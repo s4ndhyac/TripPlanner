@@ -8,8 +8,4 @@ def logout(request):
 
 
 def index(request):
-    if request.user.is_authenticated:
-        context = {'logged_in': request.user.is_authenticated}
-        return render(request, 'members/dashboard.html', context)
-    else:
-        return render(request, 'members/index.html')
+    return render(request, 'members/dashboard.html' if request.user.is_authenticated else 'members/index.html')
