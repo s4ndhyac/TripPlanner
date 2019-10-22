@@ -2,9 +2,9 @@ import React from 'react';
 import ReactDOM from 'react-dom';
 import './index.css';
 import { Route, Switch, BrowserRouter as Router } from 'react-router-dom';
-import Dashboard from './components/dashboard';
-import Landing from './components/landing';
-import AppHeader from './components/header';
+import Dashboard from './components/Dashboard';
+import Landing from './components/Landing';
+import AppHeader from './components/Header';
 import Toolbar from '@material-ui/core/Toolbar';
 import * as serviceWorker from './serviceWorker';
 
