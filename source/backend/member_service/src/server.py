@@ -1,3 +1,5 @@
+from route.user import user_blueprint
+from route.common import common_blueprint
 from flask import Flask
 from flask.ext.cors import CORS
 
@@ -8,6 +10,7 @@ server = Flask(__name__)
 server.debug = config.DEBUG
 
 server.config['SQLALCHEMY_DATABASE_URI'] = config.DB_URI
+server.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 db.init_app(server)
 db.app = server
 
@@ -17,10 +20,8 @@ CORS(
     headers=['Content-Type', 'X-Requested-With', 'Authorization']
 )
 
-from route.common import common_blueprint
 server.register_blueprint(common_blueprint)
 
-from route.user import user_blueprint
 server.register_blueprint(user_blueprint)
 
 

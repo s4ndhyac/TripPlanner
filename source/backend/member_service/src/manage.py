@@ -8,6 +8,7 @@ from model.abc import db
 server = Flask(__name__)
 server.debug = config.DEBUG
 server.config['SQLALCHEMY_DATABASE_URI'] = config.DB_URI
+server.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 db.init_app(server)
 
 migrate = Migrate(server, db)
