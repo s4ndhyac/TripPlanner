@@ -30,8 +30,10 @@ def find_user_by_token(token):
         raise Exception(data['error'])
     query_result = User.objects.filter(email=data['email'])
     if query_result.count() == 0:
-        User(email=data['email'], first_name=data['given_name'],
-             last_name=data['family_name'], picture=data['picture']).save()
+        user = User(email=data['email'], first_name=data['given_name'],
+                    last_name=data['family_name'], picture=data['picture'])
+        user.save()
+        return user
     return query_result
 
 
