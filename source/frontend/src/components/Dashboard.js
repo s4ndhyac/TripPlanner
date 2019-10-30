@@ -1,13 +1,23 @@
 import React from 'react';
-import StateStorage from '../StateStorage';
+import { connect } from 'react-redux';
+import { withRouter, Redirect } from 'react-router-dom';
 
 class Dashboard extends React.Component {
   render() {
-    const user = StateStorage.getUser();
+    const user = this.props.currentUser;
+    if (!!!user) {
+      return (<Redirect to="/" />);
+    }
     return (
       <h1>{user.first_name}'s Dashboard</h1>
     );
   }
 }
 
-export default Dashboard;
+const mapStateToProps = state => ({
+  currentUser: state.user.currentUser
+});
+
+const connectedComponent = withRouter(connect(mapStateToProps, {})(Dashboard));
+
+export default connectedComponent;

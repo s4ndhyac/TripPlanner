@@ -2,7 +2,11 @@ import React from 'react';
 import Button from '@material-ui/core/Button';
 import GoogleLogin from 'react-google-login';
 import { withRouter } from 'react-router-dom';
+
+import { connect } from 'react-redux';
+
 import { handleLoginSuccess, clientId, cookiePolicy } from './index';
+import { setUser } from '../../actions';
 
 class SimpleLoginButton extends React.Component {
   render() {
@@ -20,4 +24,6 @@ class SimpleLoginButton extends React.Component {
   }
 }
 
-export default withRouter(SimpleLoginButton);
+const connectedComponent = connect(null, { setUser })(SimpleLoginButton);
+
+export default withRouter(connectedComponent);
