@@ -1,6 +1,5 @@
 import React from "react";
 import {
-  Paper,
   Card,
   CardContent,
   CardActions,
@@ -16,9 +15,7 @@ class MainPanel extends React.Component {
           <Typography variant="h4" component="h2">
             Members
           </Typography>
-          <Typography color="textSecondary">
-            Member list
-          </Typography>
+          <Typography color="textSecondary">Member list</Typography>
         </CardContent>
         <CardActions>
           <Button size="small">Learn More</Button>

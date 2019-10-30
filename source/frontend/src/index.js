@@ -1,24 +1,29 @@
-import React from 'react';
-import ReactDOM from 'react-dom';
-import './index.css';
-import { BrowserRouter as Router, Switch, Route, withRouter } from 'react-router-dom';
-import Dashboard from './components/Dashboard';
-import Landing from './components/Landing';
-import AppHeader from './components/Header';
-import Toolbar from '@material-ui/core/Toolbar';
-import * as serviceWorker from './serviceWorker';
+import React from "react";
+import ReactDOM from "react-dom";
+import "./index.css";
+import {
+  BrowserRouter as Router,
+  Switch,
+  Route,
+  withRouter
+} from "react-router-dom";
+import Dashboard from "./components/Dashboard";
+import Landing from "./components/Landing";
+import AppHeader from "./components/Header";
+import Toolbar from "@material-ui/core/Toolbar";
+import * as serviceWorker from "./serviceWorker";
 
-import { Provider, connect } from 'react-redux';
-import { setUser, clearUser } from './actions';
-import configureStore from './configureStore';
-import { PersistGate } from 'redux-persist/lib/integration/react';
+import { Provider, connect } from "react-redux";
+import { setUser, clearUser } from "./actions";
+import configureStore from "./configureStore";
+import { PersistGate } from "redux-persist/lib/integration/react";
 
 const { store, persistor } = configureStore();
 
 class Root extends React.Component {
   componentDidMount() {
     if (!!this.props.currentUser) {
-      this.props.history.push('/dashboard');
+      this.props.history.push("/dashboard");
     }
   }
 
@@ -56,7 +61,7 @@ ReactDOM.render(
       </Router>
     </PersistGate>
   </Provider>,
-  document.getElementById('root')
+  document.getElementById("root")
 );
 
 // If you want your app to work offline and load faster, you can change

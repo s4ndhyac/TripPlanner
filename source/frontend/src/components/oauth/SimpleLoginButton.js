@@ -1,12 +1,12 @@
-import React from 'react';
-import Button from '@material-ui/core/Button';
-import GoogleLogin from 'react-google-login';
-import { withRouter } from 'react-router-dom';
+import React from "react";
+import Button from "@material-ui/core/Button";
+import GoogleLogin from "react-google-login";
+import { withRouter } from "react-router-dom";
 
-import { connect } from 'react-redux';
+import { connect } from "react-redux";
 
-import { handleLoginSuccess, clientId, cookiePolicy } from './index';
-import { setUser } from '../../actions';
+import { handleLoginSuccess, clientId, cookiePolicy } from "./index";
+import { setUser } from "../../actions";
 
 class SimpleLoginButton extends React.Component {
   render() {
@@ -14,7 +14,13 @@ class SimpleLoginButton extends React.Component {
       <GoogleLogin
         clientId={clientId}
         render={renderProps => (
-          <Button onClick={renderProps.onClick} disabled={renderProps.disabled} color="inherit">Login</Button>
+          <Button
+            onClick={renderProps.onClick}
+            disabled={renderProps.disabled}
+            color="inherit"
+          >
+            Login
+          </Button>
         )}
         onSuccess={handleLoginSuccess(this.props)}
         onFailure={console.error}
@@ -24,6 +30,9 @@ class SimpleLoginButton extends React.Component {
   }
 }
 
-const connectedComponent = connect(null, { setUser })(SimpleLoginButton);
+const connectedComponent = connect(
+  null,
+  { setUser }
+)(SimpleLoginButton);
 
 export default withRouter(connectedComponent);

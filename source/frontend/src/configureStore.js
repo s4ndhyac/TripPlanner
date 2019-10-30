@@ -1,13 +1,13 @@
-import { createStore } from 'redux';
-import { persistStore, persistReducer } from 'redux-persist';
-import storage from 'redux-persist/lib/storage';
-import { composeWithDevTools } from 'redux-devtools-extension';
+import { createStore } from "redux";
+import { persistStore, persistReducer } from "redux-persist";
+import storage from "redux-persist/lib/storage";
+import { composeWithDevTools } from "redux-devtools-extension";
 
-import rootReducer from './reducers';
+import rootReducer from "./reducers";
 
 const persistConfig = {
-  key: 'root',
-  storage,
+  key: "root",
+  storage
 };
 
 const persistedReducer = persistReducer(persistConfig, rootReducer);
