@@ -21,12 +21,6 @@ import { PersistGate } from "redux-persist/lib/integration/react";
 const { store, persistor } = configureStore();
 
 class Root extends React.Component {
-  componentDidMount() {
-    if (!!this.props.currentUser) {
-      this.props.history.push("/dashboard");
-    }
-  }
-
   render() {
     return (
       <div>
@@ -34,6 +28,8 @@ class Root extends React.Component {
         <Toolbar />
         <Switch>
           <Route exact path="/" component={Landing} />
+          <Route path="/dashboard/groups/:id" render={props => <Dashboard panel={"group"} {...props}></Dashboard>} />
+          <Route path="/dashboard/itineraries/:id" render={props => <Dashboard panel={"itinerary"} {...props}></Dashboard>} />
           <Route path="/dashboard" component={Dashboard} />
           <Route component={() => <h1>Not found</h1>} />
         </Switch>

@@ -1,5 +1,5 @@
-import { combineReducers } from 'redux';
-import * as actionTypes from '../actions/types';
+import { combineReducers } from "redux";
+import * as actionTypes from "../actions/types";
 
 const initialUserState = {
   currentUser: null,
@@ -23,8 +23,25 @@ const userReducer = (state = initialUserState, action) => {
   }
 };
 
+const initialPanelState = {
+  openPanel: null,
+  id: null
+};
+
+const panelReducer = (state = initialPanelState, action) => {
+  switch (action.type) {
+    case actionTypes.OPEN_GROUP:
+      return action.payload;
+    case actionTypes.OPEN_ITINERARY:
+      return action.payload;
+    default:
+      return state;
+  }
+};
+
 const rootReducer = combineReducers({
-  user: userReducer
+  user: userReducer,
+  panel: panelReducer
 });
 
 export default rootReducer;

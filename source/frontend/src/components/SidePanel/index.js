@@ -1,4 +1,5 @@
 import React from "react";
+import { connect } from "react-redux";
 import {
   Drawer,
   Divider,
@@ -11,8 +12,11 @@ import {
 } from "@material-ui/core";
 import CardTravelIcon from "@material-ui/icons/CardTravel";
 import GroupIcon from "@material-ui/icons/Group";
-import AddIcon from '@material-ui/icons/Add';
+import AddIcon from "@material-ui/icons/Add";
 import { withStyles } from "@material-ui/core/styles";
+import { withRouter } from "react-router-dom";
+
+import { openGroup, openItinerary } from "../../actions";
 
 const drawerWidth = "23rem";
 
@@ -28,8 +32,32 @@ const styles = theme => ({
 });
 
 class SidePanel extends React.Component {
+  state = {
+    groups: [
+      {
+        name: "My Group 1",
+        id: 1
+      },
+      {
+        name: "Random group 2",
+        id: 2
+      }
+    ],
+    itineraries: [
+      {
+        name: "Trip to LA",
+        id: 1
+      },
+      {
+        name: "Trip to SF",
+        id: 2
+      }
+    ]
+  };
+
   render() {
-    const { classes } = this.props;
+    const { classes, history } = this.props;
+    const { groups, itineraries } = this.state;
     return (
       <Drawer
         className={classes.drawer}
@@ -44,31 +72,56 @@ class SidePanel extends React.Component {
         <List>
           <ListItem>
             <Typography variant="h5">Groups</Typography>
-            <Button><AddIcon button></AddIcon></Button>
+            <Button>
+              <AddIcon></AddIcon>
+            </Button>
           </ListItem>
-          <ListItem button key={"group1"}>
-            <ListItemIcon>
-              <GroupIcon />
-            </ListItemIcon>
-            <ListItemText primary={"Group 1"} />
-          </ListItem>
+          {groups.map(group => (
+            <ListItem
+              button
+              key={`group-${group.id}`}
+              onClick={() => history.push(`/dashboard/groups/${group.id}`)}
+            >
+              <ListItemIcon>
+                <GroupIcon />
+              </ListItemIcon>
+              <ListItemText primary={group.name} />
+            </ListItem>
+          ))}
         </List>
         <Divider />
         <List>
           <ListItem>
             <Typography variant="h5">Itineraries</Typography>
-            <Button><AddIcon button></AddIcon></Button>
+            <Button>
+              <AddIcon></AddIcon>
+            </Button>
           </ListItem>
-          <ListItem button key={"itinerary1"}>
-            <ListItemIcon>
-              <CardTravelIcon />
-            </ListItemIcon>
-            <ListItemText primary={"Itinerary 1"} />
-          </ListItem>
+          {itineraries.map(itinerary => (
+            <ListItem
+              button
+              key={`itinerary-${itinerary.id}`}
+              onClick={() =>
+                history.push(`/dashboard/itineraries/${itinerary.id}`)
+              }
+            >
+              <ListItemIcon>
+                <CardTravelIcon />
+              </ListItemIcon>
+              <ListItemText primary={itinerary.name} />
+            </ListItem>
+          ))}
         </List>
       </Drawer>
     );
   }
 }
 
-export default withStyles(styles, { withTheme: true })(SidePanel);
+const connectedComponent = withRouter(
+  connect(
+    null,
+    { openGroup, openItinerary }
+  )(SidePanel)
+);
+
+export default withStyles(styles, { withTheme: true })(connectedComponent);

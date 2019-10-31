@@ -11,7 +11,7 @@ import PersonIcon from "@material-ui/icons/Person";
 import Autocomplete from "@material-ui/lab/Autocomplete";
 import TextField from "@material-ui/core/TextField";
 
-const styles = theme => ({
+const styles = () => ({
   root: {
     width: "100%",
     overflowX: "auto"
@@ -43,12 +43,39 @@ const top100Films = [
 
 class MembersPanel extends React.Component {
   state = {
-    groupName: "Group 1",
-    members: members
+    groupName: "",
+    members: []
+  };
+
+  componentWillMount() {
+    this.changeState(this.props);
+  }
+
+  changeState = props => {
+    const { itemId } = props;
+    const groupData = this.getGroupData(itemId);
+    this.setState({
+      groupName: groupData.name,
+      members: groupData.members
+    });
+  };
+
+  componentWillReceiveProps(nextProps) {
+    if (this.props.itemId !== nextProps.itemId) {
+      this.changeState(nextProps);
+    }
+  }
+
+  getGroupData = id => {
+    return {
+      name: `Group ${id}`,
+      members
+    };
   };
 
   render() {
     const { classes } = this.props;
+    const { members, groupName } = this.state;
 
     const options = top100Films.map(option => {
       const firstLetter = option.title[0].toUpperCase();
@@ -62,7 +89,7 @@ class MembersPanel extends React.Component {
       <div>
         <CardContent>
           <Typography variant="h4" component="h2">
-            Members - {this.state.groupName}
+            Members - {groupName}
           </Typography>
           <Autocomplete
             options={options.sort(
@@ -72,12 +99,7 @@ class MembersPanel extends React.Component {
             getOptionLabel={option => option.title}
             style={{ width: 300 }}
             renderInput={params => (
-              <TextField
-                {...params}
-                label="With categories"
-                variant="outlined"
-                fullWidth
-              />
+              <TextField {...params} label="" variant="outlined" fullWidth />
             )}
           />
           <br />
@@ -92,7 +114,7 @@ class MembersPanel extends React.Component {
                 </TableRow>
               </TableHead>
               <TableBody>
-                {this.state.members.map(row => (
+                {members.map(row => (
                   <TableRow key={row.name}>
                     <TableCell component="th" scope="row">
                       <PersonIcon></PersonIcon>
