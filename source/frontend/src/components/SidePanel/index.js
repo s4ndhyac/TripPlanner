@@ -18,7 +18,7 @@ import { withRouter } from "react-router-dom";
 
 import { openGroup, openItinerary } from "../../actions";
 
-const drawerWidth = "23rem";
+const drawerWidth = "20rem";
 
 const styles = theme => ({
   drawer: {

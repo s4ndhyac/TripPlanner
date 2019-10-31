@@ -124,7 +124,9 @@ class MembersPanel extends React.Component {
                     </TableCell>
                     <TableCell>{row.email}</TableCell>
                     <TableCell>
-                      <Button size="small">Remove</Button>
+                      <Button size="small" variant="outlined" color="secondary">
+                        Remove
+                      </Button>
                     </TableCell>
                   </TableRow>
                 ))}

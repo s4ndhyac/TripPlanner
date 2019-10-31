@@ -17,6 +17,7 @@ import { Provider, connect } from "react-redux";
 import { setUser, clearUser } from "./actions";
 import configureStore from "./configureStore";
 import { PersistGate } from "redux-persist/lib/integration/react";
+import { Typography } from "@material-ui/core";
 
 const { store, persistor } = configureStore();
 
@@ -28,10 +29,20 @@ class Root extends React.Component {
         <Toolbar />
         <Switch>
           <Route exact path="/" component={Landing} />
-          <Route path="/dashboard/groups/:id" render={props => <Dashboard panel={"group"} {...props}></Dashboard>} />
-          <Route path="/dashboard/itineraries/:id" render={props => <Dashboard panel={"itinerary"} {...props}></Dashboard>} />
-          <Route path="/dashboard" component={Dashboard} />
-          <Route component={() => <h1>Not found</h1>} />
+          <Route
+            path="/dashboard/groups/:id"
+            render={props => <Dashboard panel={"group"} {...props}></Dashboard>}
+          />
+          <Route
+            path="/dashboard/itineraries/:id"
+            render={props => (
+              <Dashboard panel={"itinerary"} {...props}></Dashboard>
+            )}
+          />
+          <Route exact path="/dashboard" component={Dashboard} />
+          <Route
+            component={() => <Typography variant="h2">Not found</Typography>}
+          />
         </Switch>
       </div>
     );
