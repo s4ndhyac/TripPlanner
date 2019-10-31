@@ -6,7 +6,8 @@ import {
   ListItem,
   ListItemIcon,
   ListItemText,
-  Typography
+  Typography,
+  Button
 } from "@material-ui/core";
 import CardTravelIcon from "@material-ui/icons/CardTravel";
 import GroupIcon from "@material-ui/icons/Group";
@@ -43,7 +44,7 @@ class SidePanel extends React.Component {
         <List>
           <ListItem>
             <Typography variant="h5">Groups</Typography>
-            <AddIcon button></AddIcon>
+            <Button><AddIcon button></AddIcon></Button>
           </ListItem>
           <ListItem button key={"group1"}>
             <ListItemIcon>
@@ -56,7 +57,7 @@ class SidePanel extends React.Component {
         <List>
           <ListItem>
             <Typography variant="h5">Itineraries</Typography>
-            <AddIcon button></AddIcon>
+            <Button><AddIcon button></AddIcon></Button>
           </ListItem>
           <ListItem button key={"itinerary1"}>
             <ListItemIcon>
