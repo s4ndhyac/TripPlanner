@@ -22,6 +22,6 @@ from django.contrib.auth import logout
 urlpatterns = [
     path('', include('social_django.urls', namespace='social')),
     path('members/', include('member_service.urls')),
-
+    path('itinerary/', include('itinerary_service.urls')),
     path('admin/', admin.site.urls),
 ]

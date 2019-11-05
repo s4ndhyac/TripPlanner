@@ -1,4 +1,12 @@
 import React from "react";
+import { Grid } from "@material-ui/core";
+import { withStyles } from "@material-ui/core/styles";
+import SearchPanel from "./SearchPanel";
+import ItineraryDetailsPanel from "./ItineraryDetailsPanel";
+
+const styles = () => ({
+  root: { flexGrow: 1 }
+});
 
 class ItineraryPanel extends React.Component {
   state = {
@@ -28,15 +36,41 @@ class ItineraryPanel extends React.Component {
       name: `Itinerary ${id}`,
       id,
       plan: {
-        attractions: [{ name: "Downtown LA" }]
+        sequence: [
+          {
+            name: "Downtown LA",
+            type: "Attraction",
+            description: "A beautiful city",
+            address: "Los Angeles, 90001, CA, USA"
+          },
+          {
+            name: "Santa Monica",
+            type: "Attraction",
+            description: "Visit the best beach around the area!",
+            address: "Santa Monica, 90001, CA, USA"
+          }
+        ]
       }
     };
   };
 
   render() {
-    const { name, id, plan } = this.state;
-    return <div>{name}</div>;
+    const { classes } = this.props;
+    const { name, plan } = this.state;
+    return (
+      <Grid container spacing={3} className={classes.root}>
+        <Grid item xs={5}>
+          <ItineraryDetailsPanel
+            name={name}
+            plan={plan}
+          ></ItineraryDetailsPanel>
+        </Grid>
+        <Grid item xs={7}>
+          <SearchPanel></SearchPanel>
+        </Grid>
+      </Grid>
+    );
   }
 }
 
-export default ItineraryPanel;
+export default withStyles(styles, { withTheme: true })(ItineraryPanel);

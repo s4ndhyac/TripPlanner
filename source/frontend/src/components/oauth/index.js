@@ -5,9 +5,15 @@ const clientId =
   "117123737084-rp4gfof0cf77kqjm65j69upudlefshsj.apps.googleusercontent.com";
 const cookiePolicy = "single_host_origin";
 
+const TOKEN_KEY = "tripplanner-user-token";
+
+axios.defaults.headers.common["Authorization"] =
+  localStorage.getItem(TOKEN_KEY) || "";
+
 const handleLoginSuccess = props => async response => {
   const { tokenId } = response;
   axios.defaults.headers.common["Authorization"] = tokenId;
+  localStorage.setItem(TOKEN_KEY, tokenId);
   const resp = await axios.post(authAPI, {});
   const user = resp.data[0].fields;
   user.tokenId = tokenId;
@@ -21,4 +27,4 @@ const handleLogout = props => () => {
   props.history.push("/");
 };
 
-export { handleLoginSuccess, handleLogout, clientId, cookiePolicy };
+export { handleLoginSuccess, handleLogout, clientId, cookiePolicy, axios };
