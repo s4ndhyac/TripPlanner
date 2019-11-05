@@ -9,6 +9,7 @@ import { axios } from "../oauth";
 import { withStyles } from "@material-ui/core/styles";
 import { Typography, Grid, Divider, Paper } from "@material-ui/core";
 import SearchResultList from "./SearchResultList";
+import SearchIcon from "@material-ui/icons/Search";
 
 const styles = theme => ({
   container: {
@@ -30,7 +31,7 @@ const styles = theme => ({
   }
 });
 
-const YELP_SEARCH_API = "http://localhost:8000/itinerary/search";
+const SEARCH_API = "http://localhost:8000/itinerary/search";
 
 class SearchPanel extends React.Component {
   state = {
@@ -55,17 +56,37 @@ class SearchPanel extends React.Component {
   handleSubmit = async event => {
     event.preventDefault();
     if (this.state.selectedAPI === "google-maps") {
-      // search on google maps
+      this.searchGoogleMaps();
     } else if (this.state.selectedAPI === "yelp") {
-      const res = await axios.get(YELP_SEARCH_API, {
-        params: {
-          api: "yelp",
-          term: this.state.searchInput,
-          location: this.state.searchLocation
-        }
-      });
-      this.setState({ searchResults: res.data["businesses"] });
+      this.searchYelp();
     }
+  };
+
+  searchGoogleMaps = async () => {
+    const { searchInput } = this.state;
+    if (searchInput.length === 0) return;
+    const res = await axios.get(SEARCH_API, {
+      params: {
+        api: "google-maps",
+        input: searchInput
+      }
+    });
+    this.setState({ searchResults: res.data["details"] });
+  };
+
+  searchYelp = async () => {
+    const { searchInput, searchLocation } = this.state;
+    if (searchInput.length === 0 || searchLocation.length === 0) {
+      return;
+    }
+    const res = await axios.get(SEARCH_API, {
+      params: {
+        api: "yelp",
+        term: searchInput,
+        location: searchLocation
+      }
+    });
+    this.setState({ searchResults: res.data["businesses"] });
   };
 
   render() {
@@ -119,6 +140,7 @@ class SearchPanel extends React.Component {
                 type="submit"
                 variant="contained"
                 color="primary"
+                startIcon={<SearchIcon />}
               >
                 Search
               </Button>
