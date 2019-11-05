@@ -2,7 +2,7 @@
 
 An app that lets you Auto-generate your group trip's itinerary collaboratively based on your places of interest.
 
-## Getting Started
+## Getting Started (Local Development)
 
 ```bash
 # Step 1.1: Initialize virtual environment (only need to initialize once)
