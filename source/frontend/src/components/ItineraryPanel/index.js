@@ -1,32 +1,11 @@
 import React from "react";
-import {
-  Grid,
-  Paper,
-  Typography,
-  IconButton,
-  Button,
-  Divider,
-  List,
-  ListItem,
-  ListItemText,
-  ListItemIcon,
-  ListItemSecondaryAction,
-  Box
-} from "@material-ui/core";
+import { Grid } from "@material-ui/core";
 import { withStyles } from "@material-ui/core/styles";
-import EditIcon from "@material-ui/icons/Edit";
-import PlaceIcon from "@material-ui/icons/Place";
-import YelpSearchBar from "../SearchBar/YelpSearchBar";
-import DeleteIcon from "@material-ui/icons/Delete";
+import SearchPanel from "./SearchPanel";
+import ItineraryDetailsPanel from "./ItineraryDetailsPanel";
 
-const styles = theme => ({
-  root: {
-    flexGrow: 1
-  },
-  paper: {
-    padding: theme.spacing(2),
-    height: "84vh"
-  }
+const styles = () => ({
+  root: { flexGrow: 1 }
 });
 
 class ItineraryPanel extends React.Component {
@@ -79,74 +58,17 @@ class ItineraryPanel extends React.Component {
     const { classes } = this.props;
     const { name, plan } = this.state;
     return (
-      <Box className={classes.root}>
-        <Grid container spacing={3}>
-          <Grid item xs={5}>
-            <Paper className={classes.paper}>
-              <Grid container>
-                <Grid item xs={7}>
-                  <Typography variant="h5">{name}</Typography>
-                </Grid>
-                <Button color="primary">Generate</Button>
-                <IconButton>
-                  <EditIcon />
-                </IconButton>
-              </Grid>
-              <Divider></Divider>{" "}
-              <List>
-                {plan.sequence.map(attraction => (
-                  <ListItem
-                    key={attraction.name}
-                    button
-                    alignItems="flex-start"
-                  >
-                    <ListItemIcon>
-                      <PlaceIcon />
-                    </ListItemIcon>
-                    <ListItemText
-                      primary={attraction.name}
-                      secondary={
-                        <React.Fragment>
-                          <Typography
-                            component="span"
-                            variant="body2"
-                            className={classes.inline}
-                            color="textPrimary"
-                          >
-                            {attraction.address}
-                          </Typography>
-                          <br />
-                          <Typography
-                            component="span"
-                            variant="body2"
-                            className={classes.inline}
-                            color="textSecondary"
-                          >
-                            {attraction.description}
-                          </Typography>
-                        </React.Fragment>
-                      }
-                    />
-                    <ListItemSecondaryAction>
-                      <IconButton color="secondary" aria-label="add">
-                        <DeleteIcon />
-                      </IconButton>
-                    </ListItemSecondaryAction>
-                  </ListItem>
-                ))}
-              </List>
-            </Paper>
-          </Grid>
-          <Grid item xs={7}>
-            <Paper className={classes.paper}>
-              <Typography variant="h5">Search Attractions</Typography>
-              <br />
-              <Divider></Divider>
-              <YelpSearchBar></YelpSearchBar>
-            </Paper>
-          </Grid>
+      <Grid container spacing={3} className={classes.root}>
+        <Grid item xs={5}>
+          <ItineraryDetailsPanel
+            name={name}
+            plan={plan}
+          ></ItineraryDetailsPanel>
         </Grid>
-      </Box>
+        <Grid item xs={7}>
+          <SearchPanel></SearchPanel>
+        </Grid>
+      </Grid>
     );
   }
 }

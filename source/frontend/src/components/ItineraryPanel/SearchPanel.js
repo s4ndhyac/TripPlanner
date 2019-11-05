@@ -5,21 +5,10 @@ import TextField from "@material-ui/core/TextField";
 import FormControl from "@material-ui/core/FormControl";
 import Select from "@material-ui/core/Select";
 import Button from "@material-ui/core/Button";
-import { List, Grid } from "@material-ui/core";
 import { axios } from "../oauth";
-import Rating from "@material-ui/lab/Rating";
 import { withStyles } from "@material-ui/core/styles";
-import {
-  Typography,
-  ListItem,
-  ListItemText,
-  ListItemIcon,
-  Divider,
-  ListItemSecondaryAction,
-  IconButton
-} from "@material-ui/core";
-import AddIcon from "@material-ui/icons/Add";
-import PlaceIcon from "@material-ui/icons/Place";
+import { Typography, Grid, Divider, Paper } from "@material-ui/core";
+import SearchResultList from "./SearchResultList";
 
 const styles = theme => ({
   container: {
@@ -34,12 +23,16 @@ const styles = theme => ({
   formControl: {
     margin: theme.spacing(1),
     minWidth: 120
+  },
+  paper: {
+    padding: theme.spacing(2),
+    height: "84vh"
   }
 });
 
 const YELP_SEARCH_API = "http://localhost:8000/itinerary/search";
 
-class YelpSearchBar extends React.Component {
+class SearchPanel extends React.Component {
   state = {
     selectedAPI: "",
     searchInput: "",
@@ -75,19 +68,15 @@ class YelpSearchBar extends React.Component {
     }
   };
 
-  handleItemClick = url => () => window.open(url);
-
   render() {
     const { classes } = this.props;
-    const { selectedAPI } = this.state;
+    const { selectedAPI, searchResults } = this.state;
     return (
-      <div>
-        <form
-          // className={classes.container}
-          noValidate
-          autoComplete="off"
-          onSubmit={this.handleSubmit}
-        >
+      <Paper className={classes.paper}>
+        <Typography variant="h5">Search Attractions</Typography>
+        <br />
+        <Divider></Divider>
+        <form noValidate autoComplete="off" onSubmit={this.handleSubmit}>
           <Grid
             container
             spacing={4}
@@ -138,48 +127,10 @@ class YelpSearchBar extends React.Component {
         </form>
         <br />
         <Divider></Divider>
-        <List style={{ overflow: "auto", maxHeight: "60vh" }}>
-          {this.state.searchResults.map(place => (
-            <ListItem
-              key={place.id}
-              button
-              alignItems="flex-start"
-              onClick={this.handleItemClick(place.url)}
-            >
-              <ListItemIcon>
-                <PlaceIcon />
-              </ListItemIcon>
-              <ListItemText
-                primary={place.name}
-                secondary={
-                  <React.Fragment>
-                    <Typography
-                      component="span"
-                      variant="body2"
-                      color="textPrimary"
-                    >
-                      {place.location.display_address.join(", ")}
-                    </Typography>
-                    <br />
-                    <Rating
-                      name="half-rating"
-                      value={place.rating}
-                      precision={0.5}
-                    />
-                  </React.Fragment>
-                }
-              />
-              <ListItemSecondaryAction>
-                <IconButton color="primary" aria-label="add">
-                  <AddIcon />
-                </IconButton>
-              </ListItemSecondaryAction>
-            </ListItem>
-          ))}
-        </List>
-      </div>
+        <SearchResultList searchResults={searchResults}></SearchResultList>
+      </Paper>
     );
   }
 }
 
-export default withStyles(styles, { withTheme: true })(YelpSearchBar);
+export default withStyles(styles, { withTheme: true })(SearchPanel);
