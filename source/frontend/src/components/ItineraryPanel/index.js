@@ -9,11 +9,15 @@ import {
   List,
   ListItem,
   ListItemText,
-  ListItemIcon
+  ListItemIcon,
+  ListItemSecondaryAction,
+  Box
 } from "@material-ui/core";
 import { withStyles } from "@material-ui/core/styles";
 import EditIcon from "@material-ui/icons/Edit";
 import PlaceIcon from "@material-ui/icons/Place";
+import YelpSearchBar from "../SearchBar/YelpSearchBar";
+import DeleteIcon from "@material-ui/icons/Delete";
 
 const styles = theme => ({
   root: {
@@ -73,9 +77,9 @@ class ItineraryPanel extends React.Component {
 
   render() {
     const { classes } = this.props;
-    const { name, id, plan } = this.state;
+    const { name, plan } = this.state;
     return (
-      <div className={classes.root}>
+      <Box className={classes.root}>
         <Grid container spacing={3}>
           <Grid item xs={5}>
             <Paper className={classes.paper}>
@@ -89,9 +93,13 @@ class ItineraryPanel extends React.Component {
                 </IconButton>
               </Grid>
               <Divider></Divider>{" "}
-              <List component="nav">
+              <List>
                 {plan.sequence.map(attraction => (
-                  <ListItem button alignItems="flex-start">
+                  <ListItem
+                    key={attraction.name}
+                    button
+                    alignItems="flex-start"
+                  >
                     <ListItemIcon>
                       <PlaceIcon />
                     </ListItemIcon>
@@ -119,6 +127,11 @@ class ItineraryPanel extends React.Component {
                         </React.Fragment>
                       }
                     />
+                    <ListItemSecondaryAction>
+                      <IconButton color="secondary" aria-label="add">
+                        <DeleteIcon />
+                      </IconButton>
+                    </ListItemSecondaryAction>
                   </ListItem>
                 ))}
               </List>
@@ -127,11 +140,13 @@ class ItineraryPanel extends React.Component {
           <Grid item xs={7}>
             <Paper className={classes.paper}>
               <Typography variant="h5">Search Attractions</Typography>
+              <br />
               <Divider></Divider>
+              <YelpSearchBar></YelpSearchBar>
             </Paper>
           </Grid>
         </Grid>
-      </div>
+      </Box>
     );
   }
 }

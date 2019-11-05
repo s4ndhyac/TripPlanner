@@ -21,4 +21,4 @@ const handleLogout = props => () => {
   props.history.push("/");
 };
 
-export { handleLoginSuccess, handleLogout, clientId, cookiePolicy };
+export { handleLoginSuccess, handleLogout, clientId, cookiePolicy, axios };
