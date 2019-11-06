@@ -29,7 +29,8 @@ const styles = theme => ({
   },
   formControl: {
     margin: theme.spacing(1),
-    minWidth: 120
+    minWidth: 120,
+    paddingTop: "0.5rem"
   },
   paper: {
     padding: theme.spacing(2),
@@ -117,7 +118,7 @@ class SearchPanel extends React.Component {
             <Grid item xs={3}>
               <FormControl className={classes.formControl}>
                 <InputLabel id="demo-simple-select-helper-label">
-                  API
+                  Search Engine
                 </InputLabel>
                 <Select
                   id="demo-simple-select-helper"
@@ -150,6 +151,7 @@ class SearchPanel extends React.Component {
                 variant="contained"
                 color="primary"
                 startIcon={<SearchIcon />}
+                style={{ marginTop: "1.1rem" }}
               >
                 Search
               </Button>
