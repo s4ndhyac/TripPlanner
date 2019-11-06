@@ -37,7 +37,6 @@ def do_google_maps_search(search_input):
         'inputtype': 'textquery'
     }
     req = requests.get(GOOGLE_PLACE_SEARCH_API, params=params)
-    print(req.json())
     if req.status_code != 200:
         raise Exception('Error happened during google map search')
     details = [get_details(place['place_id'])

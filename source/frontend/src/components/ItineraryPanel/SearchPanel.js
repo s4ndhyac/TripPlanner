@@ -7,7 +7,13 @@ import Select from "@material-ui/core/Select";
 import Button from "@material-ui/core/Button";
 import { axios } from "../oauth";
 import { withStyles } from "@material-ui/core/styles";
-import { Typography, Grid, Divider, Paper } from "@material-ui/core";
+import {
+  Typography,
+  Grid,
+  Divider,
+  Paper,
+  CircularProgress
+} from "@material-ui/core";
 import SearchResultList from "./SearchResultList";
 import SearchIcon from "@material-ui/icons/Search";
 
@@ -38,7 +44,8 @@ class SearchPanel extends React.Component {
     selectedAPI: "",
     searchInput: "",
     searchLocation: "",
-    searchResults: []
+    searchResults: [],
+    loading: false
   };
 
   handleSelectChange = event => {
@@ -65,13 +72,14 @@ class SearchPanel extends React.Component {
   searchGoogleMaps = async () => {
     const { searchInput } = this.state;
     if (searchInput.length === 0) return;
+    this.setState({ loading: true });
     const res = await axios.get(SEARCH_API, {
       params: {
         api: "google-maps",
         input: searchInput
       }
     });
-    this.setState({ searchResults: res.data["details"] });
+    this.setState({ searchResults: res.data["details"], loading: false });
   };
 
   searchYelp = async () => {
@@ -79,6 +87,7 @@ class SearchPanel extends React.Component {
     if (searchInput.length === 0 || searchLocation.length === 0) {
       return;
     }
+    this.setState({ loading: true });
     const res = await axios.get(SEARCH_API, {
       params: {
         api: "yelp",
@@ -86,12 +95,12 @@ class SearchPanel extends React.Component {
         location: searchLocation
       }
     });
-    this.setState({ searchResults: res.data["businesses"] });
+    this.setState({ searchResults: res.data["businesses"], loading: false });
   };
 
   render() {
     const { classes } = this.props;
-    const { selectedAPI, searchResults } = this.state;
+    const { selectedAPI, searchResults, loading } = this.state;
     return (
       <Paper className={classes.paper}>
         <Typography variant="h5">Search Attractions</Typography>
@@ -149,7 +158,13 @@ class SearchPanel extends React.Component {
         </form>
         <br />
         <Divider></Divider>
-        <SearchResultList searchResults={searchResults}></SearchResultList>
+        {loading ? (
+          <center style={{ paddingTop: "10vh" }}>
+            <CircularProgress></CircularProgress>
+          </center>
+        ) : (
+          <SearchResultList searchResults={searchResults}></SearchResultList>
+        )}
       </Paper>
     );
   }
