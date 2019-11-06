@@ -104,7 +104,30 @@ class SearchPanel extends React.Component {
     const { selectedAPI, searchResults, loading } = this.state;
     return (
       <Paper className={classes.paper}>
-        <Typography variant="h5">Search Attractions</Typography>
+        <Grid
+          container
+          item xs={12}
+          direction="row">
+          <Grid item xs={6}>
+            <Typography variant="h5">Search Attractions</Typography>
+          </Grid>
+          <Grid item xs={3}>
+            <Typography variant="h6">Date of Travel:</Typography>
+          </Grid>
+          <Grid item xs={3}>
+            <form className={classes.container} noValidate>
+              <TextField
+                id="date"
+                type="date"
+                defaultValue="2019-11-06"
+                className={classes.textField}
+                InputLabelProps={{
+                  shrink: true,
+                }}
+              />
+            </form>
+          </Grid>
+        </Grid>
         <br />
         <Divider></Divider>
         <form noValidate autoComplete="off" onSubmit={this.handleSubmit}>

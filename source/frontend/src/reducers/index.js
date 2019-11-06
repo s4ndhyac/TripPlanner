@@ -39,9 +39,25 @@ const panelReducer = (state = initialPanelState, action) => {
   }
 };
 
+const initialSidebarState = {
+  isCollapsed: false
+};
+
+const sidebarReducer = (state = initialSidebarState, action) => {
+  switch (action.type) {
+    case actionTypes.COLLAPSE_SIDEBAR:
+      return action.payload;
+    case actionTypes.EXPAND_SIDEBAR:
+      return action.payload;
+    default:
+      return state;
+  }
+};
+
 const rootReducer = combineReducers({
   user: userReducer,
-  panel: panelReducer
+  panel: panelReducer,
+  sidebar: sidebarReducer
 });
 
 export default rootReducer;

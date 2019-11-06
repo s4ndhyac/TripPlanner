@@ -6,3 +6,4 @@ venv/
 secrets.sh
 node_modules/
 .env
+env/
