@@ -11,7 +11,8 @@ import { withRouter } from "react-router-dom";
 
 import SimpleLoginButton from "./oauth/SimpleLoginButton";
 import { handleLogout } from "./oauth";
-import { clearUser } from "../actions";
+import { toggleSidebar } from "./SidePanel/hamburger";
+import { clearUser, collapseSidebar, expandSidebar } from "../actions";
 
 const styles = theme => ({
   root: {
@@ -40,8 +41,7 @@ class AppHeader extends React.Component {
               edge="start"
               className={classes.menuButton}
               color="inherit"
-              aria-label="menu"
-            >
+              aria-label="menu" onClick={toggleSidebar(this.props)}>
               <MenuIcon />
             </IconButton>
             <Typography variant="h6" className={classes.title}>
@@ -52,8 +52,8 @@ class AppHeader extends React.Component {
                 Logout from {this.props.currentUser.first_name}
               </Button>
             ) : (
-              <SimpleLoginButton />
-            )}
+                <SimpleLoginButton />
+              )}
           </Toolbar>
         </AppBar>
       </div>
@@ -62,13 +62,14 @@ class AppHeader extends React.Component {
 }
 
 const mapStateToProps = state => ({
-  currentUser: state.user.currentUser
+  currentUser: state.user.currentUser,
+  isCollapsed: state.isCollapsed,
 });
 
 const connectedComponent = withRouter(
   connect(
     mapStateToProps,
-    { clearUser }
+    { clearUser, collapseSidebar, expandSidebar }
   )(AppHeader)
 );
 

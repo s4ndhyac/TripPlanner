@@ -32,24 +32,25 @@ const styles = theme => ({
 });
 
 class SidePanel extends React.Component {
+
   state = {
     groups: [
       {
-        name: "My Group 1",
+        name: "Group 1",
         id: 1
       },
       {
-        name: "Random group 2",
+        name: "Group 2",
         id: 2
       }
     ],
     itineraries: [
       {
-        name: "Trip to LA",
+        name: "Trip to Los Angeles",
         id: 1
       },
       {
-        name: "Trip to SF",
+        name: "Trip to San Francisco",
         id: 2
       }
     ]

@@ -22,21 +22,21 @@ const styles = theme => ({
 
 class Dashboard extends React.Component {
   render() {
-    const { classes, panel, currentUser } = this.props;
+    const { classes, panel, currentUser, isCollapsed } = this.props;
     const { id } = this.props.match.params;
     if (!!!currentUser) {
       return <Redirect to="/" />;
     }
     return (
       <Container maxWidth="xl" className={classes.root}>
-        <SidePanel></SidePanel>
+        {!!!isCollapsed ? (<SidePanel></SidePanel>) : ('')}
         {panel === undefined ? (
           <Typography variant="h4" style={{ paddingTop: "2rem" }}>
             Welcome to your dashboard, {currentUser.first_name}!
           </Typography>
         ) : (
-          <MainPanel panel={panel} itemId={id} className={classes.content}></MainPanel>
-        )}
+            <MainPanel panel={panel} itemId={id} className={classes.content}></MainPanel>
+          )}
       </Container>
     );
   }
@@ -44,7 +44,8 @@ class Dashboard extends React.Component {
 
 const mapStateToProps = state => ({
   currentUser: state.user.currentUser,
-  currentPanel: state.panel
+  currentPanel: state.panel,
+  isCollapsed: state.isCollapsed,
 });
 
 const connectedComponent = withRouter(
