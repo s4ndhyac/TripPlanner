@@ -101,11 +101,13 @@ class SearchPanel extends React.Component {
           <Grid item xs={6}>
             <Typography variant="h5">Search Attractions</Typography>
           </Grid>
-          <Grid item xs={6}>
+          <Grid item xs={3}>
+            <Typography variant="h6">Date of Travel:</Typography>
+          </Grid>
+          <Grid item xs={3}>
             <form className={classes.container} noValidate>
               <TextField
                 id="date"
-                label="Date of Travel"
                 type="date"
                 defaultValue="2019-11-06"
                 className={classes.textField}

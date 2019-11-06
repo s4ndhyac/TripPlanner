@@ -40,13 +40,13 @@ class ItineraryPanel extends React.Component {
           {
             name: "Downtown LA",
             type: "Attraction",
-            description: "A beautiful city",
+            datetime: "11-05-2019",
             address: "Los Angeles, 90001, CA, USA"
           },
           {
             name: "Santa Monica",
             type: "Attraction",
-            description: "Visit the best beach around the area!",
+            datetime: "11-06-2019",
             address: "Santa Monica, 90001, CA, USA"
           }
         ]
