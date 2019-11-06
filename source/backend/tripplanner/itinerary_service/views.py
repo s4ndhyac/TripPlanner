@@ -4,6 +4,10 @@ from django.shortcuts import render
 from django.core import serializers
 from django.http import JsonResponse
 
+from .models import Itinerary
+from rest_framework import viewsets
+from .serializers import ItinerarySerializer
+
 
 YELP_API_KEY = "MB_TUAI96_WP-B2XJl6S06raCPLAKzrJdJXd1kXgngCQMEJrjy-ubXDALP7Xd1yaQv0ArIjgna1zah1R2iXEHqFHC_yVjFlDwKpbc5v5EDWl3nbZGU0E3_tNtC-_XXYx"
 YELP_HEADER = {"Authorization": "Bearer %s" % YELP_API_KEY}
@@ -15,6 +19,13 @@ GOOGLE_PLACE_DETAILS_API = 'https://maps.googleapis.com/maps/api/place/details/j
 GOOGLE_API_KEY = 'AIzaSyCPyjXwNr3_JK6vdwuw-BNleeQLPqEBFTQ'
 
 LIMIT = 15
+
+
+# CRUD and filtering on Itinerary
+class ItineraryViewSet(viewsets.ModelViewSet):
+    queryset = Itinerary.objects.all()
+    serializer_class = ItinerarySerializer
+    filterset_fields = ['group_id', 'name']
 
 
 def search(request):

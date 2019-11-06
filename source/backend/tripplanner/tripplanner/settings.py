@@ -68,6 +68,8 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
     'social_django',
     'corsheaders',
+    'rest_framework',
+    'django_filters',
 ]
 
 MIDDLEWARE = [
@@ -158,3 +160,13 @@ USE_TZ = True
 # https://docs.djangoproject.com/en/2.2/howto/static-files/
 
 STATIC_URL = '/static/'
+
+REST_FRAMEWORK = {
+    # Use Django's standard `django.contrib.auth` permissions,
+    # or allow read-only access for unauthenticated users.
+    # 'DEFAULT_PERMISSION_CLASSES': [
+    #     'rest_framework.permissions.DjangoModelPermissionsOrAnonReadOnly'
+    # ]
+    'DEFAULT_FILTER_BACKENDS': ['django_filters.rest_framework.DjangoFilterBackend']
+
+}
