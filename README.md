@@ -14,6 +14,8 @@ virtualenv venv
 # Step 1.3: Export all secret variables (only need to initialize once. DON'T ADD THEM TO GIT!!!!)
 . ./source/secrets.sh
 
+# Step 1.3.1: Add all secrets into ./source/backend/tripplanner/.env and don't add them to GIT!
+
 # Step 1.4: Create database (only need to initialize once)
 createdb tripplanner
 
