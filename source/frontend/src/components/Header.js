@@ -7,7 +7,7 @@ import IconButton from "@material-ui/core/IconButton";
 import MenuIcon from "@material-ui/icons/Menu";
 import { withStyles } from "@material-ui/core/styles";
 import { connect } from "react-redux";
-import { withRouter } from "react-router-dom";
+import { withRouter, Link } from "react-router-dom";
 
 import SimpleLoginButton from "./oauth/SimpleLoginButton";
 import { handleLogout } from "./oauth";
@@ -45,7 +45,7 @@ class AppHeader extends React.Component {
               <MenuIcon />
             </IconButton>
             <Typography variant="h6" className={classes.title}>
-              TripPlanner
+              <Link to="/" style={{ color: '#FFF', textDecoration: 'none' }}>TripPlanner</Link>
             </Typography>
             {loggedIn ? (
               <Button onClick={handleLogout(this.props)} color="inherit">
