@@ -63,7 +63,7 @@ class AppHeader extends React.Component {
 
 const mapStateToProps = state => ({
   currentUser: state.user.currentUser,
-  isCollapsed: state.isCollapsed,
+  isCollapsed: state.sidebar.isCollapsed,
 });
 
 const connectedComponent = withRouter(

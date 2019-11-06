@@ -161,8 +161,7 @@ class SearchPanel extends React.Component {
                 type="submit"
                 variant="contained"
                 color="primary"
-                startIcon={<SearchIcon />}
-              >
+                startIcon={<SearchIcon />}>
                 Search
               </Button>
             </Grid>

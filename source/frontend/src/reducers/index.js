@@ -57,7 +57,7 @@ const sidebarReducer = (state = initialSidebarState, action) => {
 const rootReducer = combineReducers({
   user: userReducer,
   panel: panelReducer,
-  sidebar: sidebarReducer,
+  sidebar: sidebarReducer
 });
 
 export default rootReducer;

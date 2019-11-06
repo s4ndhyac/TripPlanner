@@ -8,4 +8,4 @@ const toggleSidebar = props => () => {
   }
 };
 
-export { toggleSidebar, };
+export { toggleSidebar };

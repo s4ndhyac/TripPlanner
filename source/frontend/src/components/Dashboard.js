@@ -7,6 +7,7 @@ import { withStyles } from "@material-ui/core/styles";
 import SidePanel from "./SidePanel";
 import MainPanel from "./MainPanel";
 import { Typography } from "@material-ui/core";
+import { collapseSidebar, expandSidebar } from "../actions";
 
 const styles = theme => ({
   root: {
@@ -45,13 +46,13 @@ class Dashboard extends React.Component {
 const mapStateToProps = state => ({
   currentUser: state.user.currentUser,
   currentPanel: state.panel,
-  isCollapsed: state.isCollapsed,
+  isCollapsed: state.sidebar.isCollapsed,
 });
 
 const connectedComponent = withRouter(
   connect(
     mapStateToProps,
-    {}
+    { collapseSidebar, expandSidebar }
   )(Dashboard)
 );
 
