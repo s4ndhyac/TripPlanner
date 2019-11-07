@@ -7,8 +7,17 @@ from django.shortcuts import redirect, render
 from social_django.models import UserSocialAuth
 
 from .models import User, Group
+from rest_framework import viewsets
+from .serializers import GroupSerializer
 
 GOOGLE_OAUTH_API = "https://oauth2.googleapis.com/tokeninfo?id_token={}"
+
+
+# CRUD and filtering on Group
+class GroupViewSet(viewsets.ModelViewSet):
+    queryset = Group.objects.all()
+    serializer_class = GroupSerializer
+    filterset_fields = ['name']
 
 
 def logout(request):
@@ -26,16 +35,14 @@ def authenticate(request):
         return HttpResponseForbidden()
 
 
-def user_group(request):
+def addGroup(request):
     try:
         # print(request.GET['name'])
         group = Group(name=request.GET['name'])
-        # print(request.GET['email'])
-        # user = User.objects.filter(email=request.GET['email'])
-        # print(user)
-        # userinfo = UserSocialAuth.objects.get(uid=request.GET['email'])
-        # print(userinfo)
-        # group.users.set(user)
+        group.save()
+        # need to consider if there are many users using the same email
+        user = User.objects.get(email=request.GET['email'])
+        group.users.add(user.id)
         group.save()
         return HttpResponse(group)
     except Exception as e:

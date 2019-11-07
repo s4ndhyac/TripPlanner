@@ -7,11 +7,12 @@ import IconButton from "@material-ui/core/IconButton";
 import MenuIcon from "@material-ui/icons/Menu";
 import { withStyles } from "@material-ui/core/styles";
 import { connect } from "react-redux";
-import { withRouter } from "react-router-dom";
+import { withRouter, Link } from "react-router-dom";
 
 import SimpleLoginButton from "./oauth/SimpleLoginButton";
 import { handleLogout } from "./oauth";
-import { clearUser } from "../actions";
+import { toggleSidebar } from "./SidePanel/hamburger";
+import { clearUser, collapseSidebar, expandSidebar } from "../actions";
 
 const styles = theme => ({
   root: {
@@ -40,20 +41,19 @@ class AppHeader extends React.Component {
               edge="start"
               className={classes.menuButton}
               color="inherit"
-              aria-label="menu"
-            >
+              aria-label="menu" onClick={toggleSidebar(this.props)}>
               <MenuIcon />
             </IconButton>
             <Typography variant="h6" className={classes.title}>
-              TripPlanner
+              <Link to="/" style={{ color: '#FFF', textDecoration: 'none' }}>TripPlanner</Link>
             </Typography>
             {loggedIn ? (
               <Button onClick={handleLogout(this.props)} color="inherit">
                 Logout from {this.props.currentUser.first_name}
               </Button>
             ) : (
-              <SimpleLoginButton />
-            )}
+                <SimpleLoginButton />
+              )}
           </Toolbar>
         </AppBar>
       </div>
@@ -62,13 +62,14 @@ class AppHeader extends React.Component {
 }
 
 const mapStateToProps = state => ({
-  currentUser: state.user.currentUser
+  currentUser: state.user.currentUser,
+  isCollapsed: state.sidebar.isCollapsed,
 });
 
 const connectedComponent = withRouter(
   connect(
     mapStateToProps,
-    { clearUser }
+    { clearUser, collapseSidebar, expandSidebar }
   )(AppHeader)
 );
 

@@ -15,6 +15,10 @@ import GroupIcon from "@material-ui/icons/Group";
 import AddIcon from "@material-ui/icons/Add";
 import { withStyles } from "@material-ui/core/styles";
 import { withRouter } from "react-router-dom";
+import FormControl from '@material-ui/core/FormControl';
+import InputLabel from '@material-ui/core/InputLabel';
+import MenuItem from '@material-ui/core/MenuItem';
+import Select from '@material-ui/core/Select';
 
 import { openGroup, openItinerary } from "../../actions";
 import CreateGroup from "./Creategroup"
@@ -90,6 +94,25 @@ class SidePanel extends React.Component {
             <IconButton>
               <AddIcon></AddIcon>
             </IconButton>
+            <IconButton>
+
+            </IconButton>
+            <FormControl variant="filled" className={classes.formControl} fullWidth={true} margin='dense'>
+              <InputLabel id="simple-select-filled-label">Group</InputLabel>
+              <Select
+                labelId="simple-select-filled-label"
+                id="simple-select-filled"
+                value={20}
+              >
+                <MenuItem value="">
+                  <em>None</em>
+                </MenuItem>
+                <MenuItem value={10}>Group 1</MenuItem>
+                <MenuItem value={20}>Group 2</MenuItem>
+                <MenuItem value={30}>Group 3</MenuItem>
+              </Select>
+            </FormControl>
+
           </ListItem>
           {itineraries.map(itinerary => (
             <ListItem

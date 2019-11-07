@@ -34,3 +34,21 @@ export const openItinerary = itinerary => {
     }
   };
 };
+
+export const collapseSidebar = () => {
+  return {
+    type: actionTypes.COLLAPSE_SIDEBAR,
+    payload: {
+      isCollapsed: true
+    }
+  };
+};
+
+export const expandSidebar = () => {
+  return {
+    type: actionTypes.EXPAND_SIDEBAR,
+    payload: {
+      isCollapsed: false
+    }
+  };
+};

@@ -34,7 +34,7 @@ class SearchResultList extends React.Component {
                 {address}
               </Typography>
               <br />
-              <Rating name="half-rating" value={rating} precision={0.5} />
+              <Rating name="half-rating" value={rating} precision={0.5} readOnly />
             </React.Fragment>
           }
         />

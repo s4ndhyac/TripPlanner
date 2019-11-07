@@ -1,20 +1,32 @@
+import os
 import json
 import requests
 from django.shortcuts import render
 from django.core import serializers
 from django.http import JsonResponse
 
+from .models import Itinerary
+from rest_framework import viewsets
+from .serializers import ItinerarySerializer
 
-YELP_API_KEY = "MB_TUAI96_WP-B2XJl6S06raCPLAKzrJdJXd1kXgngCQMEJrjy-ubXDALP7Xd1yaQv0ArIjgna1zah1R2iXEHqFHC_yVjFlDwKpbc5v5EDWl3nbZGU0E3_tNtC-_XXYx"
+
+YELP_API_KEY = os.getenv('YELP_API_KEY', '')
 YELP_HEADER = {"Authorization": "Bearer %s" % YELP_API_KEY}
 
 YELP_SEARCH_API = "https://api.yelp.com/v3/businesses/search"
 GOOGLE_PLACE_SEARCH_API = 'https://maps.googleapis.com/maps/api/place/findplacefromtext/json'
 GOOGLE_PLACE_DETAILS_API = 'https://maps.googleapis.com/maps/api/place/details/json'
 
-GOOGLE_API_KEY = 'AIzaSyCPyjXwNr3_JK6vdwuw-BNleeQLPqEBFTQ'
+GOOGLE_API_KEY = os.getenv('GOOGLE_API_KEY', '')
 
 LIMIT = 15
+
+
+# CRUD and filtering on Itinerary
+class ItineraryViewSet(viewsets.ModelViewSet):
+    queryset = Itinerary.objects.all()
+    serializer_class = ItinerarySerializer
+    filterset_fields = ['group_id', 'name']
 
 
 def search(request):

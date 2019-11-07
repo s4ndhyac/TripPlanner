@@ -7,6 +7,7 @@ import { withStyles } from "@material-ui/core/styles";
 import SidePanel from "./SidePanel";
 import MainPanel from "./MainPanel";
 import { Typography } from "@material-ui/core";
+import { collapseSidebar, expandSidebar } from "../actions";
 
 const styles = theme => ({
   root: {
@@ -22,21 +23,21 @@ const styles = theme => ({
 
 class Dashboard extends React.Component {
   render() {
-    const { classes, panel, currentUser } = this.props;
+    const { classes, panel, currentUser, isCollapsed } = this.props;
     const { id } = this.props.match.params;
     if (!!!currentUser) {
       return <Redirect to="/" />;
     }
     return (
       <Container maxWidth="xl" className={classes.root}>
-        <SidePanel curUser={currentUser}></SidePanel>
+        {!!!isCollapsed ? (<SidePanel curUser={currentUser}></SidePanel>) : ('')}
         {panel === undefined ? (
           <Typography variant="h4" style={{ paddingTop: "2rem" }}>
             Welcome to your dashboard, {currentUser.first_name}!
           </Typography>
         ) : (
-          <MainPanel panel={panel} itemId={id} className={classes.content}></MainPanel>
-        )}
+            <MainPanel panel={panel} itemId={id} className={classes.content}></MainPanel>
+          )}
       </Container>
     );
   }
@@ -44,13 +45,14 @@ class Dashboard extends React.Component {
 
 const mapStateToProps = state => ({
   currentUser: state.user.currentUser,
-  currentPanel: state.panel
+  currentPanel: state.panel,
+  isCollapsed: state.sidebar.isCollapsed,
 });
 
 const connectedComponent = withRouter(
   connect(
     mapStateToProps,
-    {}
+    { collapseSidebar, expandSidebar }
   )(Dashboard)
 );
 

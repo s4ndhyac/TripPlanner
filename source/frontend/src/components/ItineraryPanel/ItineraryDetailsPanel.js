@@ -64,7 +64,7 @@ class ItineraryDetailsPanel extends React.Component {
                       className={classes.inline}
                       color="textSecondary"
                     >
-                      {attraction.description}
+                      {attraction.datetime}
                     </Typography>
                   </React.Fragment>
                 }

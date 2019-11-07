@@ -2,7 +2,7 @@ import React from "react";
 import { axios } from "../oauth";
 import "./style.css";  
 
-const authGroupAPI = "http://localhost:8000/members/user-group/";
+const groupAPI = "http://localhost:8000/members/addGroup/";
 
 class Creategroup extends React.Component {  
   constructor(props) {
@@ -19,7 +19,7 @@ class Creategroup extends React.Component {
 
   handleSubmit(event) {
     alert('A new group was created: ' + this.state.value);
-    axios.post(authGroupAPI + "?name=" + this.state.value + "&email=" + this.props.user.email)
+    axios.post(groupAPI + "?name=" + this.state.value + "&email=" + this.props.user.email)
     .then(function(response){
         console.log(response);
     })

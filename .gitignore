@@ -5,3 +5,5 @@ venv/
 .DS_Store
 secrets.sh
 node_modules/
+.env
+env/

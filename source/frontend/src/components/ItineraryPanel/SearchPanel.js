@@ -7,7 +7,13 @@ import Select from "@material-ui/core/Select";
 import Button from "@material-ui/core/Button";
 import { axios } from "../oauth";
 import { withStyles } from "@material-ui/core/styles";
-import { Typography, Grid, Divider, Paper } from "@material-ui/core";
+import {
+  Typography,
+  Grid,
+  Divider,
+  Paper,
+  CircularProgress
+} from "@material-ui/core";
 import SearchResultList from "./SearchResultList";
 import SearchIcon from "@material-ui/icons/Search";
 
@@ -23,7 +29,8 @@ const styles = theme => ({
   },
   formControl: {
     margin: theme.spacing(1),
-    minWidth: 120
+    minWidth: 120,
+    paddingTop: "0.5rem"
   },
   paper: {
     padding: theme.spacing(2),
@@ -38,7 +45,8 @@ class SearchPanel extends React.Component {
     selectedAPI: "",
     searchInput: "",
     searchLocation: "",
-    searchResults: []
+    searchResults: [],
+    loading: false
   };
 
   handleSelectChange = event => {
@@ -65,13 +73,14 @@ class SearchPanel extends React.Component {
   searchGoogleMaps = async () => {
     const { searchInput } = this.state;
     if (searchInput.length === 0) return;
+    this.setState({ loading: true });
     const res = await axios.get(SEARCH_API, {
       params: {
         api: "google-maps",
         input: searchInput
       }
     });
-    this.setState({ searchResults: res.data["details"] });
+    this.setState({ searchResults: res.data["details"], loading: false });
   };
 
   searchYelp = async () => {
@@ -79,6 +88,7 @@ class SearchPanel extends React.Component {
     if (searchInput.length === 0 || searchLocation.length === 0) {
       return;
     }
+    this.setState({ loading: true });
     const res = await axios.get(SEARCH_API, {
       params: {
         api: "yelp",
@@ -86,15 +96,38 @@ class SearchPanel extends React.Component {
         location: searchLocation
       }
     });
-    this.setState({ searchResults: res.data["businesses"] });
+    this.setState({ searchResults: res.data["businesses"], loading: false });
   };
 
   render() {
     const { classes } = this.props;
-    const { selectedAPI, searchResults } = this.state;
+    const { selectedAPI, searchResults, loading } = this.state;
     return (
       <Paper className={classes.paper}>
-        <Typography variant="h5">Search Attractions</Typography>
+        <Grid
+          container
+          item xs={12}
+          direction="row">
+          <Grid item xs={6}>
+            <Typography variant="h5">Search Attractions</Typography>
+          </Grid>
+          <Grid item xs={3}>
+            <Typography variant="h6">Date of Travel:</Typography>
+          </Grid>
+          <Grid item xs={3}>
+            <form className={classes.container} noValidate>
+              <TextField
+                id="date"
+                type="date"
+                defaultValue="2019-11-06"
+                className={classes.textField}
+                InputLabelProps={{
+                  shrink: true,
+                }}
+              />
+            </form>
+          </Grid>
+        </Grid>
         <br />
         <Divider></Divider>
         <form noValidate autoComplete="off" onSubmit={this.handleSubmit}>
@@ -108,7 +141,7 @@ class SearchPanel extends React.Component {
             <Grid item xs={3}>
               <FormControl className={classes.formControl}>
                 <InputLabel id="demo-simple-select-helper-label">
-                  API
+                  Search Engine
                 </InputLabel>
                 <Select
                   id="demo-simple-select-helper"
@@ -141,6 +174,7 @@ class SearchPanel extends React.Component {
                 variant="contained"
                 color="primary"
                 startIcon={<SearchIcon />}
+                style={{ marginTop: "1.1rem" }}
               >
                 Search
               </Button>
@@ -149,7 +183,13 @@ class SearchPanel extends React.Component {
         </form>
         <br />
         <Divider></Divider>
-        <SearchResultList searchResults={searchResults}></SearchResultList>
+        {loading ? (
+          <center style={{ paddingTop: "10vh" }}>
+            <CircularProgress></CircularProgress>
+          </center>
+        ) : (
+          <SearchResultList searchResults={searchResults}></SearchResultList>
+        )}
       </Paper>
     );
   }
