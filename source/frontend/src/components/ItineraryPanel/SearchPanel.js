@@ -1,9 +1,5 @@
 import React from "react";
-import InputLabel from "@material-ui/core/InputLabel";
-import MenuItem from "@material-ui/core/MenuItem";
 import TextField from "@material-ui/core/TextField";
-import FormControl from "@material-ui/core/FormControl";
-import Select from "@material-ui/core/Select";
 import Button from "@material-ui/core/Button";
 import { axios } from "../oauth";
 import { withStyles } from "@material-ui/core/styles";
@@ -42,15 +38,10 @@ const SEARCH_API = "http://localhost:8000/itinerary/search";
 
 class SearchPanel extends React.Component {
   state = {
-    selectedAPI: "",
     searchInput: "",
     searchLocation: "",
     searchResults: [],
     loading: false
-  };
-
-  handleSelectChange = event => {
-    this.setState({ selectedAPI: event.target.value });
   };
 
   handleInputChange = event => {
@@ -63,51 +54,31 @@ class SearchPanel extends React.Component {
 
   handleSubmit = async event => {
     event.preventDefault();
-    if (this.state.selectedAPI === "google-maps") {
-      this.searchGoogleMaps();
-    } else if (this.state.selectedAPI === "yelp") {
-      this.searchYelp();
-    }
+    this.search();
   };
 
-  searchGoogleMaps = async () => {
-    const { searchInput } = this.state;
-    if (searchInput.length === 0) return;
-    this.setState({ loading: true });
-    const res = await axios.get(SEARCH_API, {
-      params: {
-        api: "google-maps",
-        input: searchInput
-      }
-    });
-    this.setState({ searchResults: res.data["details"], loading: false });
-  };
-
-  searchYelp = async () => {
+  search = async () => {
     const { searchInput, searchLocation } = this.state;
-    if (searchInput.length === 0 || searchLocation.length === 0) {
+    if (searchInput.length === 0 && searchLocation.length === 0) {
       return;
     }
     this.setState({ loading: true });
     const res = await axios.get(SEARCH_API, {
       params: {
-        api: "yelp",
         term: searchInput,
         location: searchLocation
       }
     });
-    this.setState({ searchResults: res.data["businesses"], loading: false });
+    this.setState({ searchResults: res.data["items"], loading: false });
+    console.log(res.data["items"]);
   };
 
   render() {
     const { classes } = this.props;
-    const { selectedAPI, searchResults, loading } = this.state;
+    const { searchResults, loading } = this.state;
     return (
       <Paper className={classes.paper}>
-        <Grid
-          container
-          item xs={12}
-          direction="row">
+        <Grid container item xs={12} direction="row">
           <Grid item xs={6}>
             <Typography variant="h5">Search Attractions</Typography>
           </Grid>
@@ -119,11 +90,8 @@ class SearchPanel extends React.Component {
               <TextField
                 id="date"
                 type="date"
-                defaultValue="2019-11-06"
                 className={classes.textField}
-                InputLabelProps={{
-                  shrink: true,
-                }}
+                InputLabelProps={{ shrink: true }}
               />
             </form>
           </Grid>
@@ -133,34 +101,19 @@ class SearchPanel extends React.Component {
         <form noValidate autoComplete="off" onSubmit={this.handleSubmit}>
           <Grid
             container
-            spacing={4}
+            spacing={2}
             direction="row"
             justify="center"
             alignItems="center"
           >
-            <Grid item xs={3}>
-              <FormControl className={classes.formControl}>
-                <InputLabel id="demo-simple-select-helper-label">
-                  Search Engine
-                </InputLabel>
-                <Select
-                  id="demo-simple-select-helper"
-                  value={selectedAPI}
-                  onChange={this.handleSelectChange}
-                >
-                  <MenuItem value={"google-maps"}>Google Maps</MenuItem>
-                  <MenuItem value={"yelp"}>Yelp</MenuItem>
-                </Select>
-              </FormControl>
-            </Grid>
-            <Grid item xs={3}>
+            <Grid item xs={5}>
               <TextField
                 label="Place name"
                 margin="normal"
                 onChange={this.handleInputChange}
               />
             </Grid>
-            <Grid item xs={3}>
+            <Grid item xs={4}>
               <TextField
                 label="Location"
                 margin="normal"

@@ -23,6 +23,7 @@ const handleLoginSuccess = props => async response => {
 
 const handleLogout = props => () => {
   axios.defaults.headers.common["Authorization"] = "";
+  localStorage.removeItem(TOKEN_KEY);
   props.clearUser();
   props.history.push("/");
 };

@@ -1,14 +1,14 @@
-import os
 import json
+import os
+
 import requests
-from django.shortcuts import render
 from django.core import serializers
 from django.http import JsonResponse
+from django.shortcuts import render
+from rest_framework import viewsets
 
 from .models import Itinerary
-from rest_framework import viewsets
 from .serializers import ItinerarySerializer
-
 
 YELP_API_KEY = os.getenv('YELP_API_KEY', '')
 YELP_HEADER = {"Authorization": "Bearer %s" % YELP_API_KEY}
@@ -31,15 +31,20 @@ class ItineraryViewSet(viewsets.ModelViewSet):
 
 def search(request):
     try:
-        api = request.GET.get('api', None)
-        if api == "yelp":
-            return JsonResponse(do_yelp_search(request.GET.get('term', ''), request.GET.get('location', '')))
-        elif api == "google-maps":
-            return JsonResponse(do_google_maps_search(request.GET.get('input', '')))
-        else:
-            raise Exception("Search mode {} not recognized".format(api))
+        term = request.GET.get('term', '')
+        location = request.GET.get('location', '')
+        yelp_result = do_yelp_search(
+            term, location) if term != '' and location != '' else {'businesses': []}
+        gmap_result = do_google_maps_search(term + ', ' + location)
+        return JsonResponse(concatenate_results(yelp_result, gmap_result))
     except Exception as e:
         return JsonResponse({"error": str(e)})
+
+
+def concatenate_results(yelp_result, gmap_result):
+    yelp_items = yelp_result['businesses']
+    gmap_items = gmap_result['details']
+    return {'items': yelp_items + gmap_items}
 
 
 def do_google_maps_search(search_input):

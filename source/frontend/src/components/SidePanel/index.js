@@ -9,16 +9,16 @@ import {
   ListItemText,
   Typography
 } from "@material-ui/core";
-import IconButton from '@material-ui/core/IconButton';
+import IconButton from "@material-ui/core/IconButton";
 import CardTravelIcon from "@material-ui/icons/CardTravel";
 import GroupIcon from "@material-ui/icons/Group";
 import AddIcon from "@material-ui/icons/Add";
 import { withStyles } from "@material-ui/core/styles";
 import { withRouter } from "react-router-dom";
-import FormControl from '@material-ui/core/FormControl';
-import InputLabel from '@material-ui/core/InputLabel';
-import MenuItem from '@material-ui/core/MenuItem';
-import Select from '@material-ui/core/Select';
+import FormControl from "@material-ui/core/FormControl";
+import InputLabel from "@material-ui/core/InputLabel";
+import MenuItem from "@material-ui/core/MenuItem";
+import Select from "@material-ui/core/Select";
 
 import { openGroup, openItinerary } from "../../actions";
 
@@ -36,7 +36,6 @@ const styles = theme => ({
 });
 
 class SidePanel extends React.Component {
-
   state = {
     groups: [
       {
@@ -101,13 +100,15 @@ class SidePanel extends React.Component {
             <IconButton>
               <AddIcon></AddIcon>
             </IconButton>
-            <IconButton>
-
-            </IconButton>
-            <FormControl variant="filled" className={classes.formControl} fullWidth={true} margin='dense'>
+            <IconButton></IconButton>
+            <FormControl
+              variant="filled"
+              className={classes.formControl}
+              fullWidth={true}
+              margin="dense"
+            >
               <InputLabel id="simple-select-filled-label">Group</InputLabel>
               <Select
-                labelId="simple-select-filled-label"
                 id="simple-select-filled"
                 value={20}
               >
@@ -119,7 +120,6 @@ class SidePanel extends React.Component {
                 <MenuItem value={30}>Group 3</MenuItem>
               </Select>
             </FormControl>
-
           </ListItem>
           {itineraries.map(itinerary => (
             <ListItem
