@@ -21,6 +21,7 @@ import MenuItem from "@material-ui/core/MenuItem";
 import Select from "@material-ui/core/Select";
 
 import { openGroup, openItinerary } from "../../actions";
+import CreateGroup from "./Creategroup"
 
 const drawerWidth = "20rem";
 
@@ -36,32 +37,25 @@ const styles = theme => ({
 });
 
 class SidePanel extends React.Component {
-  state = {
-    groups: [
-      {
-        name: "Group 1",
-        id: 1
-      },
-      {
-        name: "Group 2",
-        id: 2
-      }
-    ],
-    itineraries: [
-      {
-        name: "Trip to Los Angeles",
-        id: 1
-      },
-      {
-        name: "Trip to San Francisco",
-        id: 2
-      }
-    ]
-  };
+
+  constructor(props) {
+    super(props);
+    this.state = {
+      showPopup: false,
+      groups: [{ name: "My Group 1", id: 1 },
+      { name: "My Group 2", id: 2 }],
+      itineraries: [{ name: "Trip to LA", id: 1 },
+      { name: "Trip to SF", id: 2 }]
+    }
+  }
+
+  togglePopup() {
+    this.setState({ showPopup: !this.state.showPopup });
+  }
 
   render() {
-    const { classes, history } = this.props;
-    const { groups, itineraries } = this.state;
+    const { curUser, classes, history } = this.props;
+    const { showPopup, groups, itineraries } = this.state;
     return (
       <Drawer
         className={classes.drawer}
@@ -76,9 +70,10 @@ class SidePanel extends React.Component {
         <List>
           <ListItem>
             <Typography variant="h5">Groups</Typography>
-            <IconButton>
+            <IconButton onClick={this.togglePopup.bind(this)}>
               <AddIcon></AddIcon>
             </IconButton>
+            {this.state.showPopup ? <CreateGroup user={curUser} closePopup={this.togglePopup.bind(this)} /> : null}
           </ListItem>
           {groups.map(group => (
             <ListItem
