@@ -29,7 +29,7 @@ class Dashboard extends React.Component {
     }
     return (
       <Container maxWidth="xl" className={classes.root}>
-        <SidePanel></SidePanel>
+        <SidePanel curUser={currentUser}></SidePanel>
         {panel === undefined ? (
           <Typography variant="h4" style={{ paddingTop: "2rem" }}>
             Welcome to your dashboard, {currentUser.first_name}!

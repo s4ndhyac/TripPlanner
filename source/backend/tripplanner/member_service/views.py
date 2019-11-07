@@ -4,7 +4,9 @@ from django.core import serializers
 from django.http import HttpResponse, HttpResponseForbidden
 from django.shortcuts import redirect, render
 
-from .models import User
+from social_django.models import UserSocialAuth
+
+from .models import User, Group
 
 GOOGLE_OAUTH_API = "https://oauth2.googleapis.com/tokeninfo?id_token={}"
 
@@ -19,6 +21,23 @@ def authenticate(request):
     try:
         user = find_user_by_token(bearer_token)
         return HttpResponse(serializers.serialize('json', user))
+    except Exception as e:
+        print(e)
+        return HttpResponseForbidden()
+
+
+def user_group(request):
+    try:
+        # print(request.GET['name'])
+        group = Group(name=request.GET['name'])
+        # print(request.GET['email'])
+        # user = User.objects.filter(email=request.GET['email'])
+        # print(user)
+        # userinfo = UserSocialAuth.objects.get(uid=request.GET['email'])
+        # print(userinfo)
+        # group.users.set(user)
+        group.save()
+        return HttpResponse(group)
     except Exception as e:
         print(e)
         return HttpResponseForbidden()
