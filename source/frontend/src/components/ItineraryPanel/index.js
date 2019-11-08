@@ -60,6 +60,10 @@ class ItineraryPanel extends React.Component {
 
   handleAddOnClick = item => event => {
     event.preventDefault();
+    if (!item.datetime) {
+      alert("Please select a travel date!");
+      return;
+    }
     const { sequence } = this.state.plan;
     this.setState({ plan: { sequence: sequence.concat([item]) } });
   };
