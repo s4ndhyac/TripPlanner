@@ -16,6 +16,15 @@ class SearchResultList extends React.Component {
   handleItemClick = url => () => window.open(url);
 
   generateListItem = (id, url, name, address, rating, photo = undefined) => {
+    const { handleAddOnClick } = this.props;
+    const item = {
+      id,
+      url,
+      name,
+      address,
+      rating,
+      datetime: "2019-11-11"
+    };
     return (
       <ListItem
         key={id}
@@ -50,7 +59,11 @@ class SearchResultList extends React.Component {
           }
         />
         <ListItemSecondaryAction>
-          <IconButton color="primary" aria-label="add">
+          <IconButton
+            color="primary"
+            aria-label="add"
+            onClick={handleAddOnClick(item)}
+          >
             <AddIcon />
           </IconButton>
         </ListItemSecondaryAction>

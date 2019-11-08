@@ -38,12 +38,14 @@ class ItineraryPanel extends React.Component {
       plan: {
         sequence: [
           {
+            id: "1",
             name: "Downtown LA",
             type: "Attraction",
             datetime: "11-05-2019",
             address: "Los Angeles, 90001, CA, USA"
           },
           {
+            id: "2",
             name: "Santa Monica",
             type: "Attraction",
             datetime: "11-06-2019",
@@ -52,6 +54,20 @@ class ItineraryPanel extends React.Component {
         ]
       }
     };
+  };
+
+  handleAddOnClick = item => event => {
+    event.preventDefault();
+    const { sequence } = this.state.plan;
+    this.setState({ plan: { sequence: sequence.concat([item]) } });
+  };
+
+  handleDeleteOnClick = itemId => event => {
+    event.preventDefault();
+    const sequence = this.state.plan.sequence.filter(
+      item => item.id !== itemId
+    );
+    this.setState({ plan: { sequence } });
   };
 
   render() {
@@ -63,10 +79,11 @@ class ItineraryPanel extends React.Component {
           <ItineraryDetailsPanel
             name={name}
             plan={plan}
+            handleDeleteOnClick={this.handleDeleteOnClick}
           ></ItineraryDetailsPanel>
         </Grid>
         <Grid item xs={7}>
-          <SearchPanel></SearchPanel>
+          <SearchPanel handleAddOnClick={this.handleAddOnClick}></SearchPanel>
         </Grid>
       </Grid>
     );
