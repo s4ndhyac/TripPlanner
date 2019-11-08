@@ -11,6 +11,7 @@ import {
 import AddIcon from "@material-ui/icons/Add";
 import PlaceIcon from "@material-ui/icons/Place";
 import Rating from "@material-ui/lab/Rating";
+import short from "short-uuid";
 
 class SearchResultList extends React.Component {
   handleItemClick = url => () => window.open(url);
@@ -23,7 +24,8 @@ class SearchResultList extends React.Component {
       name,
       address,
       rating,
-      datetime: "2019-11-11"
+      datetime: document.getElementById("travel-date").value,
+      reactId: short.generate()
     };
     return (
       <ListItem

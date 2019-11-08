@@ -46,7 +46,8 @@ class SearchPanel extends React.Component {
     searchInput: "",
     searchLocation: "",
     searchResults: [],
-    loading: false
+    loading: false,
+    travelDate: ""
   };
 
   handleInputChange = event => {
@@ -55,6 +56,10 @@ class SearchPanel extends React.Component {
 
   handleLocationChange = event => {
     this.setState({ searchLocation: event.target.value });
+  };
+
+  handleDateChange = event => {
+    this.setState({ travelDate: event.target.value });
   };
 
   handleSubmit = async event => {
@@ -82,18 +87,26 @@ class SearchPanel extends React.Component {
     const { searchResults, loading } = this.state;
     return (
       <Paper className={classes.paper}>
-        <Grid container item xs={12} direction="row">
+        <Grid
+          container
+          item
+          xs={12}
+          direction="row"
+          justify="center"
+          alignItems="center"
+        >
           <Grid item xs={8}>
             <Typography variant="h5">Search Attractions</Typography>
           </Grid>
           <Grid item xs={4}>
             <form className={classes.container} noValidate>
               <TextField
-                id="date"
+                id="travel-date"
                 type="date"
                 label="Date of Travel"
                 className={classes.textField}
                 InputLabelProps={{ shrink: true }}
+                onChange={this.handleDateChange}
               />
             </form>
           </Grid>

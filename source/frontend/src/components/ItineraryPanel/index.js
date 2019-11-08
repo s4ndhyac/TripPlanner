@@ -42,14 +42,16 @@ class ItineraryPanel extends React.Component {
             name: "Downtown LA",
             type: "Attraction",
             datetime: "11-05-2019",
-            address: "Los Angeles, 90001, CA, USA"
+            address: "Los Angeles, 90001, CA, USA",
+            reactId: "randomId1"
           },
           {
             id: "2",
             name: "Santa Monica",
             type: "Attraction",
             datetime: "11-06-2019",
-            address: "Santa Monica, 90001, CA, USA"
+            address: "Santa Monica, 90001, CA, USA",
+            reactId: "randomId2"
           }
         ]
       }
@@ -65,7 +67,7 @@ class ItineraryPanel extends React.Component {
   handleDeleteOnClick = itemId => event => {
     event.preventDefault();
     const sequence = this.state.plan.sequence.filter(
-      item => item.id !== itemId
+      item => item.reactId !== itemId
     );
     this.setState({ plan: { sequence } });
   };
