@@ -1,5 +1,11 @@
 from rest_framework import serializers
-from .models import Group, UserToGroup
+from .models import User, Group, UserToGroup
+
+
+class UserSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = User
+        fields = '__all__'
 
 
 class GroupSerializer(serializers.ModelSerializer):
