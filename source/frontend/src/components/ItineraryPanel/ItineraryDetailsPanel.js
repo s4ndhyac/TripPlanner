@@ -10,7 +10,8 @@ import {
   ListItem,
   ListItemText,
   ListItemIcon,
-  ListItemSecondaryAction
+  ListItemSecondaryAction,
+  ListSubheader
 } from "@material-ui/core";
 import { withStyles } from "@material-ui/core/styles";
 import EditIcon from "@material-ui/icons/Edit";
@@ -25,8 +26,53 @@ const styles = theme => ({
 });
 
 class ItineraryDetailsPanel extends React.Component {
+  getListItem = attraction => {
+    const { classes, handleDeleteOnClick } = this.props;
+    const { name, address, datetime, reactId } = attraction;
+    return (
+      <ListItem key={attraction.name} button alignItems="flex-start">
+        <ListItemIcon>
+          <PlaceIcon />
+        </ListItemIcon>
+        <ListItemText
+          primary={name}
+          secondary={
+            <React.Fragment>
+              <Typography
+                component="span"
+                variant="body2"
+                className={classes.inline}
+                color="textPrimary"
+              >
+                {address}
+              </Typography>
+              <br />
+              <Typography
+                component="span"
+                variant="body2"
+                className={classes.inline}
+                color="textSecondary"
+              >
+                {datetime}
+              </Typography>
+            </React.Fragment>
+          }
+        />
+        <ListItemSecondaryAction>
+          <IconButton
+            color="secondary"
+            aria-label="add"
+            onClick={handleDeleteOnClick(reactId, datetime)}
+          >
+            <DeleteIcon />
+          </IconButton>
+        </ListItemSecondaryAction>
+      </ListItem>
+    );
+  };
+
   render() {
-    const { classes, name, plan, handleDeleteOnClick } = this.props;
+    const { classes, name, plan } = this.props;
     return (
       <Paper className={classes.paper}>
         <Grid container direction="row" justify="center" alignItems="center">
@@ -41,48 +87,18 @@ class ItineraryDetailsPanel extends React.Component {
           </Grid>
         </Grid>
         <br />
-        <Divider></Divider>{" "}
-        <List>
-          {plan.sequence.map(attraction => (
-            <ListItem key={attraction.name} button alignItems="flex-start">
-              <ListItemIcon>
-                <PlaceIcon />
-              </ListItemIcon>
-              <ListItemText
-                primary={attraction.name}
-                secondary={
-                  <React.Fragment>
-                    <Typography
-                      component="span"
-                      variant="body2"
-                      className={classes.inline}
-                      color="textPrimary"
-                    >
-                      {attraction.address}
-                    </Typography>
-                    <br />
-                    <Typography
-                      component="span"
-                      variant="body2"
-                      className={classes.inline}
-                      color="textSecondary"
-                    >
-                      {attraction.datetime}
-                    </Typography>
-                  </React.Fragment>
-                }
-              />
-              <ListItemSecondaryAction>
-                <IconButton
-                  color="secondary"
-                  aria-label="add"
-                  onClick={handleDeleteOnClick(attraction.reactId)}
-                >
-                  <DeleteIcon />
-                </IconButton>
-              </ListItemSecondaryAction>
-            </ListItem>
-          ))}
+        <Divider></Divider>
+        <List style={{ overflow: "auto", maxHeight: "70vh" }}>
+          {plan.map(planForDay => {
+            return (
+              <div>
+                <ListSubheader component="div" id="nested-list-subheader">
+                  {planForDay.date.toDateString()}
+                </ListSubheader>
+                {planForDay.sequence.map(this.getListItem)}
+              </div>
+            );
+          })}
         </List>
       </Paper>
     );

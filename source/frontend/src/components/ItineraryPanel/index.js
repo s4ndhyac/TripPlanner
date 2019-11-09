@@ -35,26 +35,34 @@ class ItineraryPanel extends React.Component {
     return {
       name: `Itinerary ${id}`,
       id,
-      plan: {
-        sequence: [
-          {
-            id: "1",
-            name: "Downtown LA",
-            type: "Attraction",
-            datetime: "11-05-2019",
-            address: "Los Angeles, 90001, CA, USA",
-            reactId: "randomId1"
-          },
-          {
-            id: "2",
-            name: "Santa Monica",
-            type: "Attraction",
-            datetime: "11-06-2019",
-            address: "Santa Monica, 90001, CA, USA",
-            reactId: "randomId2"
-          }
-        ]
-      }
+      plan: [
+        {
+          date: new Date(2019, 11 - 1, 5),
+          sequence: [
+            {
+              id: "1",
+              name: "Downtown LA",
+              type: "Attraction",
+              datetime: "2019-11-05",
+              address: "Los Angeles, 90001, CA, USA",
+              reactId: "randomId1"
+            }
+          ]
+        },
+        {
+          date: new Date(2019, 11 - 1, 6),
+          sequence: [
+            {
+              id: "2",
+              name: "Santa Monica",
+              type: "Attraction",
+              datetime: "2019-11-06",
+              address: "Santa Monica, 90001, CA, USA",
+              reactId: "randomId2"
+            }
+          ]
+        }
+      ]
     };
   };
 
@@ -64,16 +72,39 @@ class ItineraryPanel extends React.Component {
       alert("Please select a travel date!");
       return;
     }
-    const { sequence } = this.state.plan;
-    this.setState({ plan: { sequence: sequence.concat([item]) } });
+    const date = this.getDateObject(item.datetime);
+    const { plan } = this.state;
+    const planForDate = plan.find(
+      p => p.date.toDateString() === date.toDateString()
+    );
+    if (!planForDate) {
+      plan.push({ date, sequence: [item] });
+      plan.sort((a, b) => a.date - b.date);
+    } else {
+      planForDate.sequence.push(item);
+    }
+    this.setState({ plan });
   };
 
-  handleDeleteOnClick = itemId => event => {
+  getDateObject = date => {
+    const split = date.split("-");
+    return new Date(split[0], split[1] - 1, split[2]);
+  };
+
+  handleDeleteOnClick = (itemId, datetime) => event => {
     event.preventDefault();
-    const sequence = this.state.plan.sequence.filter(
+    let { plan } = this.state;
+    const date = this.getDateObject(datetime);
+    const planForDate = plan.find(
+      p => p.date.toDateString() === date.toDateString()
+    );
+    planForDate.sequence = planForDate.sequence.filter(
       item => item.reactId !== itemId
     );
-    this.setState({ plan: { sequence } });
+    if (planForDate.sequence.length === 0) {
+      plan = plan.filter(p => p.date.toDateString() !== date.toDateString());
+    }
+    this.setState({ plan });
   };
 
   render() {
