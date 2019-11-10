@@ -9,6 +9,8 @@ class UserSerializer(serializers.ModelSerializer):
 
 
 class GroupSerializer(serializers.ModelSerializer):
+    users = UserSerializer(many=True, required=False)
+
     class Meta:
         model = Group
         fields = '__all__'

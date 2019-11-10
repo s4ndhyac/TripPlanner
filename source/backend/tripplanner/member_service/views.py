@@ -14,7 +14,7 @@ from .serializers import GroupSerializer, UserSerializer
 GOOGLE_OAUTH_API = "https://oauth2.googleapis.com/tokeninfo?id_token={}"
 
 
-# CRUD and filtering on User to list Users
+# CRUD and filtering
 class UserViewSet(viewsets.ModelViewSet):
     queryset = User.objects.all()
     serializer_class = UserSerializer
@@ -24,7 +24,7 @@ class UserViewSet(viewsets.ModelViewSet):
 class GroupViewSet(viewsets.ModelViewSet):
     queryset = Group.objects.all()
     serializer_class = GroupSerializer
-    filterset_fields = ['name']
+    filterset_fields = ['name', 'id']
 
 
 def logout(request):
