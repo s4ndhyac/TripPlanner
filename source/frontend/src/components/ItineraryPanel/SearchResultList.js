@@ -11,11 +11,22 @@ import {
 import AddIcon from "@material-ui/icons/Add";
 import PlaceIcon from "@material-ui/icons/Place";
 import Rating from "@material-ui/lab/Rating";
+import short from "short-uuid";
 
 class SearchResultList extends React.Component {
   handleItemClick = url => () => window.open(url);
 
-  generateListItem = (id, url, name, address, rating) => {
+  generateListItem = (id, url, name, address, rating, photo = undefined) => {
+    const { handleAddOnClick } = this.props;
+    const item = {
+      id,
+      url,
+      name,
+      address,
+      rating,
+      datetime: document.getElementById("travel-date").value,
+      reactId: short.generate()
+    };
     return (
       <ListItem
         key={id}
@@ -34,12 +45,27 @@ class SearchResultList extends React.Component {
                 {address}
               </Typography>
               <br />
-              <Rating name="half-rating" value={rating} precision={0.5} readOnly />
+              <Rating
+                name="half-rating"
+                value={rating}
+                precision={0.5}
+                readOnly
+              />
+              <br />
+              {photo ? (
+                <img src={photo} style={{ width: "10rem" }} alt="img"></img>
+              ) : (
+                <span hidden></span>
+              )}
             </React.Fragment>
           }
         />
         <ListItemSecondaryAction>
-          <IconButton color="primary" aria-label="add">
+          <IconButton
+            color="primary"
+            aria-label="add"
+            onClick={handleAddOnClick(item)}
+          >
             <AddIcon />
           </IconButton>
         </ListItemSecondaryAction>
@@ -47,11 +73,13 @@ class SearchResultList extends React.Component {
     );
   };
 
+  isFromGoogleMaps = place => "result" in place;
+
   render() {
     return (
       <List style={{ overflow: "auto", maxHeight: "60vh" }}>
         {this.props.searchResults.map(place =>
-          "result" in place
+          this.isFromGoogleMaps(place)
             ? this.generateListItem(
                 place.result.id,
                 place.result.url,
@@ -64,7 +92,8 @@ class SearchResultList extends React.Component {
                 place.url,
                 place.name,
                 place.location.display_address.join(", "),
-                place.rating
+                place.rating,
+                place.image_url
               )
         )}
       </List>

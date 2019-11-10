@@ -1,9 +1,5 @@
 import React from "react";
-import InputLabel from "@material-ui/core/InputLabel";
-import MenuItem from "@material-ui/core/MenuItem";
 import TextField from "@material-ui/core/TextField";
-import FormControl from "@material-ui/core/FormControl";
-import Select from "@material-ui/core/Select";
 import Button from "@material-ui/core/Button";
 import { axios } from "../oauth";
 import { withStyles } from "@material-ui/core/styles";
@@ -25,7 +21,12 @@ const styles = theme => ({
   textField: {
     marginLeft: theme.spacing(1),
     marginRight: theme.spacing(1),
-    width: 200
+    width: 150
+  },
+  searchField: {
+    marginLeft: theme.spacing(1),
+    marginRight: theme.spacing(1),
+    width: 170
   },
   formControl: {
     margin: theme.spacing(1),
@@ -42,15 +43,11 @@ const SEARCH_API = "http://localhost:8000/itinerary/search";
 
 class SearchPanel extends React.Component {
   state = {
-    selectedAPI: "",
     searchInput: "",
     searchLocation: "",
     searchResults: [],
-    loading: false
-  };
-
-  handleSelectChange = event => {
-    this.setState({ selectedAPI: event.target.value });
+    loading: false,
+    travelDate: ""
   };
 
   handleInputChange = event => {
@@ -61,69 +58,55 @@ class SearchPanel extends React.Component {
     this.setState({ searchLocation: event.target.value });
   };
 
+  handleDateChange = event => {
+    this.setState({ travelDate: event.target.value });
+  };
+
   handleSubmit = async event => {
     event.preventDefault();
-    if (this.state.selectedAPI === "google-maps") {
-      this.searchGoogleMaps();
-    } else if (this.state.selectedAPI === "yelp") {
-      this.searchYelp();
-    }
+    this.search();
   };
 
-  searchGoogleMaps = async () => {
-    const { searchInput } = this.state;
-    if (searchInput.length === 0) return;
-    this.setState({ loading: true });
-    const res = await axios.get(SEARCH_API, {
-      params: {
-        api: "google-maps",
-        input: searchInput
-      }
-    });
-    this.setState({ searchResults: res.data["details"], loading: false });
-  };
-
-  searchYelp = async () => {
+  search = async () => {
     const { searchInput, searchLocation } = this.state;
-    if (searchInput.length === 0 || searchLocation.length === 0) {
+    if (searchInput.length === 0 && searchLocation.length === 0) {
       return;
     }
     this.setState({ loading: true });
     const res = await axios.get(SEARCH_API, {
       params: {
-        api: "yelp",
         term: searchInput,
         location: searchLocation
       }
     });
-    this.setState({ searchResults: res.data["businesses"], loading: false });
+    this.setState({ searchResults: res.data["items"], loading: false });
   };
 
   render() {
-    const { classes } = this.props;
-    const { selectedAPI, searchResults, loading } = this.state;
+    const { classes, handleAddOnClick } = this.props;
+    const { searchResults, loading } = this.state;
     return (
       <Paper className={classes.paper}>
         <Grid
           container
-          item xs={12}
-          direction="row">
-          <Grid item xs={6}>
+          item
+          xs={12}
+          direction="row"
+          justify="center"
+          alignItems="center"
+        >
+          <Grid item xs={8}>
             <Typography variant="h5">Search Attractions</Typography>
           </Grid>
-          <Grid item xs={3}>
-            <Typography variant="h6">Date of Travel:</Typography>
-          </Grid>
-          <Grid item xs={3}>
+          <Grid item xs={4}>
             <form className={classes.container} noValidate>
               <TextField
-                id="date"
+                id="travel-date"
                 type="date"
-                defaultValue="2019-11-06"
+                label="Date of Travel"
                 className={classes.textField}
-                InputLabelProps={{
-                  shrink: true,
-                }}
+                InputLabelProps={{ shrink: true }}
+                onChange={this.handleDateChange}
               />
             </form>
           </Grid>
@@ -133,38 +116,25 @@ class SearchPanel extends React.Component {
         <form noValidate autoComplete="off" onSubmit={this.handleSubmit}>
           <Grid
             container
-            spacing={4}
+            spacing={2}
             direction="row"
             justify="center"
             alignItems="center"
           >
-            <Grid item xs={3}>
-              <FormControl className={classes.formControl}>
-                <InputLabel id="demo-simple-select-helper-label">
-                  Search Engine
-                </InputLabel>
-                <Select
-                  id="demo-simple-select-helper"
-                  value={selectedAPI}
-                  onChange={this.handleSelectChange}
-                >
-                  <MenuItem value={"google-maps"}>Google Maps</MenuItem>
-                  <MenuItem value={"yelp"}>Yelp</MenuItem>
-                </Select>
-              </FormControl>
-            </Grid>
-            <Grid item xs={3}>
+            <Grid item xs={5}>
               <TextField
                 label="Place name"
                 margin="normal"
                 onChange={this.handleInputChange}
+                className={classes.searchField}
               />
             </Grid>
-            <Grid item xs={3}>
+            <Grid item xs={4}>
               <TextField
                 label="Location"
                 margin="normal"
                 onChange={this.handleLocationChange}
+                className={classes.searchField}
               />
             </Grid>
             <Grid item xs={3}>
@@ -188,7 +158,10 @@ class SearchPanel extends React.Component {
             <CircularProgress></CircularProgress>
           </center>
         ) : (
-          <SearchResultList searchResults={searchResults}></SearchResultList>
+          <SearchResultList
+            searchResults={searchResults}
+            handleAddOnClick={handleAddOnClick}
+          ></SearchResultList>
         )}
       </Paper>
     );

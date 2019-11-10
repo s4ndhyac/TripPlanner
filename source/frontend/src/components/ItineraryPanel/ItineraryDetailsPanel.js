@@ -26,18 +26,21 @@ const styles = theme => ({
 
 class ItineraryDetailsPanel extends React.Component {
   render() {
-    const { classes, name, plan } = this.props;
+    const { classes, name, plan, handleDeleteOnClick } = this.props;
     return (
       <Paper className={classes.paper}>
-        <Grid container>
+        <Grid container direction="row" justify="center" alignItems="center">
           <Grid item xs={7}>
             <Typography variant="h5">{name}</Typography>
           </Grid>
-          <Button color="primary">Generate</Button>
-          <IconButton>
-            <EditIcon />
-          </IconButton>
+          <Grid item xs={5}>
+            <Button color="primary">Generate</Button>
+            <IconButton>
+              <EditIcon />
+            </IconButton>
+          </Grid>
         </Grid>
+        <br />
         <Divider></Divider>{" "}
         <List>
           {plan.sequence.map(attraction => (
@@ -70,7 +73,11 @@ class ItineraryDetailsPanel extends React.Component {
                 }
               />
               <ListItemSecondaryAction>
-                <IconButton color="secondary" aria-label="add">
+                <IconButton
+                  color="secondary"
+                  aria-label="add"
+                  onClick={handleDeleteOnClick(attraction.reactId)}
+                >
                   <DeleteIcon />
                 </IconButton>
               </ListItemSecondaryAction>
