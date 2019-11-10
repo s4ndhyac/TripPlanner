@@ -29,11 +29,31 @@ const styles = theme => ({
 });
 
 class ItineraryDetailsPanel extends React.Component {
+  emptyPlanTip = () => {
+    return (
+      <center>
+        <Typography
+          variant="caption"
+          display="block"
+          gutterBottom
+          style={{ marginTop: "2rem" }}
+        >
+          Use the search bar to find attractions!
+        </Typography>
+      </center>
+    );
+  };
+
   getListItem = (attraction, index) => {
     const { classes, handleDeleteOnClick } = this.props;
-    const { name, address, datetime, reactId, rating } = attraction;
+    const { name, address, datetime, reactId, rating, url } = attraction;
     return (
-      <ListItem key={attraction.name} button alignItems="flex-start">
+      <ListItem
+        key={attraction.name}
+        button
+        alignItems="flex-start"
+        onClick={() => window.open(url)}
+      >
         <ListItemIcon>
           <Tooltip title="Visit sequence">
             <Badge badgeContent={index + 1}>
@@ -91,7 +111,7 @@ class ItineraryDetailsPanel extends React.Component {
             <Typography variant="h5">{name}</Typography>
           </Grid>
           <Grid item xs={5}>
-            <Tooltip title="Generate Travel Sequence">
+            <Tooltip title="Generate optimized itinerary">
               <Button color="primary">Generate</Button>
             </Tooltip>
             <Tooltip title="Save to Database">
@@ -103,22 +123,26 @@ class ItineraryDetailsPanel extends React.Component {
         </Grid>
         <br />
         <Divider></Divider>
-        <List style={{ overflow: "auto", maxHeight: "70vh" }}>
-          {plan.map((planForDay, index) => {
-            return (
-              <div>
-                <ListSubheader
-                  component="div"
-                  id="nested-list-subheader"
-                  disableSticky={true}
-                >
-                  {planForDay.date.toDateString()}
-                </ListSubheader>
-                {planForDay.sequence.map(this.getListItem, index)}
-              </div>
-            );
-          })}
-        </List>
+        {plan.length === 0 ? (
+          this.emptyPlanTip()
+        ) : (
+          <List style={{ overflow: "auto", maxHeight: "70vh" }}>
+            {plan.map((planForDay, index) => {
+              return (
+                <div>
+                  <ListSubheader
+                    component="div"
+                    id="nested-list-subheader"
+                    disableSticky={true}
+                  >
+                    {planForDay.date.toDateString()}
+                  </ListSubheader>
+                  {planForDay.sequence.map(this.getListItem, index)}
+                </div>
+              );
+            })}
+          </List>
+        )}
       </Paper>
     );
   }
