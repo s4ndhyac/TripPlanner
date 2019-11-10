@@ -22,8 +22,13 @@ import Select from "@material-ui/core/Select";
 
 import { openGroup, openItinerary } from "../../actions";
 import CreateGroup from "./Creategroup"
+import { axios } from "../oauth";
 
 const drawerWidth = "20rem";
+const baseURL = "http://localhost:8000/"
+const listGroupsByUser = "members/v1/usergroup/?user_id="
+const listUsersByGroup = "members/v1/usergroup/?group_id="
+const listItinerariesByGroup = "itinerary/?group_id="
 
 const styles = theme => ({
   drawer: {
@@ -42,15 +47,22 @@ class SidePanel extends React.Component {
     super(props);
     this.state = {
       showPopup: false,
-      groups: [{ name: "My Group 1", id: 1 },
-      { name: "My Group 2", id: 2 }],
-      itineraries: [{ name: "Trip to LA", id: 1 },
-      { name: "Trip to SF", id: 2 }]
+      groups: [],
+      itineraries: []
     }
   }
 
   togglePopup() {
     this.setState({ showPopup: !this.state.showPopup });
+  }
+
+  componentDidMount() {
+    const { curUser } = this.props;
+    axios.get(baseURL + listGroupsByUser + curUser.id)
+      .then(res => {
+        const groups = res.data;
+        this.setState({ groups });
+      })
   }
 
   render() {
@@ -84,7 +96,7 @@ class SidePanel extends React.Component {
               <ListItemIcon>
                 <GroupIcon />
               </ListItemIcon>
-              <ListItemText primary={group.name} />
+              <ListItemText primary={group.group.name} />
             </ListItem>
           ))}
         </List>
@@ -95,26 +107,6 @@ class SidePanel extends React.Component {
             <IconButton>
               <AddIcon></AddIcon>
             </IconButton>
-            <IconButton></IconButton>
-            <FormControl
-              variant="filled"
-              className={classes.formControl}
-              fullWidth={true}
-              margin="dense"
-            >
-              <InputLabel id="simple-select-filled-label">Group</InputLabel>
-              <Select
-                id="simple-select-filled"
-                value={20}
-              >
-                <MenuItem value="">
-                  <em>None</em>
-                </MenuItem>
-                <MenuItem value={10}>Group 1</MenuItem>
-                <MenuItem value={20}>Group 2</MenuItem>
-                <MenuItem value={30}>Group 3</MenuItem>
-              </Select>
-            </FormControl>
           </ListItem>
           {itineraries.map(itinerary => (
             <ListItem
