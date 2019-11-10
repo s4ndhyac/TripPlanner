@@ -7,9 +7,9 @@ from django.shortcuts import redirect, render
 
 from social_django.models import UserSocialAuth
 
-from .models import User, Group
+from .models import User, Group, UserToGroup
 from rest_framework import viewsets
-from .serializers import GroupSerializer, UserSerializer
+from .serializers import GroupSerializer, UserSerializer, UserToGroupSerializer
 
 GOOGLE_OAUTH_API = "https://oauth2.googleapis.com/tokeninfo?id_token={}"
 
@@ -18,13 +18,19 @@ GOOGLE_OAUTH_API = "https://oauth2.googleapis.com/tokeninfo?id_token={}"
 class UserViewSet(viewsets.ModelViewSet):
     queryset = User.objects.all()
     serializer_class = UserSerializer
-    filterset_fields = ['email']
+    filterset_fields = ['email', 'id']
 
 
 class GroupViewSet(viewsets.ModelViewSet):
     queryset = Group.objects.all()
     serializer_class = GroupSerializer
     filterset_fields = ['name', 'id']
+
+
+class UserToGroupViewSet(viewsets.ModelViewSet):
+    queryset = UserToGroup.objects.all()
+    serializer_class = UserToGroupSerializer
+    filterset_fields = ['user_id', 'group_id']
 
 
 def logout(request):
