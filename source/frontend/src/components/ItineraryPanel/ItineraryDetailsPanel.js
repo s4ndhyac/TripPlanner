@@ -11,12 +11,15 @@ import {
   ListItemText,
   ListItemIcon,
   ListItemSecondaryAction,
-  ListSubheader
+  ListSubheader,
+  Badge,
+  Tooltip
 } from "@material-ui/core";
+import Rating from "@material-ui/lab/Rating";
 import { withStyles } from "@material-ui/core/styles";
-import EditIcon from "@material-ui/icons/Edit";
+import DoneIcon from "@material-ui/icons/Done";
 import PlaceIcon from "@material-ui/icons/Place";
-import DeleteIcon from "@material-ui/icons/Delete";
+import DeleteOutlineIcon from "@material-ui/icons/DeleteOutline";
 
 const styles = theme => ({
   paper: {
@@ -26,13 +29,17 @@ const styles = theme => ({
 });
 
 class ItineraryDetailsPanel extends React.Component {
-  getListItem = attraction => {
+  getListItem = (attraction, index) => {
     const { classes, handleDeleteOnClick } = this.props;
-    const { name, address, datetime, reactId } = attraction;
+    const { name, address, datetime, reactId, rating } = attraction;
     return (
       <ListItem key={attraction.name} button alignItems="flex-start">
         <ListItemIcon>
-          <PlaceIcon />
+          <Tooltip title="Visit sequence">
+            <Badge badgeContent={index + 1}>
+              <PlaceIcon />
+            </Badge>
+          </Tooltip>
         </ListItemIcon>
         <ListItemText
           primary={name}
@@ -47,14 +54,12 @@ class ItineraryDetailsPanel extends React.Component {
                 {address}
               </Typography>
               <br />
-              <Typography
-                component="span"
-                variant="body2"
-                className={classes.inline}
-                color="textSecondary"
-              >
-                {datetime}
-              </Typography>
+              <Rating
+                name="half-rating"
+                value={rating}
+                precision={0.5}
+                readOnly
+              />
             </React.Fragment>
           }
         />
@@ -64,7 +69,7 @@ class ItineraryDetailsPanel extends React.Component {
             aria-label="add"
             onClick={handleDeleteOnClick(reactId, datetime)}
           >
-            <DeleteIcon />
+            <DeleteOutlineIcon />
           </IconButton>
         </ListItemSecondaryAction>
       </ListItem>
@@ -75,27 +80,41 @@ class ItineraryDetailsPanel extends React.Component {
     const { classes, name, plan } = this.props;
     return (
       <Paper className={classes.paper}>
-        <Grid container direction="row" justify="center" alignItems="center">
+        <Grid
+          container
+          direction="row"
+          justify="center"
+          alignItems="center"
+          spacing={6}
+        >
           <Grid item xs={7}>
             <Typography variant="h5">{name}</Typography>
           </Grid>
           <Grid item xs={5}>
-            <Button color="primary">Generate</Button>
-            <IconButton>
-              <EditIcon />
-            </IconButton>
+            <Tooltip title="Generate Travel Sequence">
+              <Button color="primary">Generate</Button>
+            </Tooltip>
+            <Tooltip title="Save to Database">
+              <IconButton>
+                <DoneIcon />
+              </IconButton>
+            </Tooltip>
           </Grid>
         </Grid>
         <br />
         <Divider></Divider>
         <List style={{ overflow: "auto", maxHeight: "70vh" }}>
-          {plan.map(planForDay => {
+          {plan.map((planForDay, index) => {
             return (
               <div>
-                <ListSubheader component="div" id="nested-list-subheader">
+                <ListSubheader
+                  component="div"
+                  id="nested-list-subheader"
+                  disableSticky={true}
+                >
                   {planForDay.date.toDateString()}
                 </ListSubheader>
-                {planForDay.sequence.map(this.getListItem)}
+                {planForDay.sequence.map(this.getListItem, index)}
               </div>
             );
           })}

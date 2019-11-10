@@ -93,7 +93,7 @@ class ItineraryPanel extends React.Component {
 
   handleDeleteOnClick = (itemId, datetime) => event => {
     event.preventDefault();
-    let { plan } = this.state;
+    const { plan } = this.state;
     const date = this.getDateObject(datetime);
     const planForDate = plan.find(
       p => p.date.toDateString() === date.toDateString()
@@ -101,10 +101,7 @@ class ItineraryPanel extends React.Component {
     planForDate.sequence = planForDate.sequence.filter(
       item => item.reactId !== itemId
     );
-    if (planForDate.sequence.length === 0) {
-      plan = plan.filter(p => p.date.toDateString() !== date.toDateString());
-    }
-    this.setState({ plan });
+    this.setState({ plan: plan.filter(p => p.sequence.length !== 0) });
   };
 
   render() {

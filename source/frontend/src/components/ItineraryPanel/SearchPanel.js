@@ -26,7 +26,7 @@ const styles = theme => ({
   searchField: {
     marginLeft: theme.spacing(1),
     marginRight: theme.spacing(1),
-    width: 170
+    width: 197
   },
   formControl: {
     margin: theme.spacing(1),
@@ -121,18 +121,18 @@ class SearchPanel extends React.Component {
             justify="center"
             alignItems="center"
           >
-            <Grid item xs={5}>
+            <Grid item xs={9}>
               <TextField
                 label="Place name"
                 margin="normal"
+                variant="outlined"
                 onChange={this.handleInputChange}
                 className={classes.searchField}
               />
-            </Grid>
-            <Grid item xs={4}>
               <TextField
                 label="Location"
                 margin="normal"
+                variant="outlined"
                 onChange={this.handleLocationChange}
                 className={classes.searchField}
               />
