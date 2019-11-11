@@ -22,12 +22,6 @@ const styles = () => ({
   }
 });
 
-const createData = (name, email) => {
-  return { name, email };
-};
-
-const members = [];
-
 
 class MembersPanel extends React.Component {
   state = {

@@ -15,10 +15,6 @@ import GroupIcon from "@material-ui/icons/Group";
 import AddIcon from "@material-ui/icons/Add";
 import { withStyles } from "@material-ui/core/styles";
 import { withRouter } from "react-router-dom";
-import FormControl from "@material-ui/core/FormControl";
-import InputLabel from "@material-ui/core/InputLabel";
-import MenuItem from "@material-ui/core/MenuItem";
-import Select from "@material-ui/core/Select";
 
 import ExpansionPanel from '@material-ui/core/ExpansionPanel';
 import ExpansionPanelSummary from '@material-ui/core/ExpansionPanelSummary';
@@ -92,47 +88,6 @@ class SidePanel extends React.Component {
       >
         <div className={classes.toolbar} />
         <Divider />
-        {/* <List>
-          <ListItem>
-            <Typography variant="h5">Groups</Typography>
-            <IconButton onClick={this.togglePopup.bind(this)}>
-              <AddIcon></AddIcon>
-            </IconButton>
-            {this.state.showPopup ? <CreateGroup user={curUser} closePopup={this.togglePopup.bind(this)} /> : null}
-          </ListItem>
-          {groups.map(group => (
-            <ListItem
-              button
-              key={`group-${group.group.id}`}
-              onClick={() => history.push(`/dashboard/groups/${group.group.id}`)}
-            >
-              <ListItemIcon>
-                <GroupIcon />
-              </ListItemIcon>
-              <ListItemText primary={group.group.name} />
-            </ListItem>
-          ))}
-        </List>
-        <Divider />
-        <List>
-          <ListItem>
-            <Typography variant="h5">Itineraries</Typography>
-            <IconButton>
-              <AddIcon></AddIcon>
-            </IconButton>
-          </ListItem>
-          {itineraries.map(itinerary => (
-            <ListItem
-              button
-              key={`itinerary-${itinerary.id}`}
-              onClick={() =>
-                history.push(`/dashboard/itineraries/${itinerary.id}`)
-              }
-            >
-              <ListItemIcon>
-                <CardTravelIcon />
-              </ListItemIcon>
-              <ListItemText primary={itinerary.name} /> */}
         <ExpansionPanel>
           <ExpansionPanelSummary
             expandIcon={<ExpandMoreIcon />}
@@ -148,12 +103,15 @@ class SidePanel extends React.Component {
                 <ExpansionPanelSummary
                   expandIcon={<ExpandMoreIcon />}
                   aria-controls="panel1a-content"
-                  id="panel1a-header"
+                  id="panel1a-header" onClick={() => {
+                    this.fetchItinerariesByGroup(group.group.id);
+                    history.push(`/dashboard/groups/${group.group.id}`);
+                  }}
                 >
                   <ListItemIcon>
                     <GroupIcon />
                   </ListItemIcon>
-                  <ListItemText primary={group.name} />
+                  <ListItemText primary={group.group.name} />
                 </ExpansionPanelSummary>
 
                 <ExpansionPanelDetails>
@@ -173,20 +131,21 @@ class SidePanel extends React.Component {
                       </ListItem>
                     ))}
 
-                    <ListItem>
-                      <IconButton onClick={this.togglePopup.bind(this)}>
-                        <AddIcon></AddIcon>
-                      </IconButton>
-                      {this.state.showPopup ? <CreateGroup user={curUser} closePopup={this.togglePopup.bind(this)} /> : null}
-                    </ListItem>
+
                   </Typography>
                 </ExpansionPanelDetails>
 
               </ExpansionPanel>
             ))}
+            <ListItem>
+              <IconButton onClick={this.togglePopup.bind(this)}>
+                <AddIcon></AddIcon>
+              </IconButton>
+              {this.state.showPopup ? <CreateGroup user={curUser} closePopup={this.togglePopup.bind(this)} /> : null}
+            </ListItem>
           </Typography>
         </ExpansionPanel>
-      </Drawer>
+      </Drawer >
     );
   }
 }
