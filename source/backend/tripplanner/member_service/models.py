@@ -11,7 +11,7 @@ class User(models.Model):
 
 class Group(models.Model):
     name = models.CharField(max_length=200)
-    users = models.ManyToManyField(UserSocialAuth, through='UserToGroup')
+    users = models.ManyToManyField(User, through='UserToGroup')
 
     def __str__(self):
         return self.name
@@ -19,7 +19,7 @@ class Group(models.Model):
 
 class UserToGroup(models.Model):
     user = models.ForeignKey(
-        UserSocialAuth, db_column='user_id', on_delete=models.CASCADE)
+        User, db_column='user_id', on_delete=models.CASCADE)
     group = models.ForeignKey(
         Group, db_column='group_id', on_delete=models.CASCADE)
 

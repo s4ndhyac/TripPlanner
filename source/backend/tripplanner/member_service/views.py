@@ -1,12 +1,36 @@
 import requests
+import json
 from django.contrib.auth import logout as auth_logout
 from django.core import serializers
 from django.http import HttpResponse, HttpResponseForbidden
 from django.shortcuts import redirect, render
 
-from .models import User
+from social_django.models import UserSocialAuth
+
+from .models import User, Group, UserToGroup
+from rest_framework import viewsets
+from .serializers import GroupSerializer, UserSerializer, UserToGroupSerializer
 
 GOOGLE_OAUTH_API = "https://oauth2.googleapis.com/tokeninfo?id_token={}"
+
+
+# CRUD and filtering
+class UserViewSet(viewsets.ModelViewSet):
+    queryset = User.objects.all()
+    serializer_class = UserSerializer
+    filterset_fields = ['email', 'id']
+
+
+class GroupViewSet(viewsets.ModelViewSet):
+    queryset = Group.objects.all()
+    serializer_class = GroupSerializer
+    filterset_fields = ['name', 'id']
+
+
+class UserToGroupViewSet(viewsets.ModelViewSet):
+    queryset = UserToGroup.objects.all()
+    serializer_class = UserToGroupSerializer
+    filterset_fields = ['user_id', 'group_id']
 
 
 def logout(request):
@@ -19,6 +43,23 @@ def authenticate(request):
     try:
         user = find_user_by_token(bearer_token)
         return HttpResponse(serializers.serialize('json', user))
+    except Exception as e:
+        print(e)
+        return HttpResponseForbidden()
+
+
+def addGroup(request):
+    try:
+        body_unicode = request.body.decode('utf-8')
+        body = json.loads(body_unicode)
+        group = Group(name=body['name'])
+        group.save()
+        # need to consider if there are many users using the same email
+        user = User.objects.get(email=body['email'])
+        print(user.id)
+        group.users.add(user.id)
+        group.save()
+        return HttpResponse(group)
     except Exception as e:
         print(e)
         return HttpResponseForbidden()

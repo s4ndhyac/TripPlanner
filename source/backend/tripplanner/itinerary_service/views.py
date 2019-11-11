@@ -22,11 +22,10 @@ GOOGLE_API_KEY = os.getenv('GOOGLE_API_KEY', '')
 LIMIT = 15
 
 
-# CRUD and filtering on Itinerary
 class ItineraryViewSet(viewsets.ModelViewSet):
     queryset = Itinerary.objects.all()
     serializer_class = ItinerarySerializer
-    filterset_fields = ['group_id', 'name']
+    filterset_fields = ['group_id', 'name', 'id']
 
 
 def search(request):

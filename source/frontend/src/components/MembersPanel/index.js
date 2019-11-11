@@ -5,11 +5,12 @@ import TableCell from "@material-ui/core/TableCell";
 import TableHead from "@material-ui/core/TableHead";
 import TableRow from "@material-ui/core/TableRow";
 import Paper from "@material-ui/core/Paper";
-import { CardContent, Typography, Button } from "@material-ui/core";
+import { CardContent, Typography, Button, Grid } from "@material-ui/core";
 import { withStyles } from "@material-ui/core/styles";
 import PersonIcon from "@material-ui/icons/Person";
-import Autocomplete from "@material-ui/lab/Autocomplete";
 import TextField from "@material-ui/core/TextField";
+import Icon from '@material-ui/core/Icon';
+import { axios } from "../oauth";
 
 const styles = () => ({
   root: {
@@ -21,25 +22,6 @@ const styles = () => ({
   }
 });
 
-const createData = (name, email) => {
-  return { name, email };
-};
-
-const members = [
-  createData("User 1", "user1@gmail.com"),
-  createData("User 2", "user2@gmail.com"),
-  createData("User 3", "user3@gmail.com"),
-  createData("User 4", "user4@gmail.com"),
-  createData("User 5", "user5@gmail.com")
-];
-
-const top100Films = [
-  { title: "The Shawshank Redemption", year: 1994 },
-  { title: "The Godfather", year: 1972 },
-  { title: "The Godfather: Part II", year: 1974 },
-  { title: "The Dark Knight", year: 2008 },
-  { title: "12 Angry Men", year: 1957 }
-];
 
 class MembersPanel extends React.Component {
   state = {
@@ -53,11 +35,7 @@ class MembersPanel extends React.Component {
 
   changeState = props => {
     const { itemId } = props;
-    const groupData = this.getGroupData(itemId);
-    this.setState({
-      groupName: groupData.name,
-      members: groupData.members
-    });
+    this.getGroupData(itemId);
   };
 
   componentWillReceiveProps(nextProps) {
@@ -67,41 +45,50 @@ class MembersPanel extends React.Component {
   }
 
   getGroupData = id => {
-    return {
-      name: `Group ${id}`,
-      members
-    };
+    axios.get("http://localhost:8000/members/v1/usergroup/?group_id=" + id)
+      .then(res => {
+        const users = res.data;
+        this.setState({
+          groupName: users[0].group.name,
+          members: users
+        });
+      })
   };
 
   render() {
     const { classes } = this.props;
     const { members, groupName } = this.state;
-
-    const options = top100Films.map(option => {
-      const firstLetter = option.title[0].toUpperCase();
-      return {
-        firstLetter: /[0-9]/.test(firstLetter) ? "0-9" : firstLetter,
-        ...option
-      };
-    });
-
     return (
       <div>
         <CardContent>
-          <Typography variant="h4" component="h2">
+          <Typography variant="h5" component="h5">
             Members - {groupName}
           </Typography>
-          <Autocomplete
-            options={options.sort(
-              (a, b) => -b.firstLetter.localeCompare(a.firstLetter)
-            )}
-            groupBy={option => option.firstLetter}
-            getOptionLabel={option => option.title}
-            style={{ width: 300 }}
-            renderInput={params => (
-              <TextField {...params} label="" variant="outlined" fullWidth />
-            )}
-          />
+          <Grid
+            container
+            spacing={1}
+            direction="row"
+          >
+            <Grid item >
+              <TextField
+                id="outlined-emailid-input"
+                label="Enter Email to Invite User"
+                className={classes.textField}
+                type="emailid"
+                margin="normal"
+                variant="outlined"
+                style={{ width: 400 }}
+              />
+            </Grid>
+            <Button
+              color="primary"
+              className={classes.button}
+              endIcon={<Icon>send</Icon>}
+            >
+              Invite
+      </Button>
+          </Grid>
+
           <br />
           <Paper className={classes.root}>
             <Table className={classes.table} aria-label="simple table">
@@ -115,14 +102,14 @@ class MembersPanel extends React.Component {
               </TableHead>
               <TableBody>
                 {members.map(row => (
-                  <TableRow key={row.name}>
+                  <TableRow key={row.user.first_name + " " + row.user.last_name}>
                     <TableCell component="th" scope="row">
                       <PersonIcon></PersonIcon>
                     </TableCell>
                     <TableCell component="th" scope="row">
-                      {row.name}
+                      {row.user.first_name + " " + row.user.last_name}
                     </TableCell>
-                    <TableCell>{row.email}</TableCell>
+                    <TableCell>{row.user.email}</TableCell>
                     <TableCell>
                       <Button size="small" variant="outlined" color="secondary">
                         Remove
