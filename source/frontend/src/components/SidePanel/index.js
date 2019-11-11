@@ -23,6 +23,7 @@ import ExpandMoreIcon from '@material-ui/icons/ExpandMore';
 
 import { openGroup, openItinerary } from "../../actions";
 import CreateGroup from "./Creategroup"
+import CreateItinerary from "./CreateItinerary"
 import { axios } from "../oauth";
 
 const drawerWidth = "20rem";
@@ -131,15 +132,22 @@ class SidePanel extends React.Component {
                       </ListItem>
                     ))}
 
-
+                    <ListItem>
+                      <ListItemText primary="Create Itinerary" />
+                      <IconButton onClick={this.togglePopup.bind(this)}>
+                        {this.state.showPopup ? null : <AddIcon></AddIcon>}
+                      </IconButton>
+                      {this.state.showPopup ? <CreateItinerary group={group.group.id} closePopup={this.togglePopup.bind(this)} /> : null}
+                    </ListItem>
                   </Typography>
                 </ExpansionPanelDetails>
 
               </ExpansionPanel>
             ))}
             <ListItem>
+              <ListItemText primary="Create Group" />
               <IconButton onClick={this.togglePopup.bind(this)}>
-                <AddIcon></AddIcon>
+                {this.state.showPopup ? null : <AddIcon></AddIcon>}
               </IconButton>
               {this.state.showPopup ? <CreateGroup user={curUser} closePopup={this.togglePopup.bind(this)} /> : null}
             </ListItem>
