@@ -21,7 +21,12 @@ const styles = theme => ({
   textField: {
     marginLeft: theme.spacing(1),
     marginRight: theme.spacing(1),
-    width: 200
+    width: 150
+  },
+  searchField: {
+    marginLeft: theme.spacing(1),
+    marginRight: theme.spacing(1),
+    width: 170
   },
   formControl: {
     margin: theme.spacing(1),
@@ -41,7 +46,8 @@ class SearchPanel extends React.Component {
     searchInput: "",
     searchLocation: "",
     searchResults: [],
-    loading: false
+    loading: false,
+    travelDate: ""
   };
 
   handleInputChange = event => {
@@ -50,6 +56,10 @@ class SearchPanel extends React.Component {
 
   handleLocationChange = event => {
     this.setState({ searchLocation: event.target.value });
+  };
+
+  handleDateChange = event => {
+    this.setState({ travelDate: event.target.value });
   };
 
   handleSubmit = async event => {
@@ -70,28 +80,33 @@ class SearchPanel extends React.Component {
       }
     });
     this.setState({ searchResults: res.data["items"], loading: false });
-    console.log(res.data["items"]);
   };
 
   render() {
-    const { classes } = this.props;
+    const { classes, handleAddOnClick } = this.props;
     const { searchResults, loading } = this.state;
     return (
       <Paper className={classes.paper}>
-        <Grid container item xs={12} direction="row">
-          <Grid item xs={6}>
+        <Grid
+          container
+          item
+          xs={12}
+          direction="row"
+          justify="center"
+          alignItems="center"
+        >
+          <Grid item xs={8}>
             <Typography variant="h5">Search Attractions</Typography>
           </Grid>
-          <Grid item xs={3}>
-            <Typography variant="h6">Date of Travel:</Typography>
-          </Grid>
-          <Grid item xs={3}>
+          <Grid item xs={4}>
             <form className={classes.container} noValidate>
               <TextField
-                id="date"
+                id="travel-date"
                 type="date"
+                label="Date of Travel"
                 className={classes.textField}
                 InputLabelProps={{ shrink: true }}
+                onChange={this.handleDateChange}
               />
             </form>
           </Grid>
@@ -111,6 +126,7 @@ class SearchPanel extends React.Component {
                 label="Place name"
                 margin="normal"
                 onChange={this.handleInputChange}
+                className={classes.searchField}
               />
             </Grid>
             <Grid item xs={4}>
@@ -118,6 +134,7 @@ class SearchPanel extends React.Component {
                 label="Location"
                 margin="normal"
                 onChange={this.handleLocationChange}
+                className={classes.searchField}
               />
             </Grid>
             <Grid item xs={3}>
@@ -141,7 +158,10 @@ class SearchPanel extends React.Component {
             <CircularProgress></CircularProgress>
           </center>
         ) : (
-          <SearchResultList searchResults={searchResults}></SearchResultList>
+          <SearchResultList
+            searchResults={searchResults}
+            handleAddOnClick={handleAddOnClick}
+          ></SearchResultList>
         )}
       </Paper>
     );

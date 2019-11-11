@@ -20,6 +20,11 @@ import InputLabel from "@material-ui/core/InputLabel";
 import MenuItem from "@material-ui/core/MenuItem";
 import Select from "@material-ui/core/Select";
 
+import ExpansionPanel from '@material-ui/core/ExpansionPanel';
+import ExpansionPanelSummary from '@material-ui/core/ExpansionPanelSummary';
+import ExpansionPanelDetails from '@material-ui/core/ExpansionPanelDetails';
+import ExpandMoreIcon from '@material-ui/icons/ExpandMore';
+
 import { openGroup, openItinerary } from "../../actions";
 import CreateGroup from "./Creategroup"
 import { axios } from "../oauth";
@@ -87,7 +92,7 @@ class SidePanel extends React.Component {
       >
         <div className={classes.toolbar} />
         <Divider />
-        <List>
+        {/* <List>
           <ListItem>
             <Typography variant="h5">Groups</Typography>
             <IconButton onClick={this.togglePopup.bind(this)}>
@@ -127,10 +132,60 @@ class SidePanel extends React.Component {
               <ListItemIcon>
                 <CardTravelIcon />
               </ListItemIcon>
-              <ListItemText primary={itinerary.name} />
-            </ListItem>
-          ))}
-        </List>
+              <ListItemText primary={itinerary.name} /> */}
+        <ExpansionPanel>
+          <ExpansionPanelSummary
+            expandIcon={<ExpandMoreIcon />}
+            aria-controls="panel1a-content"
+            id="panel1a-header"
+          >
+            <Typography className={classes.heading}>Groups</Typography>
+          </ExpansionPanelSummary>
+
+          <Typography >
+            {groups.map(group => (
+              <ExpansionPanel>
+                <ExpansionPanelSummary
+                  expandIcon={<ExpandMoreIcon />}
+                  aria-controls="panel1a-content"
+                  id="panel1a-header"
+                >
+                  <ListItemIcon>
+                    <GroupIcon />
+                  </ListItemIcon>
+                  <ListItemText primary={group.name} />
+                </ExpansionPanelSummary>
+
+                <ExpansionPanelDetails>
+                  <Typography>
+                    {itineraries.map(itinerary => (
+                      <ListItem
+                        button
+                        key={`itinerary-${itinerary.id}`}
+                        onClick={() =>
+                          history.push(`/dashboard/itineraries/${itinerary.id}`)
+                        }
+                      >
+                        <ListItemIcon>
+                          <CardTravelIcon />
+                        </ListItemIcon>
+                        <ListItemText primary={itinerary.name} />
+                      </ListItem>
+                    ))}
+
+                    <ListItem>
+                      <IconButton onClick={this.togglePopup.bind(this)}>
+                        <AddIcon></AddIcon>
+                      </IconButton>
+                      {this.state.showPopup ? <CreateGroup user={curUser} closePopup={this.togglePopup.bind(this)} /> : null}
+                    </ListItem>
+                  </Typography>
+                </ExpansionPanelDetails>
+
+              </ExpansionPanel>
+            ))}
+          </Typography>
+        </ExpansionPanel>
       </Drawer>
     );
   }

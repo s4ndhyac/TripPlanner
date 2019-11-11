@@ -11,11 +11,22 @@ import {
 import AddIcon from "@material-ui/icons/Add";
 import PlaceIcon from "@material-ui/icons/Place";
 import Rating from "@material-ui/lab/Rating";
+import short from "short-uuid";
 
 class SearchResultList extends React.Component {
   handleItemClick = url => () => window.open(url);
 
   generateListItem = (id, url, name, address, rating, photo = undefined) => {
+    const { handleAddOnClick } = this.props;
+    const item = {
+      id,
+      url,
+      name,
+      address,
+      rating,
+      datetime: document.getElementById("travel-date").value,
+      reactId: short.generate()
+    };
     return (
       <ListItem
         key={id}
@@ -50,7 +61,11 @@ class SearchResultList extends React.Component {
           }
         />
         <ListItemSecondaryAction>
-          <IconButton color="primary" aria-label="add">
+          <IconButton
+            color="primary"
+            aria-label="add"
+            onClick={handleAddOnClick(item)}
+          >
             <AddIcon />
           </IconButton>
         </ListItemSecondaryAction>
