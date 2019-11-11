@@ -49,7 +49,7 @@ class ItineraryDetailsPanel extends React.Component {
     const { name, address, datetime, reactId, rating, url } = attraction;
     return (
       <ListItem
-        key={attraction.name}
+        key={attraction.name + reactId}
         button
         alignItems="flex-start"
         onClick={() => window.open(url)}
