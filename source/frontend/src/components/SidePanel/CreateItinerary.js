@@ -5,12 +5,14 @@ import TextField from "@material-ui/core/TextField";
 import { Button } from "@material-ui/core";
 
 
-const groupAPI = "http://localhost:8000/members/addGroup/";
+const createItinerary = "http://localhost:8000/itinerary/";
 
-class Creategroup extends React.Component {
+class CreateItinerary extends React.Component {
   constructor(props) {
     super(props);
-    this.state = { value: '' };
+    this.state = {
+      value: ''
+    };
 
     this.handleChange = this.handleChange.bind(this);
     this.handleSubmit = this.handleSubmit.bind(this);
@@ -21,13 +23,14 @@ class Creategroup extends React.Component {
   }
 
   handleSubmit(event) {
-    alert('A new group was created: ' + this.state.value);
-    const user = {
+    alert('A new itinerary was created: ' + this.state.value);
+    const itinerary = {
       name: this.state.value,
-      email: this.props.user.email
+      plan: {},
+      group: this.props.group
     }
 
-    axios.post(groupAPI, user)
+    axios.post(createItinerary, itinerary)
       .then(function (response) {
         console.log(response);
       })
@@ -39,11 +42,11 @@ class Creategroup extends React.Component {
 
   render() {
     return (
-      <div className='Creategroup'>
+      <div className='CreateItinerary'>
         <TextField
-          id="outlined-group-name-input"
-          label="New Group Name"
-          type="group-name"
+          id="outlined-itinerary-name-input"
+          label="New Itinerary Name"
+          type="itinerary-name"
           margin="normal"
           variant="outlined"
           value={this.state.value} onChange={this.handleChange}
@@ -59,4 +62,4 @@ class Creategroup extends React.Component {
   }
 }
 
-export default Creategroup;
+export default CreateItinerary;
