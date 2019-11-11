@@ -27,7 +27,6 @@ import { axios } from "../oauth";
 const drawerWidth = "20rem";
 const baseURL = "http://localhost:8000/"
 const listGroupsByUser = "members/v1/usergroup/?user_id="
-const listUsersByGroup = "members/v1/usergroup/?group_id="
 const listItinerariesByGroup = "itinerary/?group_id="
 
 const styles = theme => ({
@@ -48,7 +47,8 @@ class SidePanel extends React.Component {
     this.state = {
       showPopup: false,
       groups: [],
-      itineraries: []
+      itineraries: [],
+      users: []
     }
   }
 
@@ -62,6 +62,14 @@ class SidePanel extends React.Component {
       .then(res => {
         const groups = res.data;
         this.setState({ groups });
+      })
+  }
+
+  fetchItinerariesByGroup(groupId) {
+    axios.get(baseURL + listItinerariesByGroup + groupId)
+      .then(res => {
+        const itineraries = res.data;
+        this.setState({ itineraries });
       })
   }
 
@@ -90,8 +98,8 @@ class SidePanel extends React.Component {
           {groups.map(group => (
             <ListItem
               button
-              key={`group-${group.id}`}
-              onClick={() => history.push(`/dashboard/groups/${group.id}`)}
+              key={`group-${group.group.id}`}
+              onClick={() => history.push(`/dashboard/groups/${group.group.id}`)}
             >
               <ListItemIcon>
                 <GroupIcon />
