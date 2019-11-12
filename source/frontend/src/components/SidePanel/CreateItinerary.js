@@ -38,13 +38,15 @@ class CreateItinerary extends React.Component {
         console.log(error);
       });
     event.preventDefault();
+    document.getElementById("itineraryname").value = "";
+    this.props.closePopup(this.props.group);
   }
 
   render() {
     return (
       <div className='CreateItinerary'>
         <TextField
-          id="outlined-itinerary-name-input"
+          id="itineraryname"
           label="Itinerary Name"
           type="itinerary-name"
           margin="normal"

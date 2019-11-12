@@ -150,7 +150,7 @@ class SidePanel extends React.Component {
                     {this.state.showItineraryPopup[group.group.id] ? (
                       <CreateItinerary
                         group={group.group.id}
-                        closePopup={() => this.toggleItineraryPopup(group.group.id)}
+                        closePopup={this.toggleItineraryPopup.bind(this)}
                       />
                     ) : null}
                   </ListItem>

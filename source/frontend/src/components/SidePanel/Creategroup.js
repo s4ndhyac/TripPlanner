@@ -34,14 +34,17 @@ class Creategroup extends React.Component {
       .catch(function (error) {
         console.log(error);
       });
+
     event.preventDefault();
+    document.getElementById("groupname").value = "";
+    this.props.closePopup();
   }
 
   render() {
     return (
       <div className='Creategroup'>
         <TextField
-          id="outlined-group-name-input"
+          id="groupname"
           label="Group Name"
           type="group-name"
           margin="normal"
