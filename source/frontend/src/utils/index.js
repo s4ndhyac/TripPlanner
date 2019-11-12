@@ -8,3 +8,6 @@ export const compareDates = (date1, date2) => {
     d2 = stringToDate(date2);
   return d1 - d2;
 };
+
+export const emptyObject = obj =>
+  Object.entries(obj).length === 0 && obj.constructor === Object;
