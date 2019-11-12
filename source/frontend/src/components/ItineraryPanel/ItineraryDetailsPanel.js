@@ -21,6 +21,8 @@ import DoneIcon from "@material-ui/icons/Done";
 import PlaceIcon from "@material-ui/icons/Place";
 import DeleteOutlineIcon from "@material-ui/icons/DeleteOutline";
 
+import { stringToDate, emptyObject } from "../../utils";
+
 const styles = theme => ({
   paper: {
     padding: theme.spacing(2),
@@ -97,7 +99,7 @@ class ItineraryDetailsPanel extends React.Component {
   };
 
   render() {
-    const { classes, name, plan } = this.props;
+    const { classes, name, plan, handleSaveOnClick } = this.props;
     return (
       <Paper className={classes.paper}>
         <Grid
@@ -115,7 +117,7 @@ class ItineraryDetailsPanel extends React.Component {
               <Button color="primary">Generate</Button>
             </Tooltip>
             <Tooltip title="Save to Database">
-              <IconButton>
+              <IconButton onClick={handleSaveOnClick}>
                 <DoneIcon />
               </IconButton>
             </Tooltip>
@@ -123,11 +125,11 @@ class ItineraryDetailsPanel extends React.Component {
         </Grid>
         <br />
         <Divider></Divider>
-        {plan.length === 0 ? (
+        {emptyObject(plan) || plan.list.length === 0 ? (
           this.emptyPlanTip()
         ) : (
           <List style={{ overflow: "auto", maxHeight: "70vh" }}>
-            {plan.map((planForDay, index) => {
+            {plan.list.map((planForDay, index) => {
               return (
                 <div>
                   <ListSubheader
@@ -135,7 +137,7 @@ class ItineraryDetailsPanel extends React.Component {
                     id="nested-list-subheader"
                     disableSticky={true}
                   >
-                    {planForDay.date.toDateString()}
+                    {stringToDate(planForDay.date).toDateString()}
                   </ListSubheader>
                   {planForDay.sequence.map(this.getListItem, index)}
                 </div>
