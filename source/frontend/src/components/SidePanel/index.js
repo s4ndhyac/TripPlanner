@@ -15,6 +15,7 @@ import GroupIcon from "@material-ui/icons/Group";
 import AddIcon from "@material-ui/icons/Add";
 import { withStyles } from "@material-ui/core/styles";
 import { withRouter } from "react-router-dom";
+import short from "short-uuid";
 
 import ExpansionPanel from "@material-ui/core/ExpansionPanel";
 import ExpansionPanelSummary from "@material-ui/core/ExpansionPanelSummary";
@@ -87,14 +88,14 @@ class SidePanel extends React.Component {
         <div className={classes.toolbar} />
         <Divider />
         <List>
-          <ListItem>
+          <ListItem key={short.generate()}>
             <Typography className={classes.heading} variant="h6">
               Groups
             </Typography>
           </ListItem>
 
           {groups.map(group => (
-            <ExpansionPanel>
+            <ExpansionPanel key={short.generate()}>
               <ExpansionPanelSummary
                 expandIcon={<ExpandMoreIcon />}
                 aria-controls="panel1a-content"
@@ -111,7 +112,7 @@ class SidePanel extends React.Component {
               </ExpansionPanelSummary>
 
               <ExpansionPanelDetails>
-                <List>
+                <List key={short.generate()}>
                   {itineraries.map(itinerary => (
                     <ListItem
                       button
@@ -127,7 +128,7 @@ class SidePanel extends React.Component {
                     </ListItem>
                   ))}
 
-                  <ListItem>
+                  <ListItem key={short.generate()}>
                     <ListItemText primary="Create Itinerary" />
                     <IconButton onClick={this.togglePopup.bind(this)}>
                       {this.state.showPopup ? null : <AddIcon></AddIcon>}
@@ -143,7 +144,7 @@ class SidePanel extends React.Component {
               </ExpansionPanelDetails>
             </ExpansionPanel>
           ))}
-          <ListItem>
+          <ListItem key={short.generate()}>
             <ListItemText primary="Create Group" />
             <IconButton onClick={this.togglePopup.bind(this)}>
               {this.state.showPopup ? null : <AddIcon></AddIcon>}
