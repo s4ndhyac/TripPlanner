@@ -1,15 +1,19 @@
-import requests
 import json
+import logging
+
+import requests
 from django.contrib.auth import logout as auth_logout
 from django.core import serializers
-from django.http import HttpResponse, HttpResponseForbidden
+from django.forms.models import model_to_dict
+from django.http import HttpResponse, HttpResponseForbidden, JsonResponse
 from django.shortcuts import redirect, render
-
+from rest_framework import viewsets
 from social_django.models import UserSocialAuth
 
-from .models import User, Group, UserToGroup
-from rest_framework import viewsets
+from .models import Group, User, UserToGroup
 from .serializers import GroupSerializer, UserSerializer, UserToGroupSerializer
+
+logger = logging.getLogger(__name__)
 
 GOOGLE_OAUTH_API = "https://oauth2.googleapis.com/tokeninfo?id_token={}"
 
@@ -42,9 +46,9 @@ def authenticate(request):
     bearer_token = request.headers.get('Authorization')
     try:
         user = find_user_by_token(bearer_token)
-        return HttpResponse(serializers.serialize('json', user))
+        return JsonResponse(model_to_dict(user))
     except Exception as e:
-        print(e)
+        logger.error(e)
         return HttpResponseForbidden()
 
 
@@ -61,21 +65,23 @@ def addGroup(request):
         group.save()
         return HttpResponse(group)
     except Exception as e:
-        print(e)
+        logger.error(e)
         return HttpResponseForbidden()
 
 
+def get_user_from_google(token):
+    return requests.get(GOOGLE_OAUTH_API.format(token)).json()
+
+
 def find_user_by_token(token):
-    data = requests.get(GOOGLE_OAUTH_API.format(token)).json()
+    data = get_user_from_google(token)
     if 'error' in data:
         raise Exception(data['error'])
-    query_result = User.objects.filter(email=data['email'])
-    if query_result.count() == 0:
-        user = User(email=data['email'], first_name=data['given_name'],
-                    last_name=data['family_name'], picture=data['picture'])
-        user.save()
-        return user
-    return query_result
+    user, _ = User.objects.get_or_create(
+        email=data['email'], first_name=data['given_name'],
+        last_name=data['family_name'], picture=data['picture']
+    )
+    return user
 
 
 def index(request):
