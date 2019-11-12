@@ -45,7 +45,7 @@ class CreateItinerary extends React.Component {
       <div className='CreateItinerary'>
         <TextField
           id="outlined-itinerary-name-input"
-          label="New Itinerary Name"
+          label="Itinerary Name"
           type="itinerary-name"
           margin="normal"
           variant="outlined"

@@ -49,7 +49,7 @@ class SidePanel extends React.Component {
     this.state = {
       showPopup: false,
       groups: [],
-      itineraries: [],
+      itineraries: {},
       users: []
     };
   }
@@ -68,8 +68,10 @@ class SidePanel extends React.Component {
 
   fetchItinerariesByGroup(groupId) {
     axios.get(baseURL + listItinerariesByGroup + groupId).then(res => {
-      const itineraries = res.data;
-      this.setState({ itineraries });
+      const curr_itineraries = this.state.itineraries
+      curr_itineraries[groupId] = res.data;
+      console.log(curr_itineraries);
+      this.setState({ itineraries: curr_itineraries });
     });
   }
 
@@ -113,7 +115,7 @@ class SidePanel extends React.Component {
 
               <ExpansionPanelDetails>
                 <List>
-                  {itineraries.map(itinerary => (
+                  {group.group.id in itineraries ? itineraries[group.group.id].map(itinerary => (
                     <ListItem
                       button
                       key={`itinerary-${itinerary.id}`}
@@ -126,7 +128,7 @@ class SidePanel extends React.Component {
                       </ListItemIcon>
                       <ListItemText primary={itinerary.name} />
                     </ListItem>
-                  ))}
+                  )) : null}
 
                   <ListItem key={short.generate()}>
                     <ListItemText primary="Create Itinerary" />
