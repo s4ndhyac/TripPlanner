@@ -15,9 +15,8 @@ const handleLoginSuccess = props => async response => {
   axios.defaults.headers.common["Authorization"] = tokenId;
   localStorage.setItem(TOKEN_KEY, tokenId);
   const resp = await axios.post(authAPI, {});
-  const user = resp.data[0].fields;
+  const user = resp.data;
   user.tokenId = tokenId;
-  user.id = resp.data[0].pk;
   props.setUser(user);
   props.history.push("/dashboard");
 };
