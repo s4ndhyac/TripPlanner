@@ -21,7 +21,7 @@ import DoneIcon from "@material-ui/icons/Done";
 import PlaceIcon from "@material-ui/icons/Place";
 import DeleteOutlineIcon from "@material-ui/icons/DeleteOutline";
 
-import { stringToDate, emptyObject } from "../../utils";
+import { stringToDate } from "../../utils";
 
 const styles = theme => ({
   paper: {
@@ -125,7 +125,7 @@ class ItineraryDetailsPanel extends React.Component {
         </Grid>
         <br />
         <Divider></Divider>
-        {emptyObject(plan) || (plan.list && plan.list.length === 0) ? (
+        {plan.list === undefined || (plan.list && plan.list.length === 0) ? (
           this.emptyPlanTip()
         ) : (
           <List style={{ overflow: "auto", maxHeight: "70vh" }}>
