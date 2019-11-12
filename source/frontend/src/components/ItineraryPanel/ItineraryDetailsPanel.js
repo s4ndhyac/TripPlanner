@@ -21,6 +21,8 @@ import DoneIcon from "@material-ui/icons/Done";
 import PlaceIcon from "@material-ui/icons/Place";
 import DeleteOutlineIcon from "@material-ui/icons/DeleteOutline";
 
+import { stringToDate } from "../../utils";
+
 const styles = theme => ({
   paper: {
     padding: theme.spacing(2),
@@ -135,7 +137,7 @@ class ItineraryDetailsPanel extends React.Component {
                     id="nested-list-subheader"
                     disableSticky={true}
                   >
-                    {planForDay.date.toDateString()}
+                    {stringToDate(planForDay.date).toDateString()}
                   </ListSubheader>
                   {planForDay.sequence.map(this.getListItem, index)}
                 </div>

@@ -1,8 +1,6 @@
 from django.db import models
 from django.contrib.postgres.fields import JSONField
 
-# Create your models here.
-
 
 class Itinerary(models.Model):
     name = models.CharField(max_length=200)

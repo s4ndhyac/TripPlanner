@@ -4,15 +4,21 @@ import { withStyles } from "@material-ui/core/styles";
 import SearchPanel from "./SearchPanel";
 import ItineraryDetailsPanel from "./ItineraryDetailsPanel";
 
+import { axios } from "../oauth";
+import { stringToDate, compareDates } from "../../utils";
+
 const styles = () => ({
   root: { flexGrow: 1 }
 });
+
+const ITINERARY_API = "http://localhost:8000/itinerary?id=";
 
 class ItineraryPanel extends React.Component {
   state = {
     name: "",
     id: null,
-    plan: {}
+    plan: {},
+    group: null
   };
 
   componentWillMount() {
@@ -37,7 +43,7 @@ class ItineraryPanel extends React.Component {
       id,
       plan: [
         {
-          date: new Date(2019, 11 - 1, 5),
+          date: "2019-11-05",
           sequence: [
             {
               id: "1",
@@ -50,7 +56,7 @@ class ItineraryPanel extends React.Component {
           ]
         },
         {
-          date: new Date(2019, 11 - 1, 6),
+          date: "2019-11-06",
           sequence: [
             {
               id: "2",
@@ -72,31 +78,26 @@ class ItineraryPanel extends React.Component {
       alert("Please select a travel date!");
       return;
     }
-    const date = this.getDateObject(item.datetime);
+    const date = stringToDate(item.datetime);
     const { plan } = this.state;
     const planForDate = plan.find(
-      p => p.date.toDateString() === date.toDateString()
+      p => stringToDate(p.date).toDateString() === date.toDateString()
     );
     if (!planForDate) {
-      plan.push({ date, sequence: [item] });
-      plan.sort((a, b) => a.date - b.date);
+      plan.push({ date: item.datetime, sequence: [item] });
+      plan.sort((a, b) => compareDates(a.date, b.date));
     } else {
       planForDate.sequence.push(item);
     }
     this.setState({ plan });
   };
 
-  getDateObject = date => {
-    const split = date.split("-");
-    return new Date(split[0], split[1] - 1, split[2]);
-  };
-
   handleDeleteOnClick = (itemId, datetime) => event => {
     event.preventDefault();
     const { plan } = this.state;
-    const date = this.getDateObject(datetime);
+    const date = stringToDate(datetime);
     const planForDate = plan.find(
-      p => p.date.toDateString() === date.toDateString()
+      p => stringToDate(p.date).toDateString() === date.toDateString()
     );
     planForDate.sequence = planForDate.sequence.filter(
       item => item.reactId !== itemId
