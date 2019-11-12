@@ -125,7 +125,7 @@ class ItineraryDetailsPanel extends React.Component {
         </Grid>
         <br />
         <Divider></Divider>
-        {emptyObject(plan) || plan.list.length === 0 ? (
+        {emptyObject(plan) || (plan.list && plan.list.length === 0) ? (
           this.emptyPlanTip()
         ) : (
           <List style={{ overflow: "auto", maxHeight: "70vh" }}>
