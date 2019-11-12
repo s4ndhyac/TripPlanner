@@ -95,7 +95,7 @@ class SidePanel extends React.Component {
           </ListItem>
 
           {groups.map(group => (
-            <ExpansionPanel key={short.generate()}>
+            <ExpansionPanel>
               <ExpansionPanelSummary
                 expandIcon={<ExpandMoreIcon />}
                 aria-controls="panel1a-content"
@@ -112,7 +112,7 @@ class SidePanel extends React.Component {
               </ExpansionPanelSummary>
 
               <ExpansionPanelDetails>
-                <List key={short.generate()}>
+                <List>
                   {itineraries.map(itinerary => (
                     <ListItem
                       button
