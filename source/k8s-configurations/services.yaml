@@ -1,0 +1,99 @@
+kind: Service
+apiVersion: v1
+metadata: 
+  name: frontend
+  namespace: default
+  labels: 
+    run: frontend
+spec: 
+  ports: 
+      - protocol: TCP
+        port: 80
+        targetPort: 3000 
+  selector: 
+    run: frontend
+  type: ClusterIP
+
+
+---
+
+
+kind: Service
+apiVersion: v1
+metadata: 
+  name: member-backend
+  namespace: default
+  labels: 
+    run: member-backend
+spec: 
+  ports: 
+      - protocol: TCP
+        port: 5000
+        targetPort: 5000
+  selector: 
+    run: member-backend
+  type: ClusterIP
+
+
+---
+
+
+kind: Service
+apiVersion: v1
+metadata: 
+  name: itinerary-backend
+  namespace: default
+  labels: 
+    run: itinerary-backend
+spec: 
+  ports: 
+      - protocol: TCP
+        port: 4000
+        targetPort: 4000
+  selector: 
+    run: itinerary-backend
+  type: ClusterIP
+
+
+---
+
+
+
+kind: Service
+apiVersion: v1
+metadata: 
+  name: member-database
+  namespace: default
+  labels: 
+    run: member-database
+spec: 
+  ports: 
+    - protocol: TCP
+      port: 5432
+      targetPort: 5432
+  clusterIP: None
+  selector: 
+    run: member-database
+  # type: ClusterIP
+
+
+---
+
+
+kind: Service
+apiVersion: v1
+metadata: 
+  name: itinerary-database
+  namespace: default
+  labels: 
+    run: itinerary-database
+spec: 
+  ports: 
+    - protocol: TCP
+      port: 27017
+      targetPort: 27017
+  clusterIP: None
+  selector: 
+    run: itinerary-database
+  # type: ClusterIP
+
