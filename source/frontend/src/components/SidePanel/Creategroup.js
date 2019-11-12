@@ -42,7 +42,7 @@ class Creategroup extends React.Component {
       <div className='Creategroup'>
         <TextField
           id="outlined-group-name-input"
-          label="New Group Name"
+          label="Group Name"
           type="group-name"
           margin="normal"
           variant="outlined"

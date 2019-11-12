@@ -48,14 +48,24 @@ class SidePanel extends React.Component {
     super(props);
     this.state = {
       showPopup: false,
+      showItineraryPopup: {},
       groups: [],
-      itineraries: [],
+      itineraries: {},
       users: []
     };
   }
 
   togglePopup() {
     this.setState({ showPopup: !this.state.showPopup });
+  }
+
+  toggleItineraryPopup(groupId) {
+    const curr_show_itineraries = this.state.showItineraryPopup;
+    if (!(groupId in curr_show_itineraries))
+      curr_show_itineraries[groupId] = true;
+    else
+      curr_show_itineraries[groupId] = !curr_show_itineraries[groupId];
+    this.setState({ showItineraryPopup: curr_show_itineraries });
   }
 
   componentDidMount() {
@@ -67,10 +77,14 @@ class SidePanel extends React.Component {
   }
 
   fetchItinerariesByGroup(groupId) {
-    axios.get(baseURL + listItinerariesByGroup + groupId).then(res => {
-      const itineraries = res.data;
-      this.setState({ itineraries });
-    });
+    if (!(groupId in this.state.itineraries)) {
+      axios.get(baseURL + listItinerariesByGroup + groupId).then(res => {
+        const curr_itineraries = this.state.itineraries
+        curr_itineraries[groupId] = res.data;
+        console.log(curr_itineraries);
+        this.setState({ itineraries: curr_itineraries });
+      });
+    }
   }
 
   render() {
@@ -113,7 +127,7 @@ class SidePanel extends React.Component {
 
               <ExpansionPanelDetails>
                 <List>
-                  {itineraries.map(itinerary => (
+                  {group.group.id in itineraries ? itineraries[group.group.id].map(itinerary => (
                     <ListItem
                       button
                       key={`itinerary-${itinerary.id}`}
@@ -126,17 +140,17 @@ class SidePanel extends React.Component {
                       </ListItemIcon>
                       <ListItemText primary={itinerary.name} />
                     </ListItem>
-                  ))}
+                  )) : null}
 
                   <ListItem key={short.generate()}>
                     <ListItemText primary="Create Itinerary" />
-                    <IconButton onClick={this.togglePopup.bind(this)}>
-                      {this.state.showPopup ? null : <AddIcon></AddIcon>}
+                    <IconButton onClick={() => this.toggleItineraryPopup(group.group.id)}>
+                      {this.state.showItineraryPopup[group.group.id] ? null : <AddIcon></AddIcon>}
                     </IconButton>
-                    {this.state.showPopup ? (
+                    {this.state.showItineraryPopup[group.group.id] ? (
                       <CreateItinerary
                         group={group.group.id}
-                        closePopup={this.togglePopup.bind(this)}
+                        closePopup={() => this.toggleItineraryPopup(group.group.id)}
                       />
                     ) : null}
                   </ListItem>
