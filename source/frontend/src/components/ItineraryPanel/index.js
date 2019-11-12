@@ -42,38 +42,6 @@ class ItineraryPanel extends React.Component {
   getItineraryData = async id => {
     const { data } = await axios.get(ITINERARY_API + "?id=" + id);
     return data[0];
-    // return {
-    //   name: `Itinerary ${id}`,
-    //   id,
-    //   plan: [
-    //     {
-    //       date: "2019-11-05",
-    //       sequence: [
-    //         {
-    //           id: "1",
-    //           name: "Downtown LA",
-    //           type: "Attraction",
-    //           datetime: "2019-11-05",
-    //           address: "Los Angeles, 90001, CA, USA",
-    //           reactId: "randomId1"
-    //         }
-    //       ]
-    //     },
-    //     {
-    //       date: "2019-11-06",
-    //       sequence: [
-    //         {
-    //           id: "2",
-    //           name: "Santa Monica",
-    //           type: "Attraction",
-    //           datetime: "2019-11-06",
-    //           address: "Santa Monica, 90001, CA, USA",
-    //           reactId: "randomId2"
-    //         }
-    //       ]
-    //     }
-    //   ]
-    // };
   };
 
   handleAddOnClick = item => event => {
@@ -117,7 +85,6 @@ class ItineraryPanel extends React.Component {
 
   handleSaveOnClick = async event => {
     event.preventDefault();
-    // this.setState({ snackbarOpen: true });
     const { data } = await axios.put(
       ITINERARY_API + "/" + this.state.id + "/",
       this.state
