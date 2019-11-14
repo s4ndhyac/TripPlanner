@@ -13,5 +13,6 @@ urlpatterns = [
     path('logout/', views.logout, name='logout'),
     path('auth-user/', views.authenticate, name='authenticate'),
     path('addGroup/', views.addGroup, name='addGroup'),
+    path('deleteMember/', views.deleteMember, name='deleteMember'),
     url(r'^v1/', include(router.urls))
 ]

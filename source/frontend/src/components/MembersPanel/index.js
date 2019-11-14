@@ -34,6 +34,7 @@ class MembersPanel extends React.Component {
   }
 
   changeState = props => {
+    console.log(props)
     const { itemId } = props;
     this.getGroupData(itemId);
   };
@@ -52,6 +53,21 @@ class MembersPanel extends React.Component {
           groupName: users[0].group.name,
           members: users
         });
+      })
+  };
+
+  deleteMember(event) {
+    console.log("In deleteMember: ", this);
+
+    const data = {
+      id: this.id,
+      group: this.group,
+      user: this.user 
+    }
+    
+    axios.post("http://localhost:8000/members/deleteMember/", data)
+      .then(res => {
+        console.log(res);
       })
   };
 
@@ -111,7 +127,7 @@ class MembersPanel extends React.Component {
                     </TableCell>
                     <TableCell>{row.user.email}</TableCell>
                     <TableCell>
-                      <Button size="small" variant="outlined" color="secondary">
+                      <Button size="small" variant="outlined" color="secondary" onClick={this.deleteMember.bind(row, row)}>
                         Remove
                       </Button>
                     </TableCell>

@@ -60,10 +60,32 @@ def addGroup(request):
         group.save()
         # need to consider if there are many users using the same email
         user = User.objects.get(email=body['email'])
-        print(user.id)
         group.users.add(user.id)
         group.save()
         return HttpResponse(group)
+    except Exception as e:
+        logger.error(e)
+        return HttpResponseForbidden()
+
+
+def deleteMember(request):
+    try:
+        body_unicode = request.body.decode('utf-8')
+        body = json.loads(body_unicode)
+        
+        # check how many members left in the target group
+        groupusers = body['group']['users']
+
+        if len(groupusers) == 1:
+            groupId = body['group']['id']
+            targetGroup = Group.objects.get(id=groupId)
+            targetGroup.delete()
+        else:
+            usergroupId = body['id']
+            targetUserGroup = UserToGroup.objects.get(id=usergroupId)
+            targetUserGroup.delete()
+
+        return HttpResponse("Delete the member successfully.")
     except Exception as e:
         logger.error(e)
         return HttpResponseForbidden()
