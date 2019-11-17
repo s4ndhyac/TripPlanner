@@ -24,10 +24,18 @@ const styles = () => ({
 
 
 class MembersPanel extends React.Component {
-  state = {
-    groupName: "",
-    members: []
-  };
+
+  constructor(props) {
+    super(props);
+    this.state = {
+      groupName: "",
+      members: [],
+      inviteEmail: ""
+    };
+
+    this._handleInviteEmail = this._handleInviteEmail.bind(this);
+    this.inviteMember = this.inviteMember.bind(this);
+  }
 
   componentWillMount() {
     this.changeState(this.props);
@@ -56,8 +64,27 @@ class MembersPanel extends React.Component {
       })
   };
 
+  _handleInviteEmail(event) {
+    this.setState({
+      inviteEmail: event.target.value
+    });
+  }
+
+  inviteMember(event) {
+    console.log("Invite member via email: ", this.state.inviteEmail);
+    const data = {
+      email: this.state.inviteEmail,
+      groupName: this.state.groupName
+    };
+
+    axios.post("http://localhost:8000/members/inviteMember/", data)
+      .then(res => {
+        console.log(res);
+      })
+  };
+
   deleteMember(event) {
-    console.log("In deleteMember: ", this);
+    console.log("Delete member: ", this);
 
     const data = {
       id: this.id,
@@ -73,7 +100,7 @@ class MembersPanel extends React.Component {
 
   render() {
     const { classes } = this.props;
-    const { members, groupName } = this.state;
+    const { members, groupName, inviteEmail } = this.state;
     return (
       <div>
         <CardContent>
@@ -94,15 +121,18 @@ class MembersPanel extends React.Component {
                 margin="normal"
                 variant="outlined"
                 style={{ width: 400 }}
+                value={this.state.inviteEmail}
+                onChange={this._handleInviteEmail}
               />
             </Grid>
             <Button
               color="primary"
               className={classes.button}
               endIcon={<Icon>send</Icon>}
+              onClick={this.inviteMember.bind(this.inviteEmail)}
             >
               Invite
-      </Button>
+            </Button>
           </Grid>
 
           <br />
@@ -127,7 +157,7 @@ class MembersPanel extends React.Component {
                     </TableCell>
                     <TableCell>{row.user.email}</TableCell>
                     <TableCell>
-                      <Button size="small" variant="outlined" color="secondary" onClick={this.deleteMember.bind(row, row)}>
+                      <Button size="small" variant="outlined" color="secondary" onClick={this.deleteMember.bind(row)}>
                         Remove
                       </Button>
                     </TableCell>

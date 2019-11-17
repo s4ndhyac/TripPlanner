@@ -9,6 +9,8 @@ from django.http import HttpResponse, HttpResponseForbidden, JsonResponse
 from django.shortcuts import redirect, render
 from rest_framework import viewsets
 from social_django.models import UserSocialAuth
+from django.core.mail import EmailMessage
+from django.conf import settings
 
 from .models import Group, User, UserToGroup
 from .serializers import GroupSerializer, UserSerializer, UserToGroupSerializer
@@ -71,7 +73,7 @@ def addGroup(request):
 def deleteMember(request):
     try:
         body_unicode = request.body.decode('utf-8')
-        body = json.loads(body_unicode)
+        body = json.loads(body_unicode) 
         
         # check how many members left in the target group
         groupusers = body['group']['users']
@@ -86,6 +88,39 @@ def deleteMember(request):
             targetUserGroup.delete()
 
         return HttpResponse("Delete the member successfully.")
+    except Exception as e:
+        logger.error(e)
+        return HttpResponseForbidden()
+
+def inviteMember(request):
+    try:
+        body_unicode = request.body.decode('utf-8')
+        body = json.loads(body_unicode)
+
+        print(body['email'])
+        # chekc if the email were registered or not
+        user = User.objects.filter(email=body['email'])
+        if not user:
+            print("Target user not found.")
+            subject = 'TripPlanner Invitation!!!'
+            message = 'Hi, <p>Here is an invitation from your friend to join the TripPlanner.<p>\
+                           <p><a href="http://localhost:3000/">Click</a> to join TripPlanner.<p>'
+            email_from = settings.EMAIL_HOST_USER
+            recipient_list = [body['email']]
+            email = EmailMessage(subject, message, email_from, recipient_list)
+            email.content_subtype = "html"
+            email.send()    
+            return HttpResponse("Invite new user successfully.")
+        else:
+            print(user[0].id)
+            groupName = body['groupName']
+            group = Group.objects.filter(name=groupName)
+            invitetogroup = UserToGroup(group_id=group[0].id, user_id=user[0].id)
+            invitetogroup.save()
+
+            return HttpResponse("Invite existed user successfully.")
+
+        
     except Exception as e:
         logger.error(e)
         return HttpResponseForbidden()
