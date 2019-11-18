@@ -3,7 +3,7 @@ import { axios } from "../oauth";
 import "./style.css";
 import TextField from "@material-ui/core/TextField";
 import { Button } from "@material-ui/core";
-
+import { addGroup } from "../../actions";
 
 const groupAPI = "http://localhost:8000/members/addGroup/";
 
@@ -22,6 +22,7 @@ class Creategroup extends React.Component {
 
   handleSubmit(event) {
     alert('A new group was created: ' + this.state.value);
+    console.log(this.props);
     const user = {
       name: this.state.value,
       email: this.props.user.email
@@ -38,6 +39,7 @@ class Creategroup extends React.Component {
     event.preventDefault();
     document.getElementById("groupname").value = "";
     this.props.closePopup();
+
   }
 
   render() {
