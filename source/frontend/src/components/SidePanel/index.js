@@ -25,8 +25,6 @@ import ExpansionPanelDetails from "@material-ui/core/ExpansionPanelDetails";
 import ExpandMoreIcon from "@material-ui/icons/ExpandMore";
 
 import { openGroup, openItinerary } from "../../actions";
-import CreateGroup from "./Creategroup";
-import CreateItinerary from "./CreateItinerary";
 import { axios } from "../oauth";
 
 const drawerWidth = "20rem";
@@ -34,6 +32,7 @@ const baseURL = "http://localhost:8000/";
 const listGroupsByUser = "members/v1/usergroup/?user_id=";
 const listItinerariesByGroup = "itinerary/?group_id=";
 const groupAPI = "http://localhost:8000/members/addGroup/";
+const createItineraryAPI = "http://localhost:8000/itinerary/";
 
 const styles = theme => ({
   drawer: {
@@ -55,30 +54,62 @@ class SidePanel extends React.Component {
       groups: [],
       itineraries: {},
       users: [],
-      inputGroup: ""
+      inputGroup: "",
+      inputItinerary: ""
     };
 
-    this.onBlur = this.onBlur.bind(this);
-    this.handleSubmit = this.handleSubmit.bind(this);
+    this.handleSubmitGroup = this.handleSubmitGroup.bind(this);
+    // this.handleSubmit = this.handleSubmit.bind(this);
   }
 
-  onBlur(event) {
-    this.setState({ inputGroup: event.target.value });
+  handleSubmit(event, groupId) {
+    const elementId = "itinerary-" + groupId;
+    const input = document.getElementById(elementId).value;
+    alert('A new itinerary was created: ' + input);
+    this.setState({ inputItinerary: input });
+    const itinerary = {
+      name: input,
+      plan: {},
+      group: groupId
+    }
+
+    let currentComponent = this;
+    axios.post(createItineraryAPI, itinerary)
+      .then(function (response) {
+        console.log(response);
+        axios.get(baseURL + listItinerariesByGroup + groupId).then(res => {
+          const curr_itineraries = currentComponent.state.itineraries;
+          curr_itineraries[groupId] = res.data;
+          currentComponent.setState({ itineraries: curr_itineraries });
+        });
+      })
+      .catch(function (error) {
+        console.log(error);
+      });
+
+    event.preventDefault();
+    document.getElementById(elementId).value = "";
+    this.toggleItineraryPopup(groupId);
   }
 
-  handleSubmit(event) {
-    alert('A new group was created: ' + this.state.inputGroup);
+
+  handleSubmitGroup(event) {
+    const input = document.getElementById("groupname").value;
+    alert('A new group was created: ' + input);
+    this.setState({ inputGroup: input });
     const { curUser } = this.props;
     const user = {
-      name: this.state.inputGroup,
+      name: input,
       email: curUser.email
     }
 
+    let currentComponent = this;
     axios.post(groupAPI, user)
       .then(function (response) {
         console.log(response);
-        this.setState({ groups: [...this.state.groups, this.state.inputGroup] }, function () {
-          console.log(this.state);
+        axios.get(baseURL + listGroupsByUser + curUser.id).then(res => {
+          const groups = res.data;
+          currentComponent.setState({ groups });
         });
       })
       .catch(function (error) {
@@ -115,7 +146,7 @@ class SidePanel extends React.Component {
   fetchItinerariesByGroup(groupId) {
     if (!(groupId in this.state.itineraries)) {
       axios.get(baseURL + listItinerariesByGroup + groupId).then(res => {
-        const curr_itineraries = this.state.itineraries
+        const curr_itineraries = this.state.itineraries;
         curr_itineraries[groupId] = res.data;
         this.setState({ itineraries: curr_itineraries });
       });
@@ -147,7 +178,7 @@ class SidePanel extends React.Component {
             <ExpansionPanel key={short.generate()}>
               <ExpansionPanelSummary
                 key={short.generate()}
-                expandIcon={<ExpandMoreIcon />}
+                expandIcon={<ExpandMoreIcon key={short.generate()} />}
                 aria-controls="panel1a-content"
                 id="panel1a-header"
                 onClick={() => {
@@ -156,27 +187,29 @@ class SidePanel extends React.Component {
                 }}
               >
                 <ListItemIcon key={short.generate()}>
-                  <GroupIcon key={short.generate()} />
+                  <GroupIcon />
                 </ListItemIcon>
                 <ListItemText key={short.generate()} primary={group.group.name} />
               </ExpansionPanelSummary>
 
               <ExpansionPanelDetails key={short.generate()}>
                 <List key={short.generate()}>
-                  {group.group.id in itineraries ? itineraries[group.group.id].map(itinerary => (
-                    <ListItem
-                      button
-                      key={`itinerary-${itinerary.id}`}
-                      onClick={() =>
-                        history.push(`/dashboard/itineraries/${itinerary.id}`)
-                      }
-                    >
-                      <ListItemIcon key={short.generate()}>
-                        <CardTravelIcon key={short.generate()} />
-                      </ListItemIcon>
-                      <ListItemText key={short.generate()} primary={itinerary.name} />
-                    </ListItem>
-                  )) : null}
+                  {group.group.id in this.state.itineraries ?
+                    this.state.itineraries[group.group.id].map(itinerary => (
+                      <ListItem
+                        button
+                        key={short.generate()}
+                        onClick={
+                          () => history.push(`/dashboard/itineraries/${itinerary.id}`)
+                        }
+                      >
+                        <ListItemIcon key={short.generate()}>
+                          <CardTravelIcon key={short.generate()} />
+                        </ListItemIcon>
+                        <ListItemText key={short.generate()} primary={itinerary.name} />
+                      </ListItem>
+                    ))
+                    : null}
 
                   <ListItem key={short.generate()}>
                     <ListItemText key={short.generate()} primary="Create Itinerary" />
@@ -184,10 +217,24 @@ class SidePanel extends React.Component {
                       {this.state.showItineraryPopup[group.group.id] ? null : <AddIcon key={short.generate()}></AddIcon>}
                     </IconButton>
                     {this.state.showItineraryPopup[group.group.id] ? (
-                      <CreateItinerary key={short.generate()}
-                        group={group.group.id}
-                        closePopup={this.toggleItineraryPopup.bind(this)}
-                      />
+                      <div key={short.generate()} className='CreateItinerary'>
+                        <TextField
+                          id={`itinerary-${group.group.id}`}
+                          key={short.generate()}
+                          label="Itinerary Name"
+                          type="itinerary-name"
+                          margin="normal"
+                          variant="outlined"
+                          value={this.state.inputItinerary}
+                        />
+                        <Button
+                          key={short.generate()}
+                          color="primary"
+                          onClick={(e) => { this.handleSubmit(e, group.group.id) }}
+                        >
+                          Submit
+                    </Button>
+                      </div>
                     ) : null}
                   </ListItem>
                 </List>
@@ -200,10 +247,6 @@ class SidePanel extends React.Component {
               {this.state.showPopup ? null : <AddIcon></AddIcon>}
             </IconButton>
             {this.state.showPopup ? (
-              // <CreateGroup
-              //   user={curUser}
-              //   closePopup={this.togglePopup.bind(this)}
-              // />
               <div className='Creategroup'>
                 <TextField
                   key={short.generate()}
@@ -212,11 +255,11 @@ class SidePanel extends React.Component {
                   type="group-name"
                   margin="normal"
                   variant="outlined"
-                  value={this.state.value} onBlur={this.onBlur}
+                  value={this.state.value}
                 />
                 <Button
                   color="primary"
-                  onClick={this.handleSubmit}
+                  onClick={this.handleSubmitGroup}
                 >
                   Submit
       </Button>
