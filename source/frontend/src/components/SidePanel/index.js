@@ -7,7 +7,9 @@ import {
   ListItem,
   ListItemIcon,
   ListItemText,
-  Typography
+  Typography,
+  Button,
+  TextField
 } from "@material-ui/core";
 import IconButton from "@material-ui/core/IconButton";
 import CardTravelIcon from "@material-ui/icons/CardTravel";
@@ -31,6 +33,7 @@ const drawerWidth = "20rem";
 const baseURL = "http://localhost:8000/";
 const listGroupsByUser = "members/v1/usergroup/?user_id=";
 const listItinerariesByGroup = "itinerary/?group_id=";
+const groupAPI = "http://localhost:8000/members/addGroup/";
 
 const styles = theme => ({
   drawer: {
@@ -51,8 +54,38 @@ class SidePanel extends React.Component {
       showItineraryPopup: {},
       groups: [],
       itineraries: {},
-      users: []
+      users: [],
+      inputGroup: ""
     };
+
+    this.handleSubmit = this.handleSubmit.bind(this);
+  }
+
+  handleSubmit(event) {
+    const input = document.getElementById("groupname").value;
+    alert('A new group was created: ' + input);
+    this.setState({ inputGroup: input });
+    const { curUser } = this.props;
+    const user = {
+      name: input,
+      email: curUser.email
+    }
+
+    axios.post(groupAPI, user)
+      .then(function (response) {
+        console.log(response);
+        axios.get(baseURL + listGroupsByUser + curUser.id).then(res => {
+          const groups = res.data;
+          this.setState({ groups });
+        });
+      })
+      .catch(function (error) {
+        console.log(error);
+      });
+
+    event.preventDefault();
+    document.getElementById("groupname").value = "";
+    this.togglePopup();
   }
 
   togglePopup() {
@@ -164,10 +197,22 @@ class SidePanel extends React.Component {
               {this.state.showPopup ? null : <AddIcon></AddIcon>}
             </IconButton>
             {this.state.showPopup ? (
-              <CreateGroup
-                user={curUser}
-                closePopup={this.togglePopup.bind(this)}
-              />
+              <div className='Creategroup'>
+                <TextField
+                  id="groupname"
+                  label="Group Name"
+                  type="group-name"
+                  margin="normal"
+                  variant="outlined"
+                  value={this.state.inputGroup}
+                />
+                <Button
+                  color="primary"
+                  onClick={this.handleSubmit}
+                >
+                  Submit
+          </Button>
+              </div>
             ) : null}
           </ListItem>
         </List>
