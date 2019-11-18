@@ -204,7 +204,6 @@ class SidePanel extends React.Component {
                   type="group-name"
                   margin="normal"
                   variant="outlined"
-                  value={this.state.inputGroup}
                 />
                 <Button
                   color="primary"
