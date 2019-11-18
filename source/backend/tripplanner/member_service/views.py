@@ -9,6 +9,8 @@ from django.http import HttpResponse, HttpResponseForbidden, JsonResponse
 from django.shortcuts import redirect, render
 from rest_framework import viewsets
 from social_django.models import UserSocialAuth
+from django.core.mail import EmailMessage
+from django.conf import settings
 
 from .models import Group, User, UserToGroup
 from .serializers import GroupSerializer, UserSerializer, UserToGroupSerializer
@@ -60,10 +62,71 @@ def addGroup(request):
         group.save()
         # need to consider if there are many users using the same email
         user = User.objects.get(email=body['email'])
-        print(user.id)
         group.users.add(user.id)
         group.save()
         return HttpResponse(group)
+    except Exception as e:
+        logger.error(e)
+        return HttpResponseForbidden()
+
+
+def deleteMember(request):
+    try:
+        body_unicode = request.body.decode('utf-8')
+        body = json.loads(body_unicode) 
+        
+        # check how many members left in the target group
+        groupusers = body['group']['users']
+
+        if len(groupusers) == 1:
+            groupId = body['group']['id']
+            targetGroup = Group.objects.get(id=groupId)
+            targetGroup.delete()
+        else:
+            usergroupId = body['id']
+            targetUserGroup = UserToGroup.objects.get(id=usergroupId)
+            targetUserGroup.delete()
+
+        return HttpResponse("Delete the member successfully.")
+    except Exception as e:
+        logger.error(e)
+        return HttpResponseForbidden()
+
+def inviteMember(request):
+    try:
+        body_unicode = request.body.decode('utf-8')
+        body = json.loads(body_unicode)
+
+        # chekc if the email were registered or not
+        user = User.objects.filter(email=body['email'])
+        if not user:
+            subject = 'TripPlanner Invitation!!!'
+            message = 'Hi, <p>Here is an invitation from your friend , to \
+                      join the TripPlanner.<p> <p><a href="http://localhost:3000/">Click</a> to join TripPlanner.<p>'
+            email_from = settings.EMAIL_HOST_USER
+            recipient_list = [body['email']]
+            email = EmailMessage(subject, message, email_from, recipient_list)
+            email.content_subtype = "html"
+            email.send()    
+            return HttpResponse("This email address hasn't been registered yet. An register invitation has been sent.")
+        else:
+            print(user[0].id)
+            groupName = body['groupName']
+            group = Group.objects.filter(name=groupName)
+            invitetogroup = UserToGroup(group_id=group[0].id, user_id=user[0].id)
+            invitetogroup.save()
+
+            subject = 'TripPlanner Invitation!!!'
+            message = 'Hi, <p>You have been invited into a new Group!<p> \
+                       <p><a href="http://localhost:3000/">login</a> to check it out.<p>'
+            email_from = settings.EMAIL_HOST_USER
+            recipient_list = [body['email']]
+            email = EmailMessage(subject, message, email_from, recipient_list)
+            email.content_subtype = "html"
+            email.send()    
+
+            return HttpResponse("Invite existed user successfully.")
+
     except Exception as e:
         logger.error(e)
         return HttpResponseForbidden()
