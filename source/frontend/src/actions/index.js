@@ -52,3 +52,21 @@ export const expandSidebar = () => {
     }
   };
 };
+
+export const addGroup = groups => {
+  return {
+    type: actionTypes.ADD_GROUP,
+    payload: {
+      groups: groups
+    }
+  }
+};
+
+// export const addItinerary = () => {
+//   return {
+//     type: actionTypes.ADD_ITINERARY,
+//     payload: {
+//       itineraries: {}
+//     }
+//   }
+// };

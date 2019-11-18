@@ -7,7 +7,9 @@ import {
   ListItem,
   ListItemIcon,
   ListItemText,
-  Typography
+  Typography,
+  Button,
+  TextField
 } from "@material-ui/core";
 import IconButton from "@material-ui/core/IconButton";
 import CardTravelIcon from "@material-ui/icons/CardTravel";
@@ -22,7 +24,7 @@ import ExpansionPanelSummary from "@material-ui/core/ExpansionPanelSummary";
 import ExpansionPanelDetails from "@material-ui/core/ExpansionPanelDetails";
 import ExpandMoreIcon from "@material-ui/icons/ExpandMore";
 
-import { openGroup, openItinerary } from "../../actions";
+import { openGroup, openItinerary, addGroup } from "../../actions";
 import CreateGroup from "./Creategroup";
 import CreateItinerary from "./CreateItinerary";
 import { axios } from "../oauth";
@@ -176,10 +178,14 @@ class SidePanel extends React.Component {
   }
 }
 
+const mapStateToProps = state => ({
+  groups: state.groups
+});
+
 const connectedComponent = withRouter(
   connect(
-    null,
-    { openGroup, openItinerary }
+    mapStateToProps,
+    { openGroup, openItinerary, addGroup }
   )(SidePanel)
 );
 
