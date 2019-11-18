@@ -25,7 +25,6 @@ import ExpansionPanelDetails from "@material-ui/core/ExpansionPanelDetails";
 import ExpandMoreIcon from "@material-ui/icons/ExpandMore";
 
 import { openGroup, openItinerary } from "../../actions";
-import CreateItinerary from "./CreateItinerary";
 import { axios } from "../oauth";
 
 const drawerWidth = "20rem";
@@ -33,6 +32,7 @@ const baseURL = "http://localhost:8000/";
 const listGroupsByUser = "members/v1/usergroup/?user_id=";
 const listItinerariesByGroup = "itinerary/?group_id=";
 const groupAPI = "http://localhost:8000/members/addGroup/";
+const createItineraryAPI = "http://localhost:8000/itinerary/";
 
 const styles = theme => ({
   drawer: {
@@ -54,10 +54,40 @@ class SidePanel extends React.Component {
       groups: [],
       itineraries: {},
       users: [],
-      inputGroup: ""
+      inputGroup: "",
+      inputItinerary: ""
     };
 
     this.handleSubmitGroup = this.handleSubmitGroup.bind(this);
+  }
+
+  handleSubmit(event, groupId) {
+    const input = document.getElementById("itineraryname").value;
+    alert('A new itinerary was created: ' + input);
+    const itinerary = {
+      name: input,
+      plan: {},
+      group: groupId
+    }
+
+    let currentComponent = this;
+    axios.post(createItineraryAPI, itinerary)
+      .then(function (response) {
+        console.log(response);
+        axios.get(baseURL + listItinerariesByGroup + groupId).then(res => {
+          const curr_itineraries = currentComponent.state.itineraries
+          curr_itineraries[groupId] = res.data;
+          console.log(curr_itineraries);
+          currentComponent.setState({ itineraries: curr_itineraries });
+        });
+      })
+      .catch(function (error) {
+        console.log(error);
+      });
+
+    event.preventDefault();
+    document.getElementById("itineraryname").value = "";
+    this.toggleItineraryPopup(groupId);
   }
 
   handleSubmitGroup(event) {
@@ -181,10 +211,21 @@ class SidePanel extends React.Component {
                       {this.state.showItineraryPopup[group.group.id] ? null : <AddIcon></AddIcon>}
                     </IconButton>
                     {this.state.showItineraryPopup[group.group.id] ? (
-                      <CreateItinerary
-                        group={group.group.id}
-                        closePopup={this.toggleItineraryPopup.bind(this)}
-                      />
+                      <div className='CreateItinerary'>
+                        <TextField
+                          id="itineraryname"
+                          label="Itinerary Name"
+                          type="itinerary-name"
+                          margin="normal"
+                          variant="outlined"
+                        />
+                        <Button
+                          color="primary"
+                          onClick={(e) => this.handleSubmit(e, group.group.id)}
+                        >
+                          Submit
+      </Button>
+                      </div>
                     ) : null}
                   </ListItem>
                 </List>
