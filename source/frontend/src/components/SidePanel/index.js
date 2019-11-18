@@ -71,12 +71,13 @@ class SidePanel extends React.Component {
       email: curUser.email
     }
 
+    let currentComponent = this;
     axios.post(groupAPI, user)
       .then(function (response) {
         console.log(response);
         axios.get(baseURL + listGroupsByUser + curUser.id).then(res => {
           const groups = res.data;
-          this.setState({ groups });
+          currentComponent.setState({ groups: groups });
         });
       })
       .catch(function (error) {
