@@ -57,10 +57,10 @@ class SidePanel extends React.Component {
       inputGroup: ""
     };
 
-    this.handleSubmit = this.handleSubmit.bind(this);
+    this.handleSubmitGroup = this.handleSubmitGroup.bind(this);
   }
 
-  handleSubmit(event) {
+  handleSubmitGroup(event) {
     const input = document.getElementById("groupname").value;
     alert('A new group was created: ' + input);
     this.setState({ inputGroup: input });
@@ -207,7 +207,7 @@ class SidePanel extends React.Component {
                 />
                 <Button
                   color="primary"
-                  onClick={this.handleSubmit}
+                  onClick={this.handleSubmitGroup}
                 >
                   Submit
           </Button>
