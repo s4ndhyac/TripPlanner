@@ -25,7 +25,6 @@ import ExpansionPanelDetails from "@material-ui/core/ExpansionPanelDetails";
 import ExpandMoreIcon from "@material-ui/icons/ExpandMore";
 
 import { openGroup, openItinerary } from "../../actions";
-import CreateGroup from "./Creategroup";
 import CreateItinerary from "./CreateItinerary";
 import { axios } from "../oauth";
 
