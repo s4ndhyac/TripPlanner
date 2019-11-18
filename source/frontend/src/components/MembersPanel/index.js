@@ -80,6 +80,7 @@ class MembersPanel extends React.Component {
     axios.post("http://localhost:8000/members/inviteMember/", data)
       .then(res => {
         console.log(res);
+        alert(res.data);
       })
   };
 
@@ -95,6 +96,7 @@ class MembersPanel extends React.Component {
     axios.post("http://localhost:8000/members/deleteMember/", data)
       .then(res => {
         console.log(res);
+        alert(res.data);
       })
   };
 

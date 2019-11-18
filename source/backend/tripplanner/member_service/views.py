@@ -97,20 +97,18 @@ def inviteMember(request):
         body_unicode = request.body.decode('utf-8')
         body = json.loads(body_unicode)
 
-        print(body['email'])
         # chekc if the email were registered or not
         user = User.objects.filter(email=body['email'])
         if not user:
-            print("Target user not found.")
             subject = 'TripPlanner Invitation!!!'
-            message = 'Hi, <p>Here is an invitation from your friend to join the TripPlanner.<p>\
-                           <p><a href="http://localhost:3000/">Click</a> to join TripPlanner.<p>'
+            message = 'Hi, <p>Here is an invitation from your friend , to \
+                      join the TripPlanner.<p> <p><a href="http://localhost:3000/">Click</a> to join TripPlanner.<p>'
             email_from = settings.EMAIL_HOST_USER
             recipient_list = [body['email']]
             email = EmailMessage(subject, message, email_from, recipient_list)
             email.content_subtype = "html"
             email.send()    
-            return HttpResponse("Invite new user successfully.")
+            return HttpResponse("This email address hasn't been registered yet. An register invitation has been sent.")
         else:
             print(user[0].id)
             groupName = body['groupName']
@@ -118,9 +116,17 @@ def inviteMember(request):
             invitetogroup = UserToGroup(group_id=group[0].id, user_id=user[0].id)
             invitetogroup.save()
 
+            subject = 'TripPlanner Invitation!!!'
+            message = 'Hi, <p>You have been invited into a new Group!<p> \
+                       <p><a href="http://localhost:3000/">login</a> to check it out.<p>'
+            email_from = settings.EMAIL_HOST_USER
+            recipient_list = [body['email']]
+            email = EmailMessage(subject, message, email_from, recipient_list)
+            email.content_subtype = "html"
+            email.send()    
+
             return HttpResponse("Invite existed user successfully.")
 
-        
     except Exception as e:
         logger.error(e)
         return HttpResponseForbidden()
