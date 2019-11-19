@@ -20,7 +20,8 @@ class ItineraryPanel extends React.Component {
     id: null,
     plan: {},
     group: null,
-    snackbarOpen: false
+    snackbarOpen: false,
+    optimizedSnackbarOpen: false
   };
 
   componentWillMount() {
@@ -96,12 +97,20 @@ class ItineraryPanel extends React.Component {
     if (event !== null) {
       event.preventDefault();
     }
-    this.setState({ snackbarOpen: false });
+    this.setState({ snackbarOpen: false, optimizedSnackbarOpen: false });
+  };
+
+  handleGenerateOnClick = async event => {
+    event.preventDefault();
+    const data = await axios.post(ITINERARY_API + "/generate/", {
+      plan: this.state.plan
+    });
+    this.setState({ plan: data.data.plan, optimizedSnackbarOpen: true });
   };
 
   render() {
     const { classes } = this.props;
-    const { name, plan, snackbarOpen } = this.state;
+    const { name, plan, snackbarOpen, optimizedSnackbarOpen } = this.state;
     return (
       <Box>
         <Grid container spacing={3} className={classes.root}>
@@ -111,6 +120,7 @@ class ItineraryPanel extends React.Component {
               plan={plan}
               handleDeleteOnClick={this.handleDeleteOnClick}
               handleSaveOnClick={this.handleSaveOnClick}
+              handleGenerateOnClick={this.handleGenerateOnClick}
             ></ItineraryDetailsPanel>
           </Grid>
           <Grid item xs={7}>
@@ -121,6 +131,11 @@ class ItineraryPanel extends React.Component {
           open={snackbarOpen}
           handleCloseOnClick={this.closeSnackbar}
           message={"Itinerary saved!"}
+        ></SaveSnackbar>
+        <SaveSnackbar
+          open={optimizedSnackbarOpen}
+          handleCloseOnClick={this.closeSnackbar}
+          message={"Itinerary optimized!"}
         ></SaveSnackbar>
       </Box>
     );

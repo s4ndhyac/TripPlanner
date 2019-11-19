@@ -99,7 +99,13 @@ class ItineraryDetailsPanel extends React.Component {
   };
 
   render() {
-    const { classes, name, plan, handleSaveOnClick } = this.props;
+    const {
+      classes,
+      name,
+      plan,
+      handleSaveOnClick,
+      handleGenerateOnClick
+    } = this.props;
     return (
       <Paper className={classes.paper}>
         <Grid
@@ -114,7 +120,9 @@ class ItineraryDetailsPanel extends React.Component {
           </Grid>
           <Grid item xs={5}>
             <Tooltip title="Generate optimized itinerary">
-              <Button color="primary">Generate</Button>
+              <Button color="primary" onClick={handleGenerateOnClick}>
+                Generate
+              </Button>
             </Tooltip>
             <Tooltip title="Save to Database">
               <IconButton onClick={handleSaveOnClick}>
