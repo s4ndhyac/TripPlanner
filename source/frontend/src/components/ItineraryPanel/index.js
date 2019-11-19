@@ -40,8 +40,8 @@ class ItineraryPanel extends React.Component {
   };
 
   getItineraryData = async id => {
-    const { data } = await axios.get(ITINERARY_API + "?id=" + id);
-    return data[0];
+    const { data } = await axios.get(ITINERARY_API + "/" + id);
+    return data;
   };
 
   handleAddOnClick = item => event => {
