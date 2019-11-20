@@ -1,5 +1,6 @@
 import json
 import logging
+import os
 
 import requests
 from django.contrib.auth import logout as auth_logout
@@ -104,14 +105,16 @@ def inviteMember(request):
         body_unicode = request.body.decode('utf-8')
         body = json.loads(body_unicode)
 
+        email_from = settings.EMAIL_HOST_USER
+        recipient_list = [body['email']]
+        
         # chekc if the email were registered or not
         user = User.objects.filter(email=body['email'])
+        
         if not user:
             subject = 'TripPlanner Invitation!!!'
             message = 'Hi, <p>Here is an invitation from your friend , to \
                       join the TripPlanner.<p> <p><a href="http://localhost:3000/">Click</a> to join TripPlanner.<p>'
-            email_from = settings.EMAIL_HOST_USER
-            recipient_list = [body['email']]
             email = EmailMessage(subject, message, email_from, recipient_list)
             email.content_subtype = "html"
             email.send()
@@ -119,20 +122,20 @@ def inviteMember(request):
         else:
             groupName = body['groupName']
             group = Group.objects.filter(name=groupName)
-            invitetogroup = UserToGroup(
-                group_id=group[0].id, user_id=user[0].id)
-            invitetogroup.save()
+            memberInGroup = UserToGroup.objects.filter(group_id=group[0].id, user_id=user[0].id)
+            if not memberInGroup:
+                invitetogroup = UserToGroup(group_id=group[0].id, user_id=user[0].id)
+                invitetogroup.save()
 
-            subject = 'TripPlanner Invitation!!!'
-            message = 'Hi, <p>You have been invited into a new Group!<p> \
-                       <p><a href="http://localhost:3000/">login</a> to check it out.<p>'
-            email_from = settings.EMAIL_HOST_USER
-            recipient_list = [body['email']]
-            email = EmailMessage(subject, message, email_from, recipient_list)
-            email.content_subtype = "html"
-            email.send()
-
-            return HttpResponse("Invite existed user successfully.")
+                subject = 'TripPlanner Invitation!!!'
+                message = 'Hi, <p>You have been invited into a new Group!<p> \
+                           <p><a href="http://localhost:3000/">login</a> to check it out.<p>'
+                email = EmailMessage(subject, message, email_from, recipient_list)
+                email.content_subtype = "html"
+                email.send()    
+                return HttpResponse("Invite existed user successfully.")
+            else:
+                return HttpResponse("The member has already been in the group.")
 
     except Exception as e:
         logger.error(e)
