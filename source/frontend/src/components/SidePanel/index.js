@@ -144,6 +144,7 @@ class SidePanel extends React.Component {
       axios.get(baseURL + listItinerariesByGroup + groupId).then(res => {
         const curr_itineraries = this.state.itineraries;
         curr_itineraries[groupId] = res.data;
+        console.log(curr_itineraries);
         this.setState({ itineraries: curr_itineraries });
       });
     }
@@ -171,10 +172,8 @@ class SidePanel extends React.Component {
           </ListItem>
 
           {groups.map(group => (
-            <ExpansionPanel key={short.generate()}>
+            <ExpansionPanel>
               <ExpansionPanelSummary
-                key={short.generate()}
-                expandIcon={<ExpandMoreIcon key={short.generate()} />}
                 aria-controls="panel1a-content"
                 id="panel1a-header"
                 onClick={() => {
@@ -182,38 +181,36 @@ class SidePanel extends React.Component {
                   history.push(`/dashboard/groups/${group.group.id}`);
                 }}
               >
-                <ListItemIcon key={short.generate()}>
+                <ListItemIcon>
                   <GroupIcon />
                 </ListItemIcon>
-                <ListItemText key={short.generate()} primary={group.group.name} />
+                <ListItemText primary={group.group.name} />
               </ExpansionPanelSummary>
 
-              <ExpansionPanelDetails key={short.generate()}>
-                <List key={short.generate()}>
-                  {group.group.id in this.state.itineraries ?
-                    this.state.itineraries[group.group.id].map(itinerary => (
-                      <ListItem
-                        button
-                        key={short.generate()}
-                        onClick={
-                          () => history.push(`/dashboard/itineraries/${itinerary.id}`)
-                        }
-                      >
-                        <ListItemIcon key={short.generate()}>
-                          <CardTravelIcon key={short.generate()} />
-                        </ListItemIcon>
-                        <ListItemText key={short.generate()} primary={itinerary.name} />
-                      </ListItem>
-                    ))
-                    : null}
+              <ExpansionPanelDetails>
+                <List>
+                  {group.group.id in itineraries ? itineraries[group.group.id].map(itinerary => (
+                    <ListItem
+                      button
+                      key={`itinerary-${itinerary.id}`}
+                      onClick={() =>
+                        history.push(`/dashboard/itineraries/${itinerary.id}`)
+                      }
+                    >
+                      <ListItemIcon>
+                        <CardTravelIcon />
+                      </ListItemIcon>
+                      <ListItemText primary={itinerary.name} />
+                    </ListItem>
+                  )) : null}
 
                   <ListItem key={short.generate()}>
-                    <ListItemText key={short.generate()} primary="Create Itinerary" />
-                    <IconButton key={short.generate()} onClick={() => this.toggleItineraryPopup(group.group.id)}>
-                      {this.state.showItineraryPopup[group.group.id] ? null : <AddIcon key={short.generate()}></AddIcon>}
-                    </IconButton>
-                    {this.state.showItineraryPopup[group.group.id] ? (
-                      <div className='CreateItinerary'>
+                    <ListItemText primary="Create Itinerary" />
+                      <IconButton onClick={() => this.toggleItineraryPopup(group.group.id)}>
+                        {this.state.showItineraryPopup[group.group.id] ? null : <AddIcon></AddIcon>}
+                      </IconButton>
+                      {this.state.showItineraryPopup[group.group.id] ? (
+                        <div className='CreateItinerary'>
                         <TextField
                           id="itineraryname"
                           label="Itinerary Name"
@@ -226,9 +223,9 @@ class SidePanel extends React.Component {
                           onClick={(e) => this.handleSubmit(e, group.group.id)}
                         >
                           Submit
-      </Button>
-                      </div>
-                    ) : null}
+                        </Button>
+                        </div>
+                      ) : null}
                   </ListItem>
                 </List>
               </ExpansionPanelDetails>
