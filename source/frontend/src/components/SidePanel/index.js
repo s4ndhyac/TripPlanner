@@ -133,7 +133,8 @@ class SidePanel extends React.Component {
 
   componentDidMount() {
     const { curUser } = this.props;
-    axios.get(baseURL + listGroupsByUser + curUser.id).then(res => {
+    const tokenId = "Token " + curUser.tokenId;
+    axios.get(baseURL + listGroupsByUser + curUser.id, { headers: { "Authorization": tokenId } }).then(res => {
       const groups = res.data;
       this.setState({ groups });
     });
@@ -206,11 +207,11 @@ class SidePanel extends React.Component {
 
                   <ListItem key={short.generate()}>
                     <ListItemText primary="Create Itinerary" />
-                      <IconButton onClick={() => this.toggleItineraryPopup(group.group.id)}>
-                        {this.state.showItineraryPopup[group.group.id] ? null : <AddIcon></AddIcon>}
-                      </IconButton>
-                      {this.state.showItineraryPopup[group.group.id] ? (
-                        <div className='CreateItinerary'>
+                    <IconButton onClick={() => this.toggleItineraryPopup(group.group.id)}>
+                      {this.state.showItineraryPopup[group.group.id] ? null : <AddIcon></AddIcon>}
+                    </IconButton>
+                    {this.state.showItineraryPopup[group.group.id] ? (
+                      <div className='CreateItinerary'>
                         <TextField
                           id="itineraryname"
                           label="Itinerary Name"
@@ -224,8 +225,8 @@ class SidePanel extends React.Component {
                         >
                           Submit
                         </Button>
-                        </div>
-                      ) : null}
+                      </div>
+                    ) : null}
                   </ListItem>
                 </List>
               </ExpansionPanelDetails>
