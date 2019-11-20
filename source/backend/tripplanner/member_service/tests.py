@@ -4,7 +4,7 @@ from unittest import mock
 from django.test import RequestFactory, TestCase
 
 from .models import User
-from .views import authenticate
+from .views import login
 
 logging.disable(logging.CRITICAL)
 
@@ -35,20 +35,20 @@ class UserTestCase(TestCase):
     @mock.patch('member_service.views.get_user_from_google', mock_oauth_call)
     def test_user_can_login_with_valid_token(self):
         request = self.__mock_request(VALID_TOKEN)
-        response = authenticate(request)
+        response = login(request)
         self.assertEqual(response.status_code, 200)
 
     @mock.patch('member_service.views.get_user_from_google', mock_oauth_call)
     def test_user_cannot_login_with_invalid_token(self):
         request = self.__mock_request('INVALID_TOKEN')
-        response = authenticate(request)
+        response = login(request)
         self.assertEqual(response.status_code, 403)
 
     @mock.patch('member_service.views.get_user_from_google', mock_oauth_call)
     def test_should_create_new_entry_if_user_does_not_exist(self):
         previous_count = User.objects.all().count()
         request = self.__mock_request(VALID_TOKEN)
-        authenticate(request)
+        login(request)
         new_count = User.objects.all().count()
         self.assertEqual(new_count, previous_count + 1)
 
@@ -58,6 +58,6 @@ class UserTestCase(TestCase):
                             last_name=USER_DATA['family_name'], picture=USER_DATA['picture'])
         previous_count = User.objects.all().count()
         request = self.__mock_request(VALID_TOKEN)
-        authenticate(request)
+        login(request)
         new_count = User.objects.all().count()
         self.assertEqual(new_count, previous_count)
