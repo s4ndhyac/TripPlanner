@@ -7,19 +7,16 @@ const cookiePolicy = "single_host_origin";
 
 const TOKEN_KEY = "tripplanner-user-token";
 
-axios.defaults.headers.common["Authorization"] =
-  localStorage.getItem(TOKEN_KEY) || "";
-
 const handleLoginSuccess = props => async response => {
   const { tokenId } = response;
-  axios.defaults.headers.common["Authorization"] = tokenId;
-  localStorage.setItem(TOKEN_KEY, tokenId);
-  const resp = await axios.post(authAPI, {});
+  const resp = await axios.post(authAPI, {}, { headers: { "Authorization": tokenId } });
   const user = resp.data;
-  user.tokenId = tokenId;
+  localStorage.setItem(TOKEN_KEY, user['tokenId']);
   props.setUser(user);
   props.history.push("/dashboard");
 };
+
+axios.defaults.headers.common["Authorization"] = localStorage.getItem(TOKEN_KEY) ? ("Token " + localStorage.getItem(TOKEN_KEY)) : "";
 
 const handleLogout = props => () => {
   axios.defaults.headers.common["Authorization"] = "";
