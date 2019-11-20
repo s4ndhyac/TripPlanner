@@ -105,6 +105,10 @@ class ItineraryPanel extends React.Component {
 
   handleGenerateOnClick = async event => {
     event.preventDefault();
+    if (!("list" in this.state.plan) || this.state.plan.list.length === 0) {
+      alert("Please add attractions first!");
+      return;
+    }
     this.setState({ loading: true });
     const { data } = await axios.post(ITINERARY_API + "/generate/", {
       plan: this.state.plan
