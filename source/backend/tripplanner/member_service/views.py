@@ -53,7 +53,7 @@ def login(request):
         django_user, _ = Auth_user.objects.get_or_create(username=user.email)
         token, _ = Token.objects.get_or_create(user=django_user)
         resp = model_to_dict(user)
-        resp['token'] = token.key
+        resp['tokenId'] = token.key
         return JsonResponse(resp)
     except Exception as e:
         logger.error(e)
