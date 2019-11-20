@@ -20,7 +20,9 @@ class ItineraryPanel extends React.Component {
     id: null,
     plan: {},
     group: null,
-    snackbarOpen: false
+    snackbarOpen: false,
+    optimizedSnackbarOpen: false,
+    loading: false
   };
 
   componentWillMount() {
@@ -35,8 +37,9 @@ class ItineraryPanel extends React.Component {
 
   changeState = async props => {
     const { itemId } = props;
+    this.setState({ loading: true });
     const itineraryData = await this.getItineraryData(itemId);
-    this.setState(itineraryData);
+    this.setState({ ...itineraryData, loading: false });
   };
 
   getItineraryData = async id => {
@@ -85,23 +88,43 @@ class ItineraryPanel extends React.Component {
 
   handleSaveOnClick = async event => {
     event.preventDefault();
+    this.setState({ loading: true });
     const { data } = await axios.put(
       ITINERARY_API + "/" + this.state.id + "/",
       this.state
     );
-    this.setState({ ...data, snackbarOpen: true });
+    this.setState({ ...data, snackbarOpen: true, loading: false });
   };
 
   closeSnackbar = event => {
     if (event !== null) {
       event.preventDefault();
     }
-    this.setState({ snackbarOpen: false });
+    this.setState({ snackbarOpen: false, optimizedSnackbarOpen: false });
+  };
+
+  handleGenerateOnClick = async event => {
+    event.preventDefault();
+    this.setState({ loading: true });
+    const { data } = await axios.post(ITINERARY_API + "/generate/", {
+      plan: this.state.plan
+    });
+    this.setState({
+      plan: data.plan,
+      optimizedSnackbarOpen: true,
+      loading: false
+    });
   };
 
   render() {
     const { classes } = this.props;
-    const { name, plan, snackbarOpen } = this.state;
+    const {
+      name,
+      plan,
+      snackbarOpen,
+      optimizedSnackbarOpen,
+      loading
+    } = this.state;
     return (
       <Box>
         <Grid container spacing={3} className={classes.root}>
@@ -111,6 +134,8 @@ class ItineraryPanel extends React.Component {
               plan={plan}
               handleDeleteOnClick={this.handleDeleteOnClick}
               handleSaveOnClick={this.handleSaveOnClick}
+              handleGenerateOnClick={this.handleGenerateOnClick}
+              loading={loading}
             ></ItineraryDetailsPanel>
           </Grid>
           <Grid item xs={7}>
@@ -121,6 +146,11 @@ class ItineraryPanel extends React.Component {
           open={snackbarOpen}
           handleCloseOnClick={this.closeSnackbar}
           message={"Itinerary saved!"}
+        ></SaveSnackbar>
+        <SaveSnackbar
+          open={optimizedSnackbarOpen}
+          handleCloseOnClick={this.closeSnackbar}
+          message={"Itinerary optimized!"}
         ></SaveSnackbar>
       </Box>
     );
