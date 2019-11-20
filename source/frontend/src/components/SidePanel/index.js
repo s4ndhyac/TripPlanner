@@ -142,9 +142,8 @@ class SidePanel extends React.Component {
   fetchItinerariesByGroup(groupId) {
     if (!(groupId in this.state.itineraries)) {
       axios.get(baseURL + listItinerariesByGroup + groupId).then(res => {
-        const curr_itineraries = this.state.itineraries
+        const curr_itineraries = this.state.itineraries;
         curr_itineraries[groupId] = res.data;
-        console.log(curr_itineraries);
         this.setState({ itineraries: curr_itineraries });
       });
     }
@@ -172,9 +171,10 @@ class SidePanel extends React.Component {
           </ListItem>
 
           {groups.map(group => (
-            <ExpansionPanel>
+            <ExpansionPanel key={short.generate()}>
               <ExpansionPanelSummary
-                expandIcon={<ExpandMoreIcon />}
+                key={short.generate()}
+                expandIcon={<ExpandMoreIcon key={short.generate()} />}
                 aria-controls="panel1a-content"
                 id="panel1a-header"
                 onClick={() => {
@@ -182,33 +182,35 @@ class SidePanel extends React.Component {
                   history.push(`/dashboard/groups/${group.group.id}`);
                 }}
               >
-                <ListItemIcon>
+                <ListItemIcon key={short.generate()}>
                   <GroupIcon />
                 </ListItemIcon>
-                <ListItemText primary={group.group.name} />
+                <ListItemText key={short.generate()} primary={group.group.name} />
               </ExpansionPanelSummary>
 
-              <ExpansionPanelDetails>
-                <List>
-                  {group.group.id in itineraries ? itineraries[group.group.id].map(itinerary => (
-                    <ListItem
-                      button
-                      key={`itinerary-${itinerary.id}`}
-                      onClick={() =>
-                        history.push(`/dashboard/itineraries/${itinerary.id}`)
-                      }
-                    >
-                      <ListItemIcon>
-                        <CardTravelIcon />
-                      </ListItemIcon>
-                      <ListItemText primary={itinerary.name} />
-                    </ListItem>
-                  )) : null}
+              <ExpansionPanelDetails key={short.generate()}>
+                <List key={short.generate()}>
+                  {group.group.id in this.state.itineraries ?
+                    this.state.itineraries[group.group.id].map(itinerary => (
+                      <ListItem
+                        button
+                        key={short.generate()}
+                        onClick={
+                          () => history.push(`/dashboard/itineraries/${itinerary.id}`)
+                        }
+                      >
+                        <ListItemIcon key={short.generate()}>
+                          <CardTravelIcon key={short.generate()} />
+                        </ListItemIcon>
+                        <ListItemText key={short.generate()} primary={itinerary.name} />
+                      </ListItem>
+                    ))
+                    : null}
 
                   <ListItem key={short.generate()}>
-                    <ListItemText primary="Create Itinerary" />
-                    <IconButton onClick={() => this.toggleItineraryPopup(group.group.id)}>
-                      {this.state.showItineraryPopup[group.group.id] ? null : <AddIcon></AddIcon>}
+                    <ListItemText key={short.generate()} primary="Create Itinerary" />
+                    <IconButton key={short.generate()} onClick={() => this.toggleItineraryPopup(group.group.id)}>
+                      {this.state.showItineraryPopup[group.group.id] ? null : <AddIcon key={short.generate()}></AddIcon>}
                     </IconButton>
                     {this.state.showItineraryPopup[group.group.id] ? (
                       <div className='CreateItinerary'>
