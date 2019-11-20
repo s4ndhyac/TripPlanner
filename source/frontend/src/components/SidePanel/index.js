@@ -108,6 +108,7 @@ class SidePanel extends React.Component {
       .then(function (response) {
         console.log(response);
         axios.get(baseURL + listGroupsByUser + curUser.id).then(res => {
+          console.log("return: ", res);
           const groups = res.data;
           currentComponent.setState({ groups });
         });

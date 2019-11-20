@@ -74,19 +74,19 @@ def deleteMember(request):
     try:
         body_unicode = request.body.decode('utf-8')
         body = json.loads(body_unicode) 
-        
+
         # check how many members left in the target group
         groupusers = body['group']['users']
+        
+        usergroupId = body['id']
+        targetUserGroup = UserToGroup.objects.get(id=usergroupId)
+        targetUserGroup.delete()
 
         if len(groupusers) == 1:
             groupId = body['group']['id']
             targetGroup = Group.objects.get(id=groupId)
             targetGroup.delete()
-        else:
-            usergroupId = body['id']
-            targetUserGroup = UserToGroup.objects.get(id=usergroupId)
-            targetUserGroup.delete()
-
+        
         return HttpResponse("Delete the member successfully.")
     except Exception as e:
         logger.error(e)
@@ -110,7 +110,6 @@ def inviteMember(request):
             email.send()    
             return HttpResponse("This email address hasn't been registered yet. An register invitation has been sent.")
         else:
-            print(user[0].id)
             groupName = body['groupName']
             group = Group.objects.filter(name=groupName)
             invitetogroup = UserToGroup(group_id=group[0].id, user_id=user[0].id)
