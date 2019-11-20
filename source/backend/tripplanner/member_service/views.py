@@ -11,9 +11,11 @@ from rest_framework import viewsets
 from social_django.models import UserSocialAuth
 from django.core.mail import EmailMessage
 from django.conf import settings
-
 from .models import Group, User, UserToGroup
 from .serializers import GroupSerializer, UserSerializer, UserToGroupSerializer
+
+from django.contrib.auth.models import User as Auth_user
+from rest_framework.authtoken.models import Token
 
 logger = logging.getLogger(__name__)
 
@@ -44,11 +46,15 @@ def logout(request):
     return redirect('/members')
 
 
-def authenticate(request):
+def login(request):
     bearer_token = request.headers.get('Authorization')
     try:
         user = find_user_by_token(bearer_token)
-        return JsonResponse(model_to_dict(user))
+        django_user, _ = Auth_user.objects.get_or_create(username=user.email)
+        token, _ = Token.objects.get_or_create(user=django_user)
+        resp = model_to_dict(user)
+        resp['token'] = token.key
+        return JsonResponse(resp)
     except Exception as e:
         logger.error(e)
         return HttpResponseForbidden()
@@ -73,8 +79,8 @@ def addGroup(request):
 def deleteMember(request):
     try:
         body_unicode = request.body.decode('utf-8')
-        body = json.loads(body_unicode) 
-        
+        body = json.loads(body_unicode)
+
         # check how many members left in the target group
         groupusers = body['group']['users']
 
@@ -92,6 +98,7 @@ def deleteMember(request):
         logger.error(e)
         return HttpResponseForbidden()
 
+
 def inviteMember(request):
     try:
         body_unicode = request.body.decode('utf-8')
@@ -107,13 +114,14 @@ def inviteMember(request):
             recipient_list = [body['email']]
             email = EmailMessage(subject, message, email_from, recipient_list)
             email.content_subtype = "html"
-            email.send()    
+            email.send()
             return HttpResponse("This email address hasn't been registered yet. An register invitation has been sent.")
         else:
             print(user[0].id)
             groupName = body['groupName']
             group = Group.objects.filter(name=groupName)
-            invitetogroup = UserToGroup(group_id=group[0].id, user_id=user[0].id)
+            invitetogroup = UserToGroup(
+                group_id=group[0].id, user_id=user[0].id)
             invitetogroup.save()
 
             subject = 'TripPlanner Invitation!!!'
@@ -123,7 +131,7 @@ def inviteMember(request):
             recipient_list = [body['email']]
             email = EmailMessage(subject, message, email_from, recipient_list)
             email.content_subtype = "html"
-            email.send()    
+            email.send()
 
             return HttpResponse("Invite existed user successfully.")
 
