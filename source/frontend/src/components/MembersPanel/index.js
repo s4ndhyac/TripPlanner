@@ -35,6 +35,7 @@ class MembersPanel extends React.Component {
 
     this._handleInviteEmail = this._handleInviteEmail.bind(this);
     this.inviteMember = this.inviteMember.bind(this);
+    this.deleteMember = this.deleteMember.bind(this);
   }
 
   componentWillMount() {
@@ -77,25 +78,34 @@ class MembersPanel extends React.Component {
       groupName: this.state.groupName
     };
 
+    const { itemId } = this.props;
     axios.post("http://localhost:8000/members/inviteMember/", data)
       .then(res => {
         console.log(res);
+        this.getGroupData(itemId);
         alert(res.data);
-      })
+        document.getElementById("emailinput").value = "";
+      });
+
   };
 
-  deleteMember(event) {
+  deleteMember = row => event => {
     console.log("Delete member: ", this);
+    console.log(row);
 
     const data = {
-      id: this.id,
-      group: this.group,
-      user: this.user 
+      id: row.id,
+      group: row.group,
+      user: row.user
     }
-    
+
+    console.log(this);
+    const itemId = data.group.id;
+    console.log(itemId);
     axios.post("http://localhost:8000/members/deleteMember/", data)
       .then(res => {
         console.log(res);
+        this.getGroupData(itemId);
         alert(res.data);
       })
   };
@@ -116,14 +126,13 @@ class MembersPanel extends React.Component {
           >
             <Grid item >
               <TextField
-                id="outlined-emailid-input"
+                id="emailinput"
                 label="Enter Email to Invite User"
                 className={classes.textField}
                 type="emailid"
                 margin="normal"
                 variant="outlined"
                 style={{ width: 400 }}
-                value={this.state.inviteEmail}
                 onChange={this._handleInviteEmail}
               />
             </Grid>
@@ -159,7 +168,7 @@ class MembersPanel extends React.Component {
                     </TableCell>
                     <TableCell>{row.user.email}</TableCell>
                     <TableCell>
-                      <Button size="small" variant="outlined" color="secondary" onClick={this.deleteMember.bind(row)}>
+                      <Button size="small" variant="outlined" color="secondary" onClick={this.deleteMember(row)}>
                         Remove
                       </Button>
                     </TableCell>

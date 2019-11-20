@@ -12,11 +12,12 @@ const handleLoginSuccess = props => async response => {
   const resp = await axios.post(authAPI, {}, { headers: { "Authorization": tokenId } });
   const user = resp.data;
   localStorage.setItem(TOKEN_KEY, user['tokenId']);
+  axios.defaults.headers.common["Authorization"] = "Token " + localStorage.getItem(TOKEN_KEY);
   props.setUser(user);
   props.history.push("/dashboard");
 };
 
-axios.defaults.headers.common["Authorization"] = localStorage.getItem(TOKEN_KEY) ? ("Token " + localStorage.getItem(TOKEN_KEY)) : "";
+axios.defaults.headers.common["Authorization"] = localStorage.getItem(TOKEN_KEY) ? "Token " + localStorage.getItem(TOKEN_KEY) : axios.defaults.headers.common["Authorization"];
 
 const handleLogout = props => () => {
   axios.defaults.headers.common["Authorization"] = "";

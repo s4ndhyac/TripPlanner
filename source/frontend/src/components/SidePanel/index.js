@@ -142,7 +142,7 @@ class SidePanel extends React.Component {
   fetchItinerariesByGroup(groupId) {
     if (!(groupId in this.state.itineraries)) {
       axios.get(baseURL + listItinerariesByGroup + groupId).then(res => {
-        const curr_itineraries = this.state.itineraries
+        const curr_itineraries = this.state.itineraries;
         curr_itineraries[groupId] = res.data;
         console.log(curr_itineraries);
         this.setState({ itineraries: curr_itineraries });
@@ -224,7 +224,7 @@ class SidePanel extends React.Component {
                           onClick={(e) => this.handleSubmit(e, group.group.id)}
                         >
                           Submit
-      </Button>
+                        </Button>
                       </div>
                     ) : null}
                   </ListItem>
