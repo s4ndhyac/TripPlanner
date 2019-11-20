@@ -175,6 +175,7 @@ class SidePanel extends React.Component {
           {groups.map(group => (
             <ExpansionPanel>
               <ExpansionPanelSummary
+                expandIcon={<ExpandMoreIcon />} 
                 aria-controls="panel1a-content"
                 id="panel1a-header"
                 onClick={() => {
