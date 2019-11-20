@@ -78,13 +78,15 @@ class MembersPanel extends React.Component {
       groupName: this.state.groupName
     };
 
-    const { itemId } = this.props; 
+    const { itemId } = this.props;
     axios.post("http://localhost:8000/members/inviteMember/", data)
       .then(res => {
         console.log(res);
         this.getGroupData(itemId);
         alert(res.data);
-      })
+        document.getElementById("emailinput").value = "";
+      });
+
   };
 
   deleteMember = row => event => {
@@ -94,11 +96,11 @@ class MembersPanel extends React.Component {
     const data = {
       id: row.id,
       group: row.group,
-      user: row.user 
+      user: row.user
     }
 
     console.log(this);
-    const itemId = data.group.id; 
+    const itemId = data.group.id;
     console.log(itemId);
     axios.post("http://localhost:8000/members/deleteMember/", data)
       .then(res => {
@@ -124,14 +126,13 @@ class MembersPanel extends React.Component {
           >
             <Grid item >
               <TextField
-                id="outlined-emailid-input"
+                id="emailinput"
                 label="Enter Email to Invite User"
                 className={classes.textField}
                 type="emailid"
                 margin="normal"
                 variant="outlined"
                 style={{ width: 400 }}
-                value={this.state.inviteEmail}
                 onChange={this._handleInviteEmail}
               />
             </Grid>
