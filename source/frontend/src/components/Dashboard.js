@@ -36,7 +36,7 @@ class Dashboard extends React.Component {
             Welcome to your dashboard, {currentUser.first_name}!
           </Typography>
         ) : (
-            <MainPanel panel={panel} itemId={id} className={classes.content}></MainPanel>
+            <MainPanel panel={panel} itemId={id} curUser={currentUser} className={classes.content}></MainPanel>
           )}
       </Container>
     );
