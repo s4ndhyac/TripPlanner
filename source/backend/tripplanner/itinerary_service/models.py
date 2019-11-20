@@ -1,12 +1,9 @@
 import os
 
-import googlemaps
 from django.contrib.postgres.fields import JSONField
 from django.db import models
 
-from .optimizer import solve_tsp
-
-client = googlemaps.Client(key=os.getenv('GOOGLE_API_KEY', ''))
+from .optimizer import sort_sequence
 
 
 class Itinerary(models.Model):
@@ -17,15 +14,8 @@ class Itinerary(models.Model):
 
     @staticmethod
     def optimize(plan):
-        def sort(sequence):
-            places = [item['address'] for item in sequence]
-            json_matrix = client.distance_matrix(places, places, mode='driving')
-            route = solve_tsp(json_matrix)
-            optimized_sequence = [sequence[i] for i in route]
-            return optimized_sequence
-
         if 'list' not in plan['plan']:
             return {'plan': {'list': []}}
         for plan_of_day in plan['plan']['list']:
-            plan_of_day['sequence'] = sort(plan_of_day['sequence'])
+            plan_of_day['sequence'] = sort_sequence(plan_of_day['sequence'])
         return plan

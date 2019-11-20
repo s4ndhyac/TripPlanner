@@ -13,7 +13,8 @@ import {
   ListItemSecondaryAction,
   ListSubheader,
   Badge,
-  Tooltip
+  Tooltip,
+  CircularProgress
 } from "@material-ui/core";
 import Rating from "@material-ui/lab/Rating";
 import { withStyles } from "@material-ui/core/styles";
@@ -98,13 +99,37 @@ class ItineraryDetailsPanel extends React.Component {
     );
   };
 
+  renderItinerary = plan => {
+    return plan.list === undefined || (plan.list && plan.list.length === 0) ? (
+      this.emptyPlanTip()
+    ) : (
+      <List style={{ overflow: "auto", maxHeight: "70vh" }}>
+        {plan.list.map((planForDay, index) => {
+          return (
+            <div>
+              <ListSubheader
+                component="div"
+                id="nested-list-subheader"
+                disableSticky={true}
+              >
+                {stringToDate(planForDay.date).toDateString()}
+              </ListSubheader>
+              {planForDay.sequence.map(this.getListItem, index)}
+            </div>
+          );
+        })}
+      </List>
+    );
+  };
+
   render() {
     const {
       classes,
       name,
       plan,
       handleSaveOnClick,
-      handleGenerateOnClick
+      handleGenerateOnClick,
+      loading
     } = this.props;
     return (
       <Paper className={classes.paper}>
@@ -133,25 +158,12 @@ class ItineraryDetailsPanel extends React.Component {
         </Grid>
         <br />
         <Divider></Divider>
-        {plan.list === undefined || (plan.list && plan.list.length === 0) ? (
-          this.emptyPlanTip()
+        {loading ? (
+          <center style={{ paddingTop: "10vh" }}>
+            <CircularProgress></CircularProgress>
+          </center>
         ) : (
-          <List style={{ overflow: "auto", maxHeight: "70vh" }}>
-            {plan.list.map((planForDay, index) => {
-              return (
-                <div>
-                  <ListSubheader
-                    component="div"
-                    id="nested-list-subheader"
-                    disableSticky={true}
-                  >
-                    {stringToDate(planForDay.date).toDateString()}
-                  </ListSubheader>
-                  {planForDay.sequence.map(this.getListItem, index)}
-                </div>
-              );
-            })}
-          </List>
+          this.renderItinerary(plan)
         )}
       </Paper>
     );

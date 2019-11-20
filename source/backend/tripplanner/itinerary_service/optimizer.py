@@ -1,6 +1,11 @@
 from __future__ import print_function
 
+import os
+
+import googlemaps
 from ortools.constraint_solver import pywrapcp, routing_enums_pb2
+
+client = googlemaps.Client(key=os.getenv('GOOGLE_API_KEY', ''))
 
 
 def build_plain_matrix(json_matrix):
@@ -33,8 +38,7 @@ def build_solution(manager, routing, assignment):
         index = assignment.Value(routing.NextVar(index))
     plan_output += ' {}\n'.format(manager.IndexToNode(index))
     # route.append(manager.IndexToNode(index))
-    print(plan_output)
-    return route
+    return route, plan_output
 
 
 def solve_tsp(json_matrix, depot=0):
@@ -60,3 +64,12 @@ def solve_tsp(json_matrix, depot=0):
 
     assignment = routing.SolveWithParameters(search_parameters)
     return build_solution(manager, routing, assignment) if assignment else []
+
+
+def sort_sequence(sequence):
+    places = [item['address'] for item in sequence]
+    json_matrix = client.distance_matrix(places, places, mode='driving')
+    route, text_sequence = solve_tsp(json_matrix)
+    optimized_sequence = [sequence[i] for i in route]
+    print(text_sequence)
+    return optimized_sequence
