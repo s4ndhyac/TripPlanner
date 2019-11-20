@@ -141,8 +141,10 @@ class SidePanel extends React.Component {
   }
 
   fetchItinerariesByGroup(groupId) {
+    const { curUser } = this.props;
+    const tokenId = "Token " + curUser.tokenId;
     if (!(groupId in this.state.itineraries)) {
-      axios.get(baseURL + listItinerariesByGroup + groupId).then(res => {
+      axios.get(baseURL + listItinerariesByGroup + groupId, { headers: { "Authorization": tokenId } }).then(res => {
         const curr_itineraries = this.state.itineraries;
         curr_itineraries[groupId] = res.data;
         console.log(curr_itineraries);
@@ -175,7 +177,7 @@ class SidePanel extends React.Component {
           {groups.map(group => (
             <ExpansionPanel>
               <ExpansionPanelSummary
-                expandIcon={<ExpandMoreIcon />} 
+                expandIcon={<ExpandMoreIcon />}
                 aria-controls="panel1a-content"
                 id="panel1a-header"
                 onClick={() => {
