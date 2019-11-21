@@ -1,6 +1,6 @@
 import json
 import logging
-
+import os
 import requests
 from django.contrib.auth import logout as auth_logout
 from django.core import serializers
@@ -84,7 +84,7 @@ def deleteMember(request):
 
         # check how many members left in the target group
         groupusers = body['group']['users']
-        
+
         usergroupId = body['id']
         targetUserGroup = UserToGroup.objects.get(id=usergroupId)
         targetUserGroup.delete()
@@ -93,7 +93,7 @@ def deleteMember(request):
             groupId = body['group']['id']
             targetGroup = Group.objects.get(id=groupId)
             targetGroup.delete()
-        
+
         return HttpResponse("Delete the member successfully.")
     except Exception as e:
         logger.error(e)
@@ -104,17 +104,18 @@ def inviteMember(request):
     try:
         body_unicode = request.body.decode('utf-8')
         body = json.loads(body_unicode)
-
+        app_base_url = os.environ.get(
+            'FRONTEND_BASE_URL', 'http://localhost:3000/')
         email_from = settings.EMAIL_HOST_USER
         recipient_list = [body['email']]
-        
+
         # chekc if the email were registered or not
         user = User.objects.filter(email=body['email'])
-        
+
         if not user:
             subject = 'TripPlanner Invitation!!!'
             message = 'Hi, <p>Here is an invitation from your friend , to \
-                      join the TripPlanner.<p> <p><a href="http://localhost:3000/">Click</a> to join TripPlanner.<p>'
+                      join the TripPlanner.<p> <p><a href="'+str(app_base_url)+'">Click</a> to join TripPlanner.<p>'
             email = EmailMessage(subject, message, email_from, recipient_list)
             email.content_subtype = "html"
             email.send()
@@ -122,17 +123,20 @@ def inviteMember(request):
         else:
             groupName = body['groupName']
             group = Group.objects.filter(name=groupName)
-            memberInGroup = UserToGroup.objects.filter(group_id=group[0].id, user_id=user[0].id)
+            memberInGroup = UserToGroup.objects.filter(
+                group_id=group[0].id, user_id=user[0].id)
             if not memberInGroup:
-                invitetogroup = UserToGroup(group_id=group[0].id, user_id=user[0].id)
+                invitetogroup = UserToGroup(
+                    group_id=group[0].id, user_id=user[0].id)
                 invitetogroup.save()
 
                 subject = 'TripPlanner Invitation!!!'
                 message = 'Hi, <p>You have been invited into a new Group!<p> \
-                           <p><a href="http://localhost:3000/">login</a> to check it out.<p>'
-                email = EmailMessage(subject, message, email_from, recipient_list)
+                           <p><a href="'+str(app_base_url)+'">login</a> to check it out.<p>'
+                email = EmailMessage(
+                    subject, message, email_from, recipient_list)
                 email.content_subtype = "html"
-                email.send()    
+                email.send()
                 return HttpResponse("Invite existed user successfully.")
             else:
                 return HttpResponse("The member has already been in the group.")
