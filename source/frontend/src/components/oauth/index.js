@@ -1,6 +1,8 @@
 import axios from "axios";
 
-const authAPI = "http://localhost:8000/members/auth-user/";
+axios.defaults.baseURL = process.env.REACT_APP_ENVIRONMENT == "dev" ? 'http://localhost:8000' : 'https://backend.trippplanner.com';
+
+const authAPI = "/members/auth-user/";
 const clientId =
   "117123737084-rp4gfof0cf77kqjm65j69upudlefshsj.apps.googleusercontent.com";
 const cookiePolicy = "single_host_origin";

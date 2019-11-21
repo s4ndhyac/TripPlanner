@@ -55,7 +55,7 @@ class MembersPanel extends React.Component {
   }
 
   getGroupData = id => {
-    axios.get("http://localhost:8000/members/v1/usergroup/?group_id=" + id)
+    axios.get("/members/v1/usergroup/?group_id=" + id)
       .then(res => {
         const users = res.data;
         this.setState({
@@ -79,7 +79,7 @@ class MembersPanel extends React.Component {
     };
 
     const { itemId } = this.props;
-    axios.post("http://localhost:8000/members/inviteMember/", data)
+    axios.post("/members/inviteMember/", data)
       .then(res => {
         console.log(res);
         this.getGroupData(itemId);
@@ -102,7 +102,7 @@ class MembersPanel extends React.Component {
     console.log(this);
     const itemId = data.group.id;
     console.log(itemId);
-    axios.post("http://localhost:8000/members/deleteMember/", data)
+    axios.post("/members/deleteMember/", data)
       .then(res => {
         console.log(res);
         this.getGroupData(itemId);

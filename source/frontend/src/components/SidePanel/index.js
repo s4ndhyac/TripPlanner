@@ -28,11 +28,10 @@ import { openGroup, openItinerary } from "../../actions";
 import { axios } from "../oauth";
 
 const drawerWidth = "20rem";
-const baseURL = "http://localhost:8000/";
-const listGroupsByUser = "members/v1/usergroup/?user_id=";
-const listItinerariesByGroup = "itinerary/?group_id=";
-const groupAPI = "http://localhost:8000/members/addGroup/";
-const createItineraryAPI = "http://localhost:8000/itinerary/";
+const listGroupsByUser = "/members/v1/usergroup/?user_id=";
+const listItinerariesByGroup = "/itinerary/?group_id=";
+const groupAPI = "/members/addGroup/";
+const createItineraryAPI = "/itinerary/";
 
 const styles = theme => ({
   drawer: {
@@ -74,7 +73,7 @@ class SidePanel extends React.Component {
     axios.post(createItineraryAPI, itinerary)
       .then(function (response) {
         console.log(response);
-        axios.get(baseURL + listItinerariesByGroup + groupId).then(res => {
+        axios.get(listItinerariesByGroup + groupId).then(res => {
           const curr_itineraries = currentComponent.state.itineraries
           curr_itineraries[groupId] = res.data;
           console.log(curr_itineraries);
@@ -104,7 +103,7 @@ class SidePanel extends React.Component {
     axios.post(groupAPI, user)
       .then(function (response) {
         console.log(response);
-        axios.get(baseURL + listGroupsByUser + curUser.id).then(res => {
+        axios.get(listGroupsByUser + curUser.id).then(res => {
           const groups = res.data;
           currentComponent.setState({ groups: groups });
         });
@@ -133,7 +132,7 @@ class SidePanel extends React.Component {
 
   componentDidMount() {
     const { curUser } = this.props;
-    axios.get(baseURL + listGroupsByUser + curUser.id).then(res => {
+    axios.get(listGroupsByUser + curUser.id).then(res => {
       const groups = res.data;
       this.setState({ groups });
     });
@@ -141,7 +140,7 @@ class SidePanel extends React.Component {
 
   fetchItinerariesByGroup(groupId) {
     if (!(groupId in this.state.itineraries)) {
-      axios.get(baseURL + listItinerariesByGroup + groupId).then(res => {
+      axios.get(listItinerariesByGroup + groupId).then(res => {
         const curr_itineraries = this.state.itineraries;
         curr_itineraries[groupId] = res.data;
         console.log(curr_itineraries);

@@ -39,7 +39,7 @@ const styles = theme => ({
   }
 });
 
-const SEARCH_API = "http://localhost:8000/itinerary/search";
+const SEARCH_API = "/itinerary/search";
 
 class SearchPanel extends React.Component {
   state = {
@@ -158,11 +158,11 @@ class SearchPanel extends React.Component {
             <CircularProgress></CircularProgress>
           </center>
         ) : (
-          <SearchResultList
-            searchResults={searchResults}
-            handleAddOnClick={handleAddOnClick}
-          ></SearchResultList>
-        )}
+            <SearchResultList
+              searchResults={searchResults}
+              handleAddOnClick={handleAddOnClick}
+            ></SearchResultList>
+          )}
       </Paper>
     );
   }

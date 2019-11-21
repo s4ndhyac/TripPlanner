@@ -12,7 +12,7 @@ const styles = () => ({
   root: { flexGrow: 1 }
 });
 
-const ITINERARY_API = "http://localhost:8000/itinerary";
+const ITINERARY_API = "/itinerary";
 
 class ItineraryPanel extends React.Component {
   state = {
