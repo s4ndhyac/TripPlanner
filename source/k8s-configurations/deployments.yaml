@@ -27,119 +27,49 @@ spec:
 kind: Deployment
 apiVersion: extensions/v1beta1
 metadata: 
-  name: member-backend
+  name: backend
   namespace: default
   labels: 
-    run: member-backend
+    run: backend
 spec: 
   replicas: 1
   selector: 
     matchLabels: 
-      run: member-backend
+      run: backend
   template:
     metadata:
       labels:
-        run: member-backend
+        run: backend
     spec: 
       containers:
-        - name: member-backend
-          image: gcr.io/capstone-project-team2/member-backend:v1
+        - name: backend
+          image: gcr.io/capstone-project-team2/backend:v1
           ports:
-            - containerPort: 5000
+            - containerPort: 8000
               protocol: TCP
-          env:
-            - name: DATABASE_URL
-              value: "postgresql://postgres@member-database:5432/member"
 
 ---
 
 kind: Deployment
 apiVersion: extensions/v1beta1
 metadata: 
-  name: itinerary-backend
+  name: database
   namespace: default
   labels: 
-    run: itinerary-backend
+    run: database
 spec: 
   replicas: 1
   selector: 
     matchLabels: 
-      run: itinerary-backend
-  template:
-    metadata:
-      labels:
-        run: itinerary-backend
-    spec: 
-      containers:
-        - name: itinerary-backend
-          image: gcr.io/capstone-project-team2/itinerary-backend:v1
-          ports:
-            - containerPort: 4000
-              protocol: TCP
-          env:
-            - name: ENV
-              value: "development"
-            - name: PORT
-              value: "4000"
-            - name: DB
-              value: "mongodb://itinerary-database:27017/itinerary"
-
----
-
-kind: Deployment
-apiVersion: extensions/v1beta1
-metadata: 
-  name: member-database
-  namespace: default
-  labels: 
-    run: member-database
-spec: 
-  replicas: 1
-  selector: 
-    matchLabels: 
-      run: member-database
+      run: database
   template: 
     metadata: 
       labels: 
-        run: member-database
+        run: database
     spec: 
       containers: 
-        - name: member-database
-          image: gcr.io/capstone-project-team2/member-database:v1
+        - name: database
+          image: gcr.io/capstone-project-team2/database:v1
           ports: 
             - containerPort: 5432
               protocol: TCP
-
-
----
-
-kind: Deployment
-apiVersion: extensions/v1beta1
-metadata: 
-  name: itinerary-database
-  namespace: default
-  labels: 
-    run: itinerary-database
-spec: 
-  replicas: 1
-  selector: 
-    matchLabels: 
-      run: itinerary-database
-  template: 
-    metadata: 
-      labels: 
-        run: itinerary-database
-    spec: 
-      containers: 
-        - name: itinerary-database
-          image: gcr.io/capstone-project-team2/itinerary-database:v1
-          ports: 
-            - containerPort: 27017
-              protocol: TCP
-          env:
-            - name: MONGO_DATA_DIR
-              value: "/usr/data/db"
-            - name: MONGO_LOG_DIR
-              value: "/dev/null"
-
-#TODO: Attach volumes to mongodb and postgres to make persistent
