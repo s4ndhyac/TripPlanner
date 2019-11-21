@@ -1,6 +1,5 @@
 import json
 import logging
-import os
 
 import requests
 from django.contrib.auth import logout as auth_logout
@@ -12,6 +11,7 @@ from rest_framework import viewsets
 from social_django.models import UserSocialAuth
 from django.core.mail import EmailMessage
 from django.conf import settings
+
 from .models import Group, User, UserToGroup
 from .serializers import GroupSerializer, UserSerializer, UserToGroupSerializer
 
