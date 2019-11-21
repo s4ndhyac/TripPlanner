@@ -6,14 +6,14 @@ import ItineraryPanel from "../ItineraryPanel";
 
 class MainPanel extends React.Component {
   render() {
-    const { panel, itemId } = this.props;
+    const { panel, itemId, curUser } = this.props;
 
     return (
       <Box style={{ width: "100%", marginTop: "2rem", height: "82vh" }}>
         {panel === "itinerary" ? (
           <ItineraryPanel itemId={itemId}></ItineraryPanel>
         ) : (
-          <MembersPanel itemId={itemId}></MembersPanel>
+          <MembersPanel itemId={itemId} curUser={curUser}></MembersPanel>
         )}
       </Box>
     );

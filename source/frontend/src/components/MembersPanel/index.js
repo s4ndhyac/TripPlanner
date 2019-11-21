@@ -168,9 +168,11 @@ class MembersPanel extends React.Component {
                     </TableCell>
                     <TableCell>{row.user.email}</TableCell>
                     <TableCell>
+                      {this.props.curUser.id == row.user.id ? (
                       <Button size="small" variant="outlined" color="secondary" onClick={this.deleteMember(row)}>
                         Remove
-                      </Button>
+                      </Button> 
+                      ) : null}
                     </TableCell>
                   </TableRow>
                 ))}
