@@ -37,7 +37,7 @@ class Dashboard extends React.Component {
       <br /><br />
       Add the places you want to visit and the dates on which you want to visit them
       <br /><br />
-      Now Click on Generate and sit back and watch the magic happen!
+      Finally, Click on Generate and sit back and watch the magic happen!
     </p >
 
     );

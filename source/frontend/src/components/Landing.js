@@ -141,7 +141,7 @@ export default function Landing() {
                     Collaboratively Edit
                   </Typography>
                   <Typography>
-                    No time wasted in reaching a consensus, zero compromise and confusion
+                    No time wasted in reaching a consensus, zero compromise, zero confusion
                   </Typography>
                 </CardContent>
               </Card>
