@@ -86,7 +86,9 @@ MIDDLEWARE = [
 
 
 CORS_ORIGIN_WHITELIST = [
-    'http://localhost:3000'
+    'http://localhost:3000',
+    'https://frontend.trippplanner.com',
+    'http://frontend.trippplanner.com',
 ]
 
 ROOT_URLCONF = 'tripplanner.urls'
@@ -175,7 +177,7 @@ REST_FRAMEWORK = {
 
 }
 
-# # SMTP setting 
+# # SMTP setting
 EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
 EMAIL_HOST = 'smtp.gmail.com'
 EMAIL_USE_TLS = True
