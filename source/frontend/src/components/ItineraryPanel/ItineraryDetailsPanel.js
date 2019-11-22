@@ -6,18 +6,15 @@ import {
   Typography,
   IconButton,
   Button,
-  Divider,
   List,
   ListItem,
   ListItemText,
   ListItemIcon,
   ListItemSecondaryAction,
-  ListSubheader,
   Badge,
   Tooltip,
   CircularProgress,
   Checkbox,
-  AppBar,
   Tab,
   Box,
   Tabs
@@ -83,14 +80,14 @@ class ItineraryDetailsPanel extends React.Component {
         <br />
         Step 1: Use the search bar to find attractions!
         <br />
-        Step 2: Add attractions to the itinerary.
+        Step 2: Select a date and add attractions to the itinerary.
         <br />
         Step 3: Mark an attraction as the starting point for your plan of that
         date (could be a hotel)!
         <br />
-        Step 4: Click "Generate" button to generate an optimized itinerary!
+        Step 4: Click the "Generate" button to generate an optimized itinerary!
         <br />
-        Step 5: Click "Save" button to save your itinerary.
+        Step 5: Click the "Save" button to save your itinerary.
       </Typography>
     );
   };

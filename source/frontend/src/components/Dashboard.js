@@ -23,9 +23,23 @@ const styles = theme => ({
 
 class Dashboard extends React.Component {
   infoText = currentUser => {
-    return (
-      `Welcome to your dashboard, ${currentUser.first_name}! ` +
-      "Please create a group and add an itinerary, or select an existing group to start."
+    return (<p>
+      Welcome to your dashboard, {currentUser.first_name}!
+      <br /><br />
+      With TripPlanner now collaboratively and seemlessly plan your next group trip.
+      Planning a trip with friends was never easier!
+      <br /><br />
+      You can create a group
+      <br /><br />
+      Invite other users to join your group
+      <br /><br />
+      Create an itinerary
+      <br /><br />
+      Add the places you want to visit and the dates on which you want to visit them
+      <br /><br />
+      Finally, Click on Generate and sit back and watch the magic happen!
+    </p >
+
     );
   };
 
@@ -43,13 +57,13 @@ class Dashboard extends React.Component {
             {this.infoText(currentUser)}
           </Typography>
         ) : (
-          <MainPanel
-            panel={panel}
-            itemId={id}
-            curUser={currentUser}
-            className={classes.content}
-          ></MainPanel>
-        )}
+            <MainPanel
+              panel={panel}
+              itemId={id}
+              curUser={currentUser}
+              className={classes.content}
+            ></MainPanel>
+          )}
       </Container>
     );
   }

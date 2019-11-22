@@ -17,6 +17,7 @@ from django.contrib import admin
 from django.urls import path, include
 from django.conf import settings
 from django.contrib.auth import logout
+from django.conf.urls import url
 
 
 urlpatterns = [
@@ -24,4 +25,5 @@ urlpatterns = [
     path('members/', include('member_service.urls')),
     path('itinerary/', include('itinerary_service.urls')),
     path('admin/', admin.site.urls),
+    url(r'^', include('health_check.urls'))
 ]

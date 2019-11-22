@@ -109,17 +109,17 @@ def inviteMember(request):
         email_from = settings.EMAIL_HOST_USER
         recipient_list = [body['email']]
 
-        # chekc if the email were registered or not
+        # check if the email were registered or not
         user = User.objects.filter(email=body['email'])
 
         if not user:
             subject = 'TripPlanner Invitation!!!'
             message = 'Hi, <p>Here is an invitation from your friend , to \
-                      join the TripPlanner.<p> <p><a href="'+str(app_base_url)+'">Click</a> to join TripPlanner.<p>'
+                      join the TripPlanner App.<p> <p><a href="'+str(app_base_url)+'">Click</a> to join TripPlanner.<p>'
             email = EmailMessage(subject, message, email_from, recipient_list)
             email.content_subtype = "html"
             email.send()
-            return HttpResponse("This email address hasn't been registered yet. An register invitation has been sent.")
+            return HttpResponse("This email address hasn't been registered yet. A register invitation has been sent. User not added to group.")
         else:
             groupName = body['groupName']
             group = Group.objects.filter(name=groupName)
@@ -137,9 +137,9 @@ def inviteMember(request):
                     subject, message, email_from, recipient_list)
                 email.content_subtype = "html"
                 email.send()
-                return HttpResponse("Invite existed user successfully.")
+                return HttpResponse("Registered user added to group successfully.")
             else:
-                return HttpResponse("The member has already been in the group.")
+                return HttpResponse("The user is already present in the group.")
 
     except Exception as e:
         logger.error(e)
