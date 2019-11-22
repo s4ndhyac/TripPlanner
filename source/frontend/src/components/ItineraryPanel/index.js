@@ -1,5 +1,5 @@
 import React from "react";
-import { Grid, Box } from "@material-ui/core";
+import { Box } from "@material-ui/core";
 import { withStyles } from "@material-ui/core/styles";
 import SearchPanel from "./SearchPanel";
 import ItineraryDetailsPanel from "./ItineraryDetailsPanel";
@@ -22,7 +22,8 @@ class ItineraryPanel extends React.Component {
     group: null,
     snackbarOpen: false,
     optimizedSnackbarOpen: false,
-    loading: false
+    loading: false,
+    searchPanelOpen: false
   };
 
   componentWillMount() {
@@ -133,33 +134,42 @@ class ItineraryPanel extends React.Component {
     });
   };
 
+  toggleSearchPanel = open => event => {
+    if (
+      event.type === "keydown" &&
+      (event.key === "Tab" || event.key === "Shift")
+    ) {
+      return;
+    }
+    this.setState({ searchPanelOpen: open });
+  };
+
   render() {
-    const { classes } = this.props;
     const {
       name,
       plan,
       snackbarOpen,
       optimizedSnackbarOpen,
-      loading
+      loading,
+      searchPanelOpen
     } = this.state;
     return (
       <Box>
-        <Grid container spacing={3} className={classes.root}>
-          <Grid item xs={5}>
-            <ItineraryDetailsPanel
-              name={name}
-              plan={plan}
-              handleCheckboxOnClick={this.handleCheckboxOnClick}
-              handleDeleteOnClick={this.handleDeleteOnClick}
-              handleSaveOnClick={this.handleSaveOnClick}
-              handleGenerateOnClick={this.handleGenerateOnClick}
-              loading={loading}
-            ></ItineraryDetailsPanel>
-          </Grid>
-          <Grid item xs={7}>
-            <SearchPanel handleAddOnClick={this.handleAddOnClick}></SearchPanel>
-          </Grid>
-        </Grid>
+        <ItineraryDetailsPanel
+          name={name}
+          plan={plan}
+          toggle={this.toggleSearchPanel}
+          handleCheckboxOnClick={this.handleCheckboxOnClick}
+          handleDeleteOnClick={this.handleDeleteOnClick}
+          handleSaveOnClick={this.handleSaveOnClick}
+          handleGenerateOnClick={this.handleGenerateOnClick}
+          loading={loading}
+        ></ItineraryDetailsPanel>
+        <SearchPanel
+          open={searchPanelOpen}
+          handleAddOnClick={this.handleAddOnClick}
+          toggle={this.toggleSearchPanel}
+        ></SearchPanel>
         <SaveSnackbar
           open={snackbarOpen}
           handleCloseOnClick={this.closeSnackbar}

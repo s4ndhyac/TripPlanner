@@ -56,8 +56,8 @@ class SearchResultList extends React.Component {
               {photo ? (
                 <img src={photo} style={{ width: "10rem" }} alt="img"></img>
               ) : (
-                  <span hidden></span>
-                )}
+                <span hidden></span>
+              )}
             </React.Fragment>
           }
         />
@@ -78,24 +78,24 @@ class SearchResultList extends React.Component {
 
   render() {
     return (
-      <List style={{ overflow: "auto", maxHeight: "60vh" }}>
+      <List style={{ overflow: "auto", maxHeight: "80vh" }}>
         {this.props.searchResults.map(place =>
           this.isFromGoogleMaps(place)
             ? this.generateListItem(
-              place.result.id,
-              place.result.url,
-              place.result.name,
-              place.result.formatted_address,
-              place.result.rating
-            )
+                place.result.id,
+                place.result.url,
+                place.result.name,
+                place.result.formatted_address,
+                place.result.rating
+              )
             : this.generateListItem(
-              place.id,
-              place.url,
-              place.name,
-              place.location.display_address.join(", "),
-              place.rating,
-              place.image_url
-            )
+                place.id,
+                place.url,
+                place.name,
+                place.location.display_address.join(", "),
+                place.rating,
+                place.image_url
+              )
         )}
       </List>
     );

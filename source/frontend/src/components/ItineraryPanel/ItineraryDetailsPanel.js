@@ -1,4 +1,5 @@
 import React from "react";
+import PropTypes from "prop-types";
 import {
   Grid,
   Paper,
@@ -15,7 +16,11 @@ import {
   Badge,
   Tooltip,
   CircularProgress,
-  Checkbox
+  Checkbox,
+  AppBar,
+  Tab,
+  Box,
+  Tabs
 } from "@material-ui/core";
 import Rating from "@material-ui/lab/Rating";
 import { withStyles } from "@material-ui/core/styles";
@@ -25,8 +30,32 @@ import FlagIcon from "@material-ui/icons/Flag";
 import DoneIcon from "@material-ui/icons/Done";
 import PlaceIcon from "@material-ui/icons/Place";
 import DeleteOutlineIcon from "@material-ui/icons/DeleteOutline";
+import SearchOutlined from "@material-ui/icons/SearchOutlined";
 
 import { stringToDate } from "../../utils";
+
+function TabPanel(props) {
+  const { children, value, index, ...other } = props;
+
+  return (
+    <Typography
+      component="div"
+      role="tabpanel"
+      hidden={value !== index}
+      id={`simple-tabpanel-${index}`}
+      aria-labelledby={`simple-tab-${index}`}
+      {...other}
+    >
+      <Box p={3}>{children}</Box>
+    </Typography>
+  );
+}
+
+TabPanel.propTypes = {
+  children: PropTypes.node,
+  index: PropTypes.any.isRequired,
+  value: PropTypes.any.isRequired
+};
 
 const styles = theme => ({
   paper: {
@@ -36,6 +65,12 @@ const styles = theme => ({
 });
 
 class ItineraryDetailsPanel extends React.Component {
+  state = {
+    value: 0
+  };
+
+  handleChange = (_, newValue) => this.setState({ value: newValue });
+
   emptyPlanTip = () => {
     return (
       <Typography
@@ -133,27 +168,21 @@ class ItineraryDetailsPanel extends React.Component {
     );
   };
 
-  renderItinerary = plan => {
-    return plan.list === undefined || (plan.list && plan.list.length === 0) ? (
-      this.emptyPlanTip()
-    ) : (
-      <List style={{ overflow: "auto", maxHeight: "70vh" }}>
-        {plan.list.map((planForDay, index) => {
+  _emptyPlan = plan =>
+    plan.list === undefined || (plan.list && plan.list.length === 0);
+
+  renderItinerary = (plan, value) => {
+    return this._emptyPlan(plan)
+      ? this.emptyPlanTip()
+      : plan.list.map((p, i) => {
           return (
-            <div>
-              <ListSubheader
-                component="div"
-                id="nested-list-subheader"
-                disableSticky={true}
-              >
-                {stringToDate(planForDay.date).toDateString()}
-              </ListSubheader>
-              {planForDay.sequence.map(this.getListItem, index)}
-            </div>
+            <TabPanel value={value} index={i}>
+              <List style={{ overflow: "auto", maxHeight: "60vh" }}>
+                {p.sequence.map(this.getListItem, i)}
+              </List>
+            </TabPanel>
           );
-        })}
-      </List>
-    );
+        });
   };
 
   render() {
@@ -163,8 +192,10 @@ class ItineraryDetailsPanel extends React.Component {
       plan,
       handleSaveOnClick,
       handleGenerateOnClick,
-      loading
+      loading,
+      toggle
     } = this.props;
+    const { value } = this.state;
     return (
       <Paper className={classes.paper}>
         <Grid
@@ -179,7 +210,7 @@ class ItineraryDetailsPanel extends React.Component {
           </Grid>
           <Grid item xs={5}>
             <Grid container alignItems="center" justify="space-between">
-              <Grid item xs={9}>
+              <Grid item xs={8}>
                 <Tooltip title="Generate optimized itinerary">
                   <Button
                     color="primary"
@@ -191,10 +222,17 @@ class ItineraryDetailsPanel extends React.Component {
                   </Button>
                 </Tooltip>
               </Grid>
-              <Grid item xs={3}>
+              <Grid item xs={2}>
                 <Tooltip title="Save to Database">
                   <IconButton onClick={handleSaveOnClick}>
                     <DoneIcon />
+                  </IconButton>
+                </Tooltip>
+              </Grid>
+              <Grid item xs={2}>
+                <Tooltip title="Open search panel">
+                  <IconButton onClick={toggle(true)}>
+                    <SearchOutlined />
                   </IconButton>
                 </Tooltip>
               </Grid>
@@ -202,13 +240,23 @@ class ItineraryDetailsPanel extends React.Component {
           </Grid>
         </Grid>
         <br />
-        <Divider></Divider>
         {loading ? (
           <center style={{ paddingTop: "10vh" }}>
             <CircularProgress></CircularProgress>
           </center>
         ) : (
-          this.renderItinerary(plan)
+          <div>
+            <Paper position="static" square>
+              <Tabs value={value} onChange={this.handleChange}>
+                {this._emptyPlan(plan)
+                  ? <p></p>
+                  : plan.list.map(p => (
+                      <Tab label={stringToDate(p.date).toDateString()} />
+                    ))}
+              </Tabs>
+            </Paper>
+            {this.renderItinerary(plan, value)}
+          </div>
         )}
       </Paper>
     );
