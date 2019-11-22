@@ -1,6 +1,6 @@
 import axios from "axios";
 
-axios.defaults.baseURL = (process.env.REACT_APP_ENVIRONMENT && process.env.REACT_APP_ENVIRONMENT == "prod") ? 'https://backend.trippplanner.com' : 'http://localhost:8000';
+// axios.defaults.baseURL = (process.env.REACT_APP_ENVIRONMENT && process.env.REACT_APP_ENVIRONMENT == "prod") ? 'https://backend.trippplanner.com' : 'http://localhost:8000';
 
 const authAPI = "/members/auth-user/";
 const clientId =
