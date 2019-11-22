@@ -96,26 +96,6 @@ class SearchPanel extends React.Component {
             <Grid item xs={8}>
               <Typography variant="h5">Search Attractions</Typography>
             </Grid>
-            <Grid item xs={4}>
-              <form className={classes.container} noValidate>
-                <TextField
-                  id="travel-date"
-                  type="date"
-                  label="Date of Travel"
-                  className={classes.textField}
-                  InputLabelProps={{ shrink: true }}
-                  fullWidth={true}
-                  onChange={this.handleDateChange}
-                  InputProps={{
-                    startAdornment: (
-                      <InputAdornment position="start">
-                        <TodayIcon />
-                      </InputAdornment>
-                    )
-                  }}
-                />
-              </form>
-            </Grid>
           </Grid>
           <br />
           <Divider></Divider>
@@ -182,11 +162,11 @@ class SearchPanel extends React.Component {
               <CircularProgress></CircularProgress>
             </center>
           ) : (
-            <SearchResultList
-              searchResults={searchResults}
-              handleAddOnClick={handleAddOnClick}
-            ></SearchResultList>
-          )}
+              <SearchResultList
+                searchResults={searchResults}
+                handleAddOnClick={handleAddOnClick}
+              ></SearchResultList>
+            )}
         </div>
       </Drawer>
     );

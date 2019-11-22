@@ -17,7 +17,8 @@ import {
   Checkbox,
   Tab,
   Box,
-  Tabs
+  Tabs,
+  TextField
 } from "@material-ui/core";
 import Rating from "@material-ui/lab/Rating";
 import { withStyles } from "@material-ui/core/styles";
@@ -28,6 +29,8 @@ import DoneIcon from "@material-ui/icons/Done";
 import PlaceIcon from "@material-ui/icons/Place";
 import DeleteOutlineIcon from "@material-ui/icons/DeleteOutline";
 import SearchOutlined from "@material-ui/icons/SearchOutlined";
+import InputAdornment from "@material-ui/core/InputAdornment";
+import TodayIcon from "@material-ui/icons/Today";
 
 import { stringToDate } from "../../utils";
 
@@ -172,14 +175,14 @@ class ItineraryDetailsPanel extends React.Component {
     return this._emptyPlan(plan)
       ? this.emptyPlanTip()
       : plan.list.map((p, i) => {
-          return (
-            <TabPanel value={value} index={i}>
-              <List style={{ overflow: "auto", maxHeight: "60vh" }}>
-                {p.sequence.map(this.getListItem, i)}
-              </List>
-            </TabPanel>
-          );
-        });
+        return (
+          <TabPanel value={value} index={i}>
+            <List style={{ overflow: "auto", maxHeight: "60vh" }}>
+              {p.sequence.map(this.getListItem, i)}
+            </List>
+          </TabPanel>
+        );
+      });
   };
 
   render() {
@@ -199,15 +202,34 @@ class ItineraryDetailsPanel extends React.Component {
           container
           direction="row"
           justify="space-between"
-          alignItems="center"
-          spacing={6}
+          alignItems="flex-end"
         >
-          <Grid item xs={7}>
+          <Grid item xs={5}>
             <Typography variant="h5">{name}</Typography>
           </Grid>
-          <Grid item xs={5}>
-            <Grid container alignItems="center" justify="space-between">
-              <Grid item xs={8}>
+          <Grid item xs={7}>
+            <Grid container direction="row" alignItems="flex-end" justify="space-between">
+              <Grid item xs={4}>
+                <form className={classes.container} noValidate>
+                  <TextField
+                    id="travel-date"
+                    type="date"
+                    label="Date of Travel"
+                    className={classes.textField}
+                    InputLabelProps={{ shrink: true }}
+                    fullWidth={true}
+                    onChange={this.handleDateChange}
+                    InputProps={{
+                      startAdornment: (
+                        <InputAdornment position="start">
+                          <TodayIcon />
+                        </InputAdornment>
+                      )
+                    }}
+                  />
+                </form>
+              </Grid>
+              <Grid item xs={2}>
                 <Tooltip title="Generate optimized itinerary">
                   <Button
                     color="primary"
@@ -242,19 +264,19 @@ class ItineraryDetailsPanel extends React.Component {
             <CircularProgress></CircularProgress>
           </center>
         ) : (
-          <div>
-            <Paper position="static" square>
-              <Tabs value={value} onChange={this.handleChange}>
-                {this._emptyPlan(plan)
-                  ? <p></p>
-                  : plan.list.map(p => (
+            <div>
+              <Paper position="static" square>
+                <Tabs value={value} onChange={this.handleChange}>
+                  {this._emptyPlan(plan)
+                    ? <p></p>
+                    : plan.list.map(p => (
                       <Tab label={stringToDate(p.date).toDateString()} />
                     ))}
-              </Tabs>
-            </Paper>
-            {this.renderItinerary(plan, value)}
-          </div>
-        )}
+                </Tabs>
+              </Paper>
+              {this.renderItinerary(plan, value)}
+            </div>
+          )}
       </Paper>
     );
   }
