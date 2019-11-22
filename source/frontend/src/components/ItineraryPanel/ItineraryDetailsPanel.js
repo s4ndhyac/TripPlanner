@@ -20,6 +20,7 @@ import {
 import Rating from "@material-ui/lab/Rating";
 import { withStyles } from "@material-ui/core/styles";
 import FlagOutlinedIcon from "@material-ui/icons/FlagOutlined";
+import DirectionsIcon from "@material-ui/icons/Directions";
 import FlagIcon from "@material-ui/icons/Flag";
 import DoneIcon from "@material-ui/icons/Done";
 import PlaceIcon from "@material-ui/icons/Place";
@@ -112,19 +113,21 @@ class ItineraryDetailsPanel extends React.Component {
               checked={isStart || false}
               onChange={handleCheckboxOnClick(reactId, datetime)}
               style={{ marginLeft: "0.2rem" }}
-              icon={<FlagOutlinedIcon />}
-              checkedIcon={<FlagIcon />}
+              icon={<FlagOutlinedIcon fontSize="small" />}
+              checkedIcon={<FlagIcon fontSize="small" />}
               color="primary"
             />
           </Tooltip>
           <br />
-          <IconButton
-            color="secondary"
-            aria-label="add"
-            onClick={handleDeleteOnClick(reactId, datetime)}
-          >
-            <DeleteOutlineIcon />
-          </IconButton>
+          <Tooltip title="Delete attraction">
+            <IconButton
+              color="secondary"
+              aria-label="add"
+              onClick={handleDeleteOnClick(reactId, datetime)}
+            >
+              <DeleteOutlineIcon fontSize="small" />
+            </IconButton>
+          </Tooltip>
         </ListItemSecondaryAction>
       </ListItem>
     );
@@ -167,7 +170,7 @@ class ItineraryDetailsPanel extends React.Component {
         <Grid
           container
           direction="row"
-          justify="center"
+          justify="space-between"
           alignItems="center"
           spacing={6}
         >
@@ -175,16 +178,27 @@ class ItineraryDetailsPanel extends React.Component {
             <Typography variant="h5">{name}</Typography>
           </Grid>
           <Grid item xs={5}>
-            <Tooltip title="Generate optimized itinerary">
-              <Button color="primary" onClick={handleGenerateOnClick}>
-                Generate
-              </Button>
-            </Tooltip>
-            <Tooltip title="Save to Database">
-              <IconButton onClick={handleSaveOnClick}>
-                <DoneIcon />
-              </IconButton>
-            </Tooltip>
+            <Grid container alignItems="center" justify="space-between">
+              <Grid item xs={9}>
+                <Tooltip title="Generate optimized itinerary">
+                  <Button
+                    color="primary"
+                    onClick={handleGenerateOnClick}
+                    fullWidth={true}
+                    startIcon={<DirectionsIcon />}
+                  >
+                    Generate
+                  </Button>
+                </Tooltip>
+              </Grid>
+              <Grid item xs={3}>
+                <Tooltip title="Save to Database">
+                  <IconButton onClick={handleSaveOnClick}>
+                    <DoneIcon />
+                  </IconButton>
+                </Tooltip>
+              </Grid>
+            </Grid>
           </Grid>
         </Grid>
         <br />

@@ -1,6 +1,5 @@
 import React from "react";
 import TextField from "@material-ui/core/TextField";
-import Button from "@material-ui/core/Button";
 import { axios } from "../oauth";
 import { withStyles } from "@material-ui/core/styles";
 import {
@@ -8,8 +7,13 @@ import {
   Grid,
   Divider,
   Paper,
-  CircularProgress
+  CircularProgress,
+  IconButton
 } from "@material-ui/core";
+import InputAdornment from "@material-ui/core/InputAdornment";
+import TodayIcon from "@material-ui/icons/Today";
+import BusinessIcon from "@material-ui/icons/Business";
+import LocationOnIcon from "@material-ui/icons/LocationOn";
 import SearchResultList from "./SearchResultList";
 import SearchIcon from "@material-ui/icons/Search";
 
@@ -20,17 +24,10 @@ const styles = theme => ({
   },
   textField: {
     marginLeft: theme.spacing(1),
-    marginRight: theme.spacing(1),
-    width: 150
-  },
-  searchField: {
-    marginLeft: theme.spacing(1),
-    marginRight: theme.spacing(1),
-    width: 197
+    marginRight: theme.spacing(1)
   },
   formControl: {
     margin: theme.spacing(1),
-    minWidth: 120,
     paddingTop: "0.5rem"
   },
   paper: {
@@ -92,8 +89,8 @@ class SearchPanel extends React.Component {
           item
           xs={12}
           direction="row"
-          justify="center"
           alignItems="center"
+          justify="space-between"
         >
           <Grid item xs={8}>
             <Typography variant="h5">Search Attractions</Typography>
@@ -106,7 +103,15 @@ class SearchPanel extends React.Component {
                 label="Date of Travel"
                 className={classes.textField}
                 InputLabelProps={{ shrink: true }}
+                fullWidth={true}
                 onChange={this.handleDateChange}
+                InputProps={{
+                  startAdornment: (
+                    <InputAdornment position="start">
+                      <TodayIcon />
+                    </InputAdornment>
+                  )
+                }}
               />
             </form>
           </Grid>
@@ -118,36 +123,54 @@ class SearchPanel extends React.Component {
             container
             spacing={2}
             direction="row"
-            justify="center"
+            justify="space-between"
             alignItems="center"
           >
-            <Grid item xs={9}>
+            <Grid item xs={6}>
               <TextField
                 label="Place name"
                 margin="normal"
                 variant="outlined"
                 onChange={this.handleInputChange}
-                className={classes.searchField}
+                className={classes.textField}
+                fullWidth={true}
+                placeholder="e.g. Disneyland"
+                InputProps={{
+                  startAdornment: (
+                    <InputAdornment position="start">
+                      <BusinessIcon />
+                    </InputAdornment>
+                  )
+                }}
               />
+            </Grid>
+            <Grid item xs={5}>
               <TextField
                 label="Location"
                 margin="normal"
                 variant="outlined"
                 onChange={this.handleLocationChange}
-                className={classes.searchField}
+                className={classes.textField}
+                fullWidth={true}
+                placeholder="Irvine, CA"
+                InputProps={{
+                  startAdornment: (
+                    <InputAdornment position="start">
+                      <LocationOnIcon />
+                    </InputAdornment>
+                  )
+                }}
               />
             </Grid>
-            <Grid item xs={3}>
-              <Button
-                size="medium"
+            <Grid item xs={1}>
+              <IconButton
                 type="submit"
-                variant="contained"
                 color="primary"
-                startIcon={<SearchIcon />}
-                style={{ marginTop: "1.1rem" }}
+                fullWidth={true}
+                style={{ marginTop: "1rem" }}
               >
-                Search
-              </Button>
+                <SearchIcon />
+              </IconButton>
             </Grid>
           </Grid>
         </form>
@@ -158,11 +181,11 @@ class SearchPanel extends React.Component {
             <CircularProgress></CircularProgress>
           </center>
         ) : (
-            <SearchResultList
-              searchResults={searchResults}
-              handleAddOnClick={handleAddOnClick}
-            ></SearchResultList>
-          )}
+          <SearchResultList
+            searchResults={searchResults}
+            handleAddOnClick={handleAddOnClick}
+          ></SearchResultList>
+        )}
       </Paper>
     );
   }
