@@ -14,10 +14,13 @@ import {
   ListSubheader,
   Badge,
   Tooltip,
-  CircularProgress
+  CircularProgress,
+  Checkbox
 } from "@material-ui/core";
 import Rating from "@material-ui/lab/Rating";
 import { withStyles } from "@material-ui/core/styles";
+import FlagOutlinedIcon from "@material-ui/icons/FlagOutlined";
+import FlagIcon from "@material-ui/icons/Flag";
 import DoneIcon from "@material-ui/icons/Done";
 import PlaceIcon from "@material-ui/icons/Place";
 import DeleteOutlineIcon from "@material-ui/icons/DeleteOutline";
@@ -48,8 +51,16 @@ class ItineraryDetailsPanel extends React.Component {
   };
 
   getListItem = (attraction, index) => {
-    const { classes, handleDeleteOnClick } = this.props;
-    const { name, address, datetime, reactId, rating, url } = attraction;
+    const { classes, handleDeleteOnClick, handleCheckboxOnClick } = this.props;
+    const {
+      name,
+      address,
+      datetime,
+      reactId,
+      rating,
+      url,
+      isStart
+    } = attraction;
     return (
       <ListItem
         key={attraction.name + reactId}
@@ -87,6 +98,17 @@ class ItineraryDetailsPanel extends React.Component {
           }
         />
         <ListItemSecondaryAction>
+          <Tooltip title="Mark as Start (Only one start is allowed)">
+            <Checkbox
+              checked={isStart || false}
+              onChange={handleCheckboxOnClick(reactId, datetime)}
+              style={{ marginLeft: "0.2rem" }}
+              icon={<FlagOutlinedIcon />}
+              checkedIcon={<FlagIcon />}
+              color="primary"
+            />
+          </Tooltip>
+          <br />
           <IconButton
             color="secondary"
             aria-label="add"

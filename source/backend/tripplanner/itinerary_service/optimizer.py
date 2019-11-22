@@ -8,7 +8,7 @@ from ortools.constraint_solver import pywrapcp, routing_enums_pb2
 client = googlemaps.Client(key=os.getenv('GOOGLE_API_KEY', ''))
 
 
-def build_plain_matrix(json_matrix):
+def __build_plain_matrix(json_matrix):
     size = len(json_matrix['destination_addresses'])
     matrix = [[0] * size for _ in range(size)]
     for i, row in enumerate(json_matrix['rows']):
@@ -20,15 +20,15 @@ def build_plain_matrix(json_matrix):
     return matrix
 
 
-def create_data_model(json_matrix, depot):
+def __create_data_model(json_matrix, depot):
     return {
-        'distance_matrix':  build_plain_matrix(json_matrix),
+        'distance_matrix':  __build_plain_matrix(json_matrix),
         'num_vehicles': 1,
         'depot': depot
     }
 
 
-def build_solution(manager, routing, assignment):
+def __build_solution(manager, routing, assignment):
     plan_output = 'Optimized Route:'
     route_distance, index = 0, routing.Start(0)
     route = []
@@ -41,8 +41,8 @@ def build_solution(manager, routing, assignment):
     return route, plan_output
 
 
-def solve_tsp(json_matrix, depot=0):
-    data = create_data_model(json_matrix, depot)
+def __solve_tsp(json_matrix, depot=0):
+    data = __create_data_model(json_matrix, depot)
     manager = pywrapcp.RoutingIndexManager(len(data['distance_matrix']),
                                            data['num_vehicles'], data['depot'])
     routing = pywrapcp.RoutingModel(manager)
@@ -63,13 +63,20 @@ def solve_tsp(json_matrix, depot=0):
         routing_enums_pb2.FirstSolutionStrategy.PATH_CHEAPEST_ARC)
 
     assignment = routing.SolveWithParameters(search_parameters)
-    return build_solution(manager, routing, assignment) if assignment else []
+    return __build_solution(manager, routing, assignment) if assignment else []
+
+
+def __find_depot(sequence):
+    depot = [i for i, item in enumerate(
+        sequence) if 'isStart' in item and item['isStart']]
+    return depot[0] if len(depot) > 0 else 0
 
 
 def sort_sequence(sequence):
     places = [item['address'] for item in sequence]
     json_matrix = client.distance_matrix(places, places, mode='driving')
-    route, text_sequence = solve_tsp(json_matrix)
+    route, text_sequence = __solve_tsp(
+        json_matrix, depot=__find_depot(sequence))
     optimized_sequence = [sequence[i] for i in route]
     print(text_sequence)
     return optimized_sequence

@@ -22,6 +22,13 @@ const styles = theme => ({
 });
 
 class Dashboard extends React.Component {
+  infoText = currentUser => {
+    return (
+      `Welcome to your dashboard, ${currentUser.first_name}! ` +
+      "Please create a group and add an itinerary, or select an existing group to start."
+    );
+  };
+
   render() {
     const { classes, panel, currentUser, isCollapsed } = this.props;
     const { id } = this.props.match.params;
@@ -30,14 +37,19 @@ class Dashboard extends React.Component {
     }
     return (
       <Container maxWidth="xl" className={classes.root}>
-        {!!!isCollapsed ? (<SidePanel curUser={currentUser}></SidePanel>) : ('')}
+        {!!!isCollapsed ? <SidePanel curUser={currentUser}></SidePanel> : ""}
         {panel === undefined ? (
           <Typography variant="h4" style={{ paddingTop: "2rem" }}>
-            Welcome to your dashboard, {currentUser.first_name}!
+            {this.infoText(currentUser)}
           </Typography>
         ) : (
-            <MainPanel panel={panel} itemId={id} curUser={currentUser} className={classes.content}></MainPanel>
-          )}
+          <MainPanel
+            panel={panel}
+            itemId={id}
+            curUser={currentUser}
+            className={classes.content}
+          ></MainPanel>
+        )}
       </Container>
     );
   }
@@ -46,14 +58,11 @@ class Dashboard extends React.Component {
 const mapStateToProps = state => ({
   currentUser: state.user.currentUser,
   currentPanel: state.panel,
-  isCollapsed: state.sidebar.isCollapsed,
+  isCollapsed: state.sidebar.isCollapsed
 });
 
 const connectedComponent = withRouter(
-  connect(
-    mapStateToProps,
-    { collapseSidebar, expandSidebar }
-  )(Dashboard)
+  connect(mapStateToProps, { collapseSidebar, expandSidebar })(Dashboard)
 );
 
 export default withStyles(styles, { withTheme: true })(connectedComponent);

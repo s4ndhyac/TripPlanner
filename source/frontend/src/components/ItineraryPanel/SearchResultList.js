@@ -25,7 +25,8 @@ class SearchResultList extends React.Component {
       address,
       rating,
       datetime: document.getElementById("travel-date").value,
-      reactId: short.generate()
+      reactId: short.generate(),
+      isStart: false
     };
     return (
       <ListItem

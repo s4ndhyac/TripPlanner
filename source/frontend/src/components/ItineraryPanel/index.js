@@ -73,17 +73,30 @@ class ItineraryPanel extends React.Component {
 
   handleDeleteOnClick = (itemId, datetime) => event => {
     event.preventDefault();
+    const plan = this._findPlanForDate(datetime);
+    plan.sequence = plan.sequence.filter(item => item.reactId !== itemId);
+    this.setState({
+      plan: { list: this.state.plan.list.filter(p => p.sequence.length !== 0) }
+    });
+  };
+
+  _findPlanForDate = datetime => {
     const { list } = this.state.plan;
     const date = stringToDate(datetime);
-    const planForDate = list.find(
+    return list.find(
       p => stringToDate(p.date).toDateString() === date.toDateString()
     );
-    planForDate.sequence = planForDate.sequence.filter(
-      item => item.reactId !== itemId
-    );
-    this.setState({
-      plan: { list: list.filter(p => p.sequence.length !== 0) }
-    });
+  };
+
+  handleCheckboxOnClick = (itemId, datetime) => event => {
+    event.preventDefault();
+    const { sequence } = this._findPlanForDate(datetime);
+    sequence
+      .filter(item => item.reactId !== itemId && item.isStart)
+      .forEach(item => (item.isStart = false));
+    const item = sequence.find(item => item.reactId === itemId);
+    item.isStart = !item.isStart;
+    this.setState({ plan: this.state.plan });
   };
 
   handleSaveOnClick = async event => {
@@ -136,6 +149,7 @@ class ItineraryPanel extends React.Component {
             <ItineraryDetailsPanel
               name={name}
               plan={plan}
+              handleCheckboxOnClick={this.handleCheckboxOnClick}
               handleDeleteOnClick={this.handleDeleteOnClick}
               handleSaveOnClick={this.handleSaveOnClick}
               handleGenerateOnClick={this.handleGenerateOnClick}
