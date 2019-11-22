@@ -50,6 +50,7 @@ class ItineraryPanel extends React.Component {
 
   handleAddOnClick = item => event => {
     event.preventDefault();
+    item.datetime = document.getElementById("travel-date").value;
     if (!item.datetime) {
       alert("Please select a travel date!");
       return;
