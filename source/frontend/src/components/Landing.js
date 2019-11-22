@@ -55,7 +55,6 @@ const useStyles = makeStyles(theme => ({
   }
 }));
 
-const cards = ["Form Groups", "Select Places & Dates", "Collaboratively Edit"];
 
 export default function Landing() {
   const classes = useStyles();
@@ -96,26 +95,57 @@ export default function Landing() {
         </div>
         <Container className={classes.cardGrid} maxWidth="md">
           <Grid container spacing={4}>
-            {cards.map(card => (
-              <Grid item key={card} xs={12} sm={6} md={4}>
-                <Card className={classes.card}>
-                  <CardMedia
-                    className={classes.cardMedia}
-                    image="https://source.unsplash.com/random"
-                    title="Image title"
-                  />
-                  <CardContent className={classes.cardContent}>
-                    <Typography gutterBottom variant="h5" component="h2">
-                      {card}
-                    </Typography>
-                    <Typography>
-                      This is a media card. You can use this section to describe
-                      the content.
-                    </Typography>
-                  </CardContent>
-                </Card>
-              </Grid>
-            ))}
+            <Grid item key="FormGroups" xs={12} sm={6} md={4}>
+              <Card className={classes.card}>
+                <CardMedia
+                  className={classes.cardMedia}
+                  image="https://source.unsplash.com/random?mountains"
+                  title="Image title"
+                />
+                <CardContent className={classes.cardContent}>
+                  <Typography gutterBottom variant="h5" component="h2">
+                    Form Groups
+                  </Typography>
+                  <Typography>
+                    Form groups and add your friends to the groups to plan your trip together
+                      </Typography>
+                </CardContent>
+              </Card>
+            </Grid>
+            <Grid item key="SelectPlaces" xs={12} sm={6} md={4}>
+              <Card className={classes.card}>
+                <CardMedia
+                  className={classes.cardMedia}
+                  image="https://source.unsplash.com/random?beaches"
+                  title="Image title"
+                />
+                <CardContent className={classes.cardContent}>
+                  <Typography gutterBottom variant="h5" component="h2">
+                    Select Places & Dates
+                  </Typography>
+                  <Typography>
+                    Add all the places you want to visit and generate the perfect itinerary in seconds
+                  </Typography>
+                </CardContent>
+              </Card>
+            </Grid>
+            <Grid item key="CollabEdit" xs={12} sm={6} md={4}>
+              <Card className={classes.card}>
+                <CardMedia
+                  className={classes.cardMedia}
+                  image="https://source.unsplash.com/random?travel"
+                  title="Image title"
+                />
+                <CardContent className={classes.cardContent}>
+                  <Typography gutterBottom variant="h5" component="h2">
+                    Collaboratively Edit
+                  </Typography>
+                  <Typography>
+                    No time wasted in reaching a consensus, zero compromise and confusion
+                  </Typography>
+                </CardContent>
+              </Card>
+            </Grid>
           </Grid>
         </Container>
       </main>

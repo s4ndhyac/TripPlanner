@@ -48,14 +48,14 @@ class ItineraryDetailsPanel extends React.Component {
         <br />
         Step 1: Use the search bar to find attractions!
         <br />
-        Step 2: Add attractions to the itinerary.
+        Step 2: Select a date and add attractions to the itinerary.
         <br />
         Step 3: Mark an attraction as the starting point for your plan of that
-        date (could be an hotel)!
+        date (could be a hotel)!
         <br />
-        Step 4: Click "Generate" button to generate an optimized itinerary!
+        Step 4: Click the "Generate" button to generate an optimized itinerary!
         <br />
-        Step 5: Click "Save" button to save your itinerary.
+        Step 5: Click the "Save" button to save your itinerary.
       </Typography>
     );
   };
@@ -137,23 +137,23 @@ class ItineraryDetailsPanel extends React.Component {
     return plan.list === undefined || (plan.list && plan.list.length === 0) ? (
       this.emptyPlanTip()
     ) : (
-      <List style={{ overflow: "auto", maxHeight: "70vh" }}>
-        {plan.list.map((planForDay, index) => {
-          return (
-            <div>
-              <ListSubheader
-                component="div"
-                id="nested-list-subheader"
-                disableSticky={true}
-              >
-                {stringToDate(planForDay.date).toDateString()}
-              </ListSubheader>
-              {planForDay.sequence.map(this.getListItem, index)}
-            </div>
-          );
-        })}
-      </List>
-    );
+        <List style={{ overflow: "auto", maxHeight: "70vh" }}>
+          {plan.list.map((planForDay, index) => {
+            return (
+              <div>
+                <ListSubheader
+                  component="div"
+                  id="nested-list-subheader"
+                  disableSticky={true}
+                >
+                  {stringToDate(planForDay.date).toDateString()}
+                </ListSubheader>
+                {planForDay.sequence.map(this.getListItem, index)}
+              </div>
+            );
+          })}
+        </List>
+      );
   };
 
   render() {
@@ -208,8 +208,8 @@ class ItineraryDetailsPanel extends React.Component {
             <CircularProgress></CircularProgress>
           </center>
         ) : (
-          this.renderItinerary(plan)
-        )}
+            this.renderItinerary(plan)
+          )}
       </Paper>
     );
   }
