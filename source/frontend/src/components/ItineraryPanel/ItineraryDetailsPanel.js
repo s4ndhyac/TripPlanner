@@ -86,7 +86,7 @@ class ItineraryDetailsPanel extends React.Component {
         Step 2: Add attractions to the itinerary.
         <br />
         Step 3: Mark an attraction as the starting point for your plan of that
-        date (could be an hotel)!
+        date (could be a hotel)!
         <br />
         Step 4: Click "Generate" button to generate an optimized itinerary!
         <br />
