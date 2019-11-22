@@ -37,16 +37,25 @@ const styles = theme => ({
 class ItineraryDetailsPanel extends React.Component {
   emptyPlanTip = () => {
     return (
-      <center>
-        <Typography
-          variant="caption"
-          display="block"
-          gutterBottom
-          style={{ marginTop: "2rem" }}
-        >
-          Use the search bar to find attractions!
-        </Typography>
-      </center>
+      <Typography
+        variant="caption"
+        display="block"
+        gutterBottom
+        style={{ marginTop: "2rem", marginLeft: "1rem" }}
+      >
+        Tips:
+        <br />
+        Step 1: Use the search bar to find attractions!
+        <br />
+        Step 2: Add attractions to the itinerary.
+        <br />
+        Step 3: Mark an attraction as the starting point for your plan of that
+        date (could be an hotel)!
+        <br />
+        Step 4: Click "Generate" button to generate an optimized itinerary!
+        <br />
+        Step 5: Click "Save" button to save your itinerary.
+      </Typography>
     );
   };
 
