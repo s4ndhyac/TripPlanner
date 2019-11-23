@@ -44,7 +44,6 @@ class SearchPanel extends React.Component {
     searchLocation: "",
     searchResults: [],
     loading: false,
-    travelDate: ""
   };
 
   handleInputChange = event => {
@@ -53,10 +52,6 @@ class SearchPanel extends React.Component {
 
   handleLocationChange = event => {
     this.setState({ searchLocation: event.target.value });
-  };
-
-  handleDateChange = event => {
-    this.setState({ travelDate: event.target.value });
   };
 
   handleSubmit = async event => {

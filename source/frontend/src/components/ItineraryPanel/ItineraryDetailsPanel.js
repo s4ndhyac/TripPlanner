@@ -69,7 +69,15 @@ class ItineraryDetailsPanel extends React.Component {
     value: 0
   };
 
-  handleChange = (_, newValue) => this.setState({ value: newValue });
+  handleChange = (event, newValue) => { this.setState({ value: newValue }); }
+
+  handleChangeOfDate = (event) => {
+    const {
+      plan
+    } = this.props;
+    const index = plan.list.findIndex(x => x.date === event.target.value);
+    this.setState({ value: index });
+  }
 
   emptyPlanTip = () => {
     return (
@@ -171,6 +179,23 @@ class ItineraryDetailsPanel extends React.Component {
   _emptyPlan = plan =>
     plan.list === undefined || (plan.list && plan.list.length === 0);
 
+  renderTab = (plan, value) => {
+    return (
+      <div>
+        <Paper position="static" square>
+          <Tabs value={value} onChange={this.handleChange}>
+            {this._emptyPlan(plan)
+              ? <p></p>
+              : plan.list.map(p => (
+                <Tab label={stringToDate(p.date).toDateString()} />
+              ))}
+          </Tabs>
+        </Paper>
+        {this.renderItinerary(plan, value)}
+      </div>
+    )
+  };
+
   renderItinerary = (plan, value) => {
     return this._emptyPlan(plan)
       ? this.emptyPlanTip()
@@ -218,7 +243,7 @@ class ItineraryDetailsPanel extends React.Component {
                     className={classes.textField}
                     InputLabelProps={{ shrink: true }}
                     fullWidth={true}
-                    onChange={this.handleDateChange}
+                    onChange={this.handleChangeOfDate}
                     InputProps={{
                       startAdornment: (
                         <InputAdornment position="start">
@@ -263,20 +288,7 @@ class ItineraryDetailsPanel extends React.Component {
           <center style={{ paddingTop: "10vh" }}>
             <CircularProgress></CircularProgress>
           </center>
-        ) : (
-            <div>
-              <Paper position="static" square>
-                <Tabs value={value} onChange={this.handleChange}>
-                  {this._emptyPlan(plan)
-                    ? <p></p>
-                    : plan.list.map(p => (
-                      <Tab label={stringToDate(p.date).toDateString()} />
-                    ))}
-                </Tabs>
-              </Paper>
-              {this.renderItinerary(plan, value)}
-            </div>
-          )}
+        ) : (this.renderTab(plan, value))}
       </Paper>
     );
   }
