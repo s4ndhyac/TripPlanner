@@ -62,25 +62,26 @@ class SidePanel extends React.Component {
 
   handleSubmit(event, groupId) {
     const input = document.getElementById("itineraryname").value;
-    alert('A new itinerary was created: ' + input);
+    alert("A new itinerary was created: " + input);
     const itinerary = {
       name: input,
       plan: {},
       group: groupId
-    }
+    };
 
     let currentComponent = this;
-    axios.post(createItineraryAPI, itinerary)
-      .then(function (response) {
+    axios
+      .post(createItineraryAPI, itinerary)
+      .then(function(response) {
         console.log(response);
         axios.get(listItinerariesByGroup + groupId).then(res => {
-          const curr_itineraries = currentComponent.state.itineraries
+          const curr_itineraries = currentComponent.state.itineraries;
           curr_itineraries[groupId] = res.data;
           console.log(curr_itineraries);
           currentComponent.setState({ itineraries: curr_itineraries });
         });
       })
-      .catch(function (error) {
+      .catch(function(error) {
         console.log(error);
       });
 
@@ -91,24 +92,25 @@ class SidePanel extends React.Component {
 
   handleSubmitGroup(event) {
     const input = document.getElementById("groupname").value;
-    alert('A new group was created: ' + input);
+    alert("A new group was created: " + input);
     this.setState({ inputGroup: input });
     const { curUser } = this.props;
     const user = {
       name: input,
       email: curUser.email
-    }
+    };
 
     let currentComponent = this;
-    axios.post(groupAPI, user)
-      .then(function (response) {
+    axios
+      .post(groupAPI, user)
+      .then(function(response) {
         console.log(response);
         axios.get(listGroupsByUser + curUser.id).then(res => {
           const groups = res.data;
           currentComponent.setState({ groups: groups });
         });
       })
-      .catch(function (error) {
+      .catch(function(error) {
         console.log(error);
       });
 
@@ -125,8 +127,7 @@ class SidePanel extends React.Component {
     const curr_show_itineraries = this.state.showItineraryPopup;
     if (!(groupId in curr_show_itineraries))
       curr_show_itineraries[groupId] = true;
-    else
-      curr_show_itineraries[groupId] = !curr_show_itineraries[groupId];
+    else curr_show_itineraries[groupId] = !curr_show_itineraries[groupId];
     this.setState({ showItineraryPopup: curr_show_itineraries });
   }
 
@@ -150,7 +151,7 @@ class SidePanel extends React.Component {
   }
 
   render() {
-    const { curUser, classes, history } = this.props;
+    const { classes, history } = this.props;
     const { groups, itineraries } = this.state;
     return (
       <Drawer
@@ -189,28 +190,36 @@ class SidePanel extends React.Component {
 
               <ExpansionPanelDetails>
                 <List>
-                  {group.group.id in itineraries ? itineraries[group.group.id].map(itinerary => (
-                    <ListItem
-                      button
-                      key={`itinerary-${itinerary.id}`}
-                      onClick={() =>
-                        history.push(`/dashboard/itineraries/${itinerary.id}`)
-                      }
-                    >
-                      <ListItemIcon>
-                        <CardTravelIcon />
-                      </ListItemIcon>
-                      <ListItemText primary={itinerary.name} />
-                    </ListItem>
-                  )) : null}
+                  {group.group.id in itineraries
+                    ? itineraries[group.group.id].map(itinerary => (
+                        <ListItem
+                          button
+                          key={`itinerary-${itinerary.id}`}
+                          onClick={() =>
+                            history.push(
+                              `/dashboard/itineraries/${itinerary.id}`
+                            )
+                          }
+                        >
+                          <ListItemIcon>
+                            <CardTravelIcon />
+                          </ListItemIcon>
+                          <ListItemText primary={itinerary.name} />
+                        </ListItem>
+                      ))
+                    : null}
 
                   <ListItem key={short.generate()}>
                     <ListItemText primary="Create Itinerary" />
-                    <IconButton onClick={() => this.toggleItineraryPopup(group.group.id)}>
-                      {this.state.showItineraryPopup[group.group.id] ? null : <AddIcon></AddIcon>}
+                    <IconButton
+                      onClick={() => this.toggleItineraryPopup(group.group.id)}
+                    >
+                      {this.state.showItineraryPopup[group.group.id] ? null : (
+                        <AddIcon></AddIcon>
+                      )}
                     </IconButton>
                     {this.state.showItineraryPopup[group.group.id] ? (
-                      <div className='CreateItinerary'>
+                      <div className="CreateItinerary">
                         <TextField
                           id="itineraryname"
                           label="Itinerary Name"
@@ -220,7 +229,7 @@ class SidePanel extends React.Component {
                         />
                         <Button
                           color="primary"
-                          onClick={(e) => this.handleSubmit(e, group.group.id)}
+                          onClick={e => this.handleSubmit(e, group.group.id)}
                         >
                           Submit
                         </Button>
@@ -237,7 +246,7 @@ class SidePanel extends React.Component {
               {this.state.showPopup ? null : <AddIcon></AddIcon>}
             </IconButton>
             {this.state.showPopup ? (
-              <div className='Creategroup'>
+              <div className="Creategroup">
                 <TextField
                   id="groupname"
                   label="Group Name"
@@ -245,12 +254,9 @@ class SidePanel extends React.Component {
                   margin="normal"
                   variant="outlined"
                 />
-                <Button
-                  color="primary"
-                  onClick={this.handleSubmitGroup}
-                >
+                <Button color="primary" onClick={this.handleSubmitGroup}>
                   Submit
-          </Button>
+                </Button>
               </div>
             ) : null}
           </ListItem>
@@ -261,10 +267,7 @@ class SidePanel extends React.Component {
 }
 
 const connectedComponent = withRouter(
-  connect(
-    null,
-    { openGroup, openItinerary }
-  )(SidePanel)
+  connect(null, { openGroup, openItinerary })(SidePanel)
 );
 
 export default withStyles(styles, { withTheme: true })(connectedComponent);

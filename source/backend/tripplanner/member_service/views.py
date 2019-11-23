@@ -67,6 +67,7 @@ def addGroup(request):
         body = json.loads(body_unicode)
         group = Group(name=body['name'])
         group.save()
+
         # need to consider if there are many users using the same email
         user = User.objects.get(email=body['email'])
         group.users.add(user.id)

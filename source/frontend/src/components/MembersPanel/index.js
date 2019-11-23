@@ -9,7 +9,7 @@ import { CardContent, Typography, Button, Grid } from "@material-ui/core";
 import { withStyles } from "@material-ui/core/styles";
 import PersonIcon from "@material-ui/icons/Person";
 import TextField from "@material-ui/core/TextField";
-import Icon from '@material-ui/core/Icon';
+import Icon from "@material-ui/core/Icon";
 import { axios } from "../oauth";
 
 const styles = () => ({
@@ -22,9 +22,7 @@ const styles = () => ({
   }
 });
 
-
 class MembersPanel extends React.Component {
-
   constructor(props) {
     super(props);
     this.state = {
@@ -43,7 +41,7 @@ class MembersPanel extends React.Component {
   }
 
   changeState = props => {
-    console.log(props)
+    console.log(props);
     const { itemId } = props;
     this.getGroupData(itemId);
   };
@@ -55,14 +53,13 @@ class MembersPanel extends React.Component {
   }
 
   getGroupData = id => {
-    axios.get("/members/v1/usergroup/?group_id=" + id)
-      .then(res => {
-        const users = res.data;
-        this.setState({
-          groupName: users[0].group.name,
-          members: users
-        });
-      })
+    axios.get("/members/v1/usergroup/?group_id=" + id).then(res => {
+      const users = res.data;
+      this.setState({
+        groupName: users[0].group.name,
+        members: users
+      });
+    });
   };
 
   _handleInviteEmail(event) {
@@ -79,15 +76,13 @@ class MembersPanel extends React.Component {
     };
 
     const { itemId } = this.props;
-    axios.post("/members/inviteMember/", data)
-      .then(res => {
-        console.log(res);
-        this.getGroupData(itemId);
-        alert(res.data);
-        document.getElementById("emailinput").value = "";
-      });
-
-  };
+    axios.post("/members/inviteMember/", data).then(res => {
+      console.log(res);
+      this.getGroupData(itemId);
+      alert(res.data);
+      document.getElementById("emailinput").value = "";
+    });
+  }
 
   deleteMember = row => event => {
     console.log("Delete member: ", this);
@@ -97,34 +92,29 @@ class MembersPanel extends React.Component {
       id: row.id,
       group: row.group,
       user: row.user
-    }
+    };
 
     console.log(this);
     const itemId = data.group.id;
     console.log(itemId);
-    axios.post("/members/deleteMember/", data)
-      .then(res => {
-        console.log(res);
-        this.getGroupData(itemId);
-        alert(res.data);
-      })
+    axios.post("/members/deleteMember/", data).then(res => {
+      console.log(res);
+      this.getGroupData(itemId);
+      alert(res.data);
+    });
   };
 
   render() {
     const { classes } = this.props;
-    const { members, groupName, inviteEmail } = this.state;
+    const { members, groupName } = this.state;
     return (
       <div>
         <CardContent>
           <Typography variant="h5" component="h5">
             Members - {groupName}
           </Typography>
-          <Grid
-            container
-            spacing={1}
-            direction="row"
-          >
-            <Grid item >
+          <Grid container spacing={1} direction="row">
+            <Grid item>
               <TextField
                 id="emailinput"
                 label="Enter Email to Invite User"
@@ -159,7 +149,9 @@ class MembersPanel extends React.Component {
               </TableHead>
               <TableBody>
                 {members.map(row => (
-                  <TableRow key={row.user.first_name + " " + row.user.last_name}>
+                  <TableRow
+                    key={row.user.first_name + " " + row.user.last_name}
+                  >
                     <TableCell component="th" scope="row">
                       <PersonIcon></PersonIcon>
                     </TableCell>
@@ -168,10 +160,15 @@ class MembersPanel extends React.Component {
                     </TableCell>
                     <TableCell>{row.user.email}</TableCell>
                     <TableCell>
-                      {this.props.curUser.id == row.user.id ? (
-                        <Button size="small" variant="outlined" color="secondary" onClick={this.deleteMember(row)}>
+                      {this.props.curUser.id === row.user.id ? (
+                        <Button
+                          size="small"
+                          variant="outlined"
+                          color="secondary"
+                          onClick={this.deleteMember(row)}
+                        >
                           Remove
-                      </Button>
+                        </Button>
                       ) : null}
                     </TableCell>
                   </TableRow>

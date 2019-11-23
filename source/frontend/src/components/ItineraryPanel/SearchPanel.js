@@ -6,7 +6,6 @@ import {
   Typography,
   Grid,
   Divider,
-  Paper,
   CircularProgress,
   IconButton,
   Drawer
