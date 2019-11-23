@@ -21,17 +21,17 @@ spec:
 kind: Service
 apiVersion: v1
 metadata: 
-  name: member-backend
+  name: backend
   namespace: default
   labels: 
-    run: member-backend
+    run: backend
 spec: 
   ports: 
       - protocol: TCP
-        port: 5000
-        targetPort: 5000
+        port: 8000
+        targetPort: 8000
   selector: 
-    run: member-backend
+    run: backend
   type: ClusterIP
 
 
@@ -41,31 +41,10 @@ spec:
 kind: Service
 apiVersion: v1
 metadata: 
-  name: itinerary-backend
+  name: database
   namespace: default
   labels: 
-    run: itinerary-backend
-spec: 
-  ports: 
-      - protocol: TCP
-        port: 4000
-        targetPort: 4000
-  selector: 
-    run: itinerary-backend
-  type: ClusterIP
-
-
----
-
-
-
-kind: Service
-apiVersion: v1
-metadata: 
-  name: member-database
-  namespace: default
-  labels: 
-    run: member-database
+    run: database
 spec: 
   ports: 
     - protocol: TCP
@@ -73,27 +52,5 @@ spec:
       targetPort: 5432
   clusterIP: None
   selector: 
-    run: member-database
+    run: database
   # type: ClusterIP
-
-
----
-
-
-kind: Service
-apiVersion: v1
-metadata: 
-  name: itinerary-database
-  namespace: default
-  labels: 
-    run: itinerary-database
-spec: 
-  ports: 
-    - protocol: TCP
-      port: 27017
-      targetPort: 27017
-  clusterIP: None
-  selector: 
-    run: itinerary-database
-  # type: ClusterIP
-

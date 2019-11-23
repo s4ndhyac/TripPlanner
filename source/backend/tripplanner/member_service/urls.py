@@ -11,7 +11,9 @@ router.register(r'usergroup', views.UserToGroupViewSet, 'usergroup')
 urlpatterns = [
     path('', views.index, name='index'),
     path('logout/', views.logout, name='logout'),
-    path('auth-user/', views.authenticate, name='authenticate'),
+    path('auth-user/', views.login, name='login'),
     path('addGroup/', views.addGroup, name='addGroup'),
+    path('deleteMember/', views.deleteMember, name='deleteMember'),
+    path('inviteMember/', views.inviteMember, name='inviteMember'),
     url(r'^v1/', include(router.urls))
 ]

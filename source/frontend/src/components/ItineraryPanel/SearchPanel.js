@@ -1,15 +1,19 @@
 import React from "react";
 import TextField from "@material-ui/core/TextField";
-import Button from "@material-ui/core/Button";
 import { axios } from "../oauth";
 import { withStyles } from "@material-ui/core/styles";
 import {
   Typography,
   Grid,
   Divider,
-  Paper,
-  CircularProgress
+  CircularProgress,
+  IconButton,
+  Drawer
 } from "@material-ui/core";
+import InputAdornment from "@material-ui/core/InputAdornment";
+import TodayIcon from "@material-ui/icons/Today";
+import BusinessIcon from "@material-ui/icons/Business";
+import LocationOnIcon from "@material-ui/icons/LocationOn";
 import SearchResultList from "./SearchResultList";
 import SearchIcon from "@material-ui/icons/Search";
 
@@ -20,26 +24,18 @@ const styles = theme => ({
   },
   textField: {
     marginLeft: theme.spacing(1),
-    marginRight: theme.spacing(1),
-    width: 150
-  },
-  searchField: {
-    marginLeft: theme.spacing(1),
-    marginRight: theme.spacing(1),
-    width: 197
+    marginRight: theme.spacing(1)
   },
   formControl: {
     margin: theme.spacing(1),
-    minWidth: 120,
     paddingTop: "0.5rem"
   },
   paper: {
-    padding: theme.spacing(2),
-    height: "84vh"
+    padding: theme.spacing(2)
   }
 });
 
-const SEARCH_API = "http://localhost:8000/itinerary/search";
+const SEARCH_API = "/itinerary/search";
 
 class SearchPanel extends React.Component {
   state = {
@@ -47,7 +43,6 @@ class SearchPanel extends React.Component {
     searchLocation: "",
     searchResults: [],
     loading: false,
-    travelDate: ""
   };
 
   handleInputChange = event => {
@@ -56,10 +51,6 @@ class SearchPanel extends React.Component {
 
   handleLocationChange = event => {
     this.setState({ searchLocation: event.target.value });
-  };
-
-  handleDateChange = event => {
-    this.setState({ travelDate: event.target.value });
   };
 
   handleSubmit = async event => {
@@ -83,87 +74,95 @@ class SearchPanel extends React.Component {
   };
 
   render() {
-    const { classes, handleAddOnClick } = this.props;
+    const { classes, handleAddOnClick, open, toggle } = this.props;
     const { searchResults, loading } = this.state;
     return (
-      <Paper className={classes.paper}>
-        <Grid
-          container
-          item
-          xs={12}
-          direction="row"
-          justify="center"
-          alignItems="center"
-        >
-          <Grid item xs={8}>
-            <Typography variant="h5">Search Attractions</Typography>
-          </Grid>
-          <Grid item xs={4}>
-            <form className={classes.container} noValidate>
-              <TextField
-                id="travel-date"
-                type="date"
-                label="Date of Travel"
-                className={classes.textField}
-                InputLabelProps={{ shrink: true }}
-                onChange={this.handleDateChange}
-              />
-            </form>
-          </Grid>
-        </Grid>
-        <br />
-        <Divider></Divider>
-        <form noValidate autoComplete="off" onSubmit={this.handleSubmit}>
+      <Drawer anchor="right" open={open} onClose={toggle(false)}>
+        <div className={classes.paper}>
           <Grid
             container
-            spacing={2}
+            item
+            xs={12}
             direction="row"
-            justify="center"
             alignItems="center"
+            justify="space-between"
           >
-            <Grid item xs={9}>
-              <TextField
-                label="Place name"
-                margin="normal"
-                variant="outlined"
-                onChange={this.handleInputChange}
-                className={classes.searchField}
-              />
-              <TextField
-                label="Location"
-                margin="normal"
-                variant="outlined"
-                onChange={this.handleLocationChange}
-                className={classes.searchField}
-              />
-            </Grid>
-            <Grid item xs={3}>
-              <Button
-                size="medium"
-                type="submit"
-                variant="contained"
-                color="primary"
-                startIcon={<SearchIcon />}
-                style={{ marginTop: "1.1rem" }}
-              >
-                Search
-              </Button>
+            <Grid item xs={8}>
+              <Typography variant="h5">Search Attractions</Typography>
             </Grid>
           </Grid>
-        </form>
-        <br />
-        <Divider></Divider>
-        {loading ? (
-          <center style={{ paddingTop: "10vh" }}>
-            <CircularProgress></CircularProgress>
-          </center>
-        ) : (
-          <SearchResultList
-            searchResults={searchResults}
-            handleAddOnClick={handleAddOnClick}
-          ></SearchResultList>
-        )}
-      </Paper>
+          <br />
+          <Divider></Divider>
+          <form noValidate autoComplete="off" onSubmit={this.handleSubmit}>
+            <Grid
+              container
+              spacing={2}
+              direction="row"
+              justify="space-between"
+              alignItems="center"
+            >
+              <Grid item xs={6}>
+                <TextField
+                  label="Place name"
+                  margin="normal"
+                  variant="outlined"
+                  onChange={this.handleInputChange}
+                  className={classes.textField}
+                  fullWidth={true}
+                  placeholder="e.g. Disneyland"
+                  InputProps={{
+                    startAdornment: (
+                      <InputAdornment position="start">
+                        <BusinessIcon />
+                      </InputAdornment>
+                    )
+                  }}
+                />
+              </Grid>
+              <Grid item xs={5}>
+                <TextField
+                  label="Location"
+                  margin="normal"
+                  variant="outlined"
+                  onChange={this.handleLocationChange}
+                  className={classes.textField}
+                  fullWidth={true}
+                  placeholder="Irvine, CA"
+                  InputProps={{
+                    startAdornment: (
+                      <InputAdornment position="start">
+                        <LocationOnIcon />
+                      </InputAdornment>
+                    )
+                  }}
+                />
+              </Grid>
+              <Grid item xs={1}>
+                <IconButton
+                  type="submit"
+                  color="primary"
+                  fullWidth={true}
+                  style={{ marginTop: "1rem" }}
+                >
+                  <SearchIcon />
+                </IconButton>
+              </Grid>
+            </Grid>
+          </form>
+          <br />
+          <Divider></Divider>
+          {loading ? (
+            <center style={{ paddingTop: "10vh" }}>
+              <CircularProgress></CircularProgress>
+            </center>
+          ) : (
+              <SearchResultList
+                searchResults={searchResults}
+                handleAddOnClick={handleAddOnClick}
+              ></SearchResultList>
+            )}
+        </div>
+      </Drawer>
     );
   }
 }

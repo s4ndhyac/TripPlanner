@@ -79,3 +79,8 @@ def do_yelp_search(term, location):
         raise Exception(
             "Yelp search status code is {}, not 200".format(req.status_code))
     return json.loads(req.text)
+
+
+def generate_plan(request):
+    plan = json.loads(request.body.decode('utf-8'))
+    return JsonResponse(Itinerary.optimize(plan))

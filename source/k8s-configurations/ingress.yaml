@@ -15,39 +15,23 @@ spec:
               serviceName: frontend
               servicePort: 80
             path: /
-    - host: member-api.trippplanner.com
+    - host: backend.trippplanner.com
       http:
         paths:
           - backend:
-              serviceName: member-backend
-              servicePort: 5000
+              serviceName: backend
+              servicePort: 8000
             path: /
-    - host: itinerary-api.trippplanner.com
+    - host: database.trippplanner.com
       http:
         paths:
           - backend:
-              serviceName: itinerary-backend
-              servicePort: 4000
-            path: /
-    - host: member-database.trippplanner.com
-      http:
-        paths:
-          - backend:
-              serviceName: member-database
+              serviceName: database
               servicePort: 5432
-            path: /
-    - host: itinerary-database.trippplanner.com
-      http:
-        paths:
-          - backend:
-              serviceName: itinerary-database
-              servicePort: 27017
             path: / 
   tls:
     - hosts:
         - frontend.trippplanner.com
-        - member-api.trippplanner.com
-        - itinerary-api.trippplanner.com
-        - member-database.trippplanner.com
-        - itinerary-database.trippplanner.com
+        - backend.trippplanner.com
+        - database.trippplanner.com
       secretName: ssl-certs

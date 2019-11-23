@@ -7,3 +7,4 @@ secrets.sh
 node_modules/
 .env
 env/
+source/backend/tripplanner/itinerary_service/sample-response.json
