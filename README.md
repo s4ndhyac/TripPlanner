@@ -4,29 +4,58 @@ An app that lets you Auto-generate your group trip's itinerary collaboratively b
 ## Getting Started (Local Development)
 
 ```bash
-# Step 1.1: Initialize virtual environment (only need to initialize once)
-virtualenv venv
+git clone https://gitlab-cs297p.ics.uci.edu/team2/capstone_project_team2.git
 
-# Step 1.2: Export all environment variables (only need to initialize once)
+# Create the Environment variables
 . ./source/env.sh
 
-# Step 1.3: Export all secret variables (only need to initialize once. DON'T ADD THEM TO GIT!!!!)
-. ./source/secrets.sh
+# Start the database
+cd source/database/docker
 
-# Step 1.3.1: Add all secrets into ./source/backend/tripplanner/.env and don't add them to GIT!
+# Build the docker image
+docker build -t $GCR_REGISTRY/$PROJECT/$DATABASE_DOCKER_IMG:v1 -f Dockerfile .
 
-# Step 1.4: Create database (only need to initialize once)
-createdb tripplanner
+# Run the docker image
+docker run -d -p 5432:5432  $GCR_REGISTRY/$PROJECT/$DATABASE_DOCKER_IMG:v1 --name database
 
-# Step 2: Activate venv
+# Start Django on the wsgi server
+cd source/backend/tripplanner
+
+# Initialize virtual environment (only need to initialize once)
+virtualenv venv
+
+# Activate venv
 source venv/bin/activate
 
-# Step 3: Install dependencies inside venv
-pip3 install -r source/backend/tripplanner/requirements.txt
+# Install dependencies inside venv
+pip3 install -r requirements.txt
 
-# Step 4: Migrate database
-python3 source/backend/tripplanner/manage.py migrate
+# Migrate database
+python3 manage.py migrate
 
-# Step 5: Start development server
-python3 source/backend/tripplanner/manage.py runserver
+# Start development server
+python3 manage.py runserver
+
+# Start the react-app server
+cd source/frontend
+
+# Install the node modules
+npm install
+
+# Start the react-app development server
+npm run start
+
 ```
+
+Now navigate to http://localhost:3000/ to interact with the app.
+
+## Running Django Unit Tests
+```bash
+cd source/backend/tripplanner
+
+python3 manage.py test
+
+```
+
+# Production Setup 
+Refer to [Kubernetes Setup](k8s-setup.md)
