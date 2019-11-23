@@ -71,14 +71,6 @@ class ItineraryDetailsPanel extends React.Component {
 
   handleChange = (event, newValue) => { this.setState({ value: newValue }); }
 
-  handleChangeOfDate = (event) => {
-    const {
-      plan
-    } = this.props;
-    const index = plan.list.findIndex(x => x.date === event.target.value);
-    this.setState({ value: index });
-  }
-
   emptyPlanTip = () => {
     return (
       <Typography
@@ -178,6 +170,20 @@ class ItineraryDetailsPanel extends React.Component {
 
   _emptyPlan = plan =>
     plan.list === undefined || (plan.list && plan.list.length === 0);
+
+  handleChangeOfDate = (event) => {
+    const {
+      plan
+    } = this.props;
+    let index = this._emptyPlan(plan) ? 0 : plan.list.findIndex(x => x.date === event.target.value);
+    if (index === -1) {
+      var allDates = plan.list.map(p => stringToDate(p.date));
+      allDates.push(stringToDate(event.target.value));
+      allDates.sort();
+      index = allDates.findIndex(x => x.getTime() === stringToDate(event.target.value).getTime());
+    }
+    this.setState({ value: index });
+  }
 
   renderTab = (plan, value) => {
     return (
