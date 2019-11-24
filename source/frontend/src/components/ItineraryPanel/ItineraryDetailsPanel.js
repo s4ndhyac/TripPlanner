@@ -226,11 +226,7 @@ class ItineraryDetailsPanel extends React.Component {
                     {p.sequence.map(this.getListItem, i)}
                   </List>
                 </Grid>
-                <Grid
-                  item
-                  xs={6}
-                  style={{ overflow: "auto" }}
-                >
+                <Grid item xs={6} style={{ overflow: "auto" }}>
                   <Typography variant="h6">Route Visulization</Typography>
                   <MapContainer sequence={p.sequence}></MapContainer>
                 </Grid>
