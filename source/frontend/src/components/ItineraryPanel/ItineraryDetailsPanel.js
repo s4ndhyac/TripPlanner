@@ -33,7 +33,7 @@ import InputAdornment from "@material-ui/core/InputAdornment";
 import TodayIcon from "@material-ui/icons/Today";
 
 import { stringToDate } from "../../utils";
-import MapContainer from './MapContainer';
+import MapContainer from "./MapContainer";
 
 function TabPanel(props) {
   const { children, value, index, ...other } = props;
@@ -226,7 +226,11 @@ class ItineraryDetailsPanel extends React.Component {
                     {p.sequence.map(this.getListItem, i)}
                   </List>
                 </Grid>
-                <Grid item xs={6} style={{ overflow: "auto", maxHeight: "60vh" }}>
+                <Grid
+                  item
+                  xs={6}
+                  style={{ overflow: "auto" }}
+                >
                   <Typography variant="h6">Route Visulization</Typography>
                   <MapContainer sequence={p.sequence}></MapContainer>
                 </Grid>

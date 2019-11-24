@@ -1,6 +1,8 @@
 import React from "react";
 import GoogleMapReact from "google-map-react";
 
+import { axios } from "../oauth";
+
 const { google } = window;
 
 class MapContainer extends React.Component {
@@ -20,25 +22,25 @@ class MapContainer extends React.Component {
     }));
   };
 
-  _addMarkers = (map, sequence) => {
+  _addMarkers = async (map, sequence) => {
     const bounds = new google.maps.LatLngBounds();
     const infoWindow = new google.maps.InfoWindow();
-    const geocoder = new google.maps.Geocoder();
 
-    sequence.forEach((item, i) => {
-      geocoder.geocode({ address: item.address }, (results, status) => {
-        if (status === google.maps.GeocoderStatus.OK) {
-          if (i === 0) map.setCenter(results[0].geometry.location);
-          const marker = new google.maps.Marker({
-            position: results[0].geometry.location,
-            map: map,
-            label: `${i + 1}`
-          });
-          bounds.extend(marker.getPosition());
-          this._addListenerToMarker(marker, map, infoWindow, item);
-        } else console.log(status + " for " + item.name);
-      });
+    const addresses = sequence.map(item => item.address);
+    const { data } = await axios.get("/itinerary/geocode/", {
+      params: { addresses: JSON.stringify(addresses) }
     });
+    data.geocodes.forEach((item, i) => {
+      const { lat, lng } = item;
+      const marker = new google.maps.Marker({
+        position: new google.maps.LatLng(lat, lng),
+        map: map,
+        label: `${i + 1}`
+      });
+      bounds.extend(marker.position);
+      this._addListenerToMarker(marker, map, infoWindow, item);
+    });
+    map.setCenter(bounds.getCenter());
     map.fitBounds(bounds);
     map.setZoom(11);
   };
@@ -86,7 +88,7 @@ class MapContainer extends React.Component {
   render() {
     const { sequence } = this.props;
     return (
-      <div style={{ height: "100vh", width: "100vh" }}>
+      <div style={{ height: "55vh", width: "100%" }}>
         <GoogleMapReact
           ref="map"
           bootstrapURLKeys={{ key: "AIzaSyB6YgxpNCFRclsxCFIY8hGU1508sLVzxKY" }}
