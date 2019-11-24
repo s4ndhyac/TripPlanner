@@ -1,5 +1,6 @@
 import json
 import os
+from functools import lru_cache
 
 import googlemaps
 import requests
@@ -10,6 +11,7 @@ from rest_framework import viewsets
 
 from .models import Itinerary
 from .serializers import ItinerarySerializer
+
 
 YELP_API_KEY = os.getenv('YELP_API_KEY', '')
 YELP_HEADER = {"Authorization": "Bearer %s" % YELP_API_KEY}
@@ -93,10 +95,11 @@ def get_geocode(request):
     addresses = request.GET.get('addresses', [])
     addresses = json.loads(addresses) if len(addresses) > 0 else []
     geocodes = [fetch_geocode(address) for address in addresses]
-    print(len(geocodes) == len(addresses))
-    return JsonResponse({"geocodes": geocodes})
+    print(fetch_geocode.cache_info())
+    return JsonResponse({'geocodes': geocodes})
 
 
+@lru_cache(maxsize=128)
 def fetch_geocode(address):
     attempts, exception = 0, None
     while attempts < 3:

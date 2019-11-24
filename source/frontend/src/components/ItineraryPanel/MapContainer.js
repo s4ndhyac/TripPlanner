@@ -18,7 +18,7 @@ class MapContainer extends React.Component {
     const waypoints = sequence.slice(0, sequence.length);
     return waypoints.map(waypoint => ({
       location: waypoint.address,
-      stopover: false
+      stopover: true
     }));
   };
 
@@ -38,19 +38,19 @@ class MapContainer extends React.Component {
         label: `${i + 1}`
       });
       bounds.extend(marker.position);
-      this._addListenerToMarker(marker, map, infoWindow, item);
+      this._addListenerToMarker(marker, map, infoWindow, sequence[i].name);
     });
     map.setCenter(bounds.getCenter());
     map.fitBounds(bounds);
     map.setZoom(11);
   };
 
-  _addListenerToMarker = (marker, map, infoWindow, item) => {
+  _addListenerToMarker = (marker, map, infoWindow, name) => {
     google.maps.event.addListener(
       marker,
       "click",
       (marker => () => {
-        infoWindow.setContent(item.name);
+        infoWindow.setContent(name);
         infoWindow.open(map, marker);
       })(marker)
     );
