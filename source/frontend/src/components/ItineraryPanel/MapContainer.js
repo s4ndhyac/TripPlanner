@@ -4,6 +4,7 @@ import GoogleMapReact from "google-map-react";
 import { axios } from "../oauth";
 
 const { google } = window;
+const infoWindow = new google.maps.InfoWindow();
 
 class MapContainer extends React.Component {
   static defaultProps = {
@@ -24,8 +25,6 @@ class MapContainer extends React.Component {
 
   _addMarkers = async (map, sequence) => {
     const bounds = new google.maps.LatLngBounds();
-    const infoWindow = new google.maps.InfoWindow();
-
     const addresses = sequence.map(item => item.address);
     const { data } = await axios.get("/itinerary/geocode/", {
       params: { addresses: JSON.stringify(addresses) }
@@ -61,25 +60,39 @@ class MapContainer extends React.Component {
     this._addMarkers(map, sequence);
     const directionsService = new maps.DirectionsService();
     const directionsDisplay = new maps.DirectionsRenderer();
-    directionsService.route(
-      {
-        origin: sequence[0].address,
-        destination: sequence[0].address,
-        waypoints: this._getWaypoints(sequence),
-        travelMode: "DRIVING"
-      },
-      this._routeCallback(directionsDisplay, map)
-    );
+    for (let i = 0; i < sequence.length; i++) {
+      directionsService.route(
+        {
+          origin: sequence[i].address,
+          destination: sequence[i === sequence.length - 1 ? 0 : i + 1].address,
+          // waypoints: this._getWaypoints(sequence),
+          travelMode: "DRIVING"
+        },
+        this._routeCallback(directionsDisplay, map)
+      );
+    }
+  };
+
+  _addListenerToLine = (line, content, map) => {
+    google.maps.event.addListener(line, "click", event => {
+      infoWindow.setContent(content);
+      infoWindow.setPosition(event.latLng);
+      infoWindow.open(map);
+    });
   };
 
   _routeCallback = (directionsDisplay, map) => (res, status) => {
     if (status === "OK") {
+      console.log(res);
       directionsDisplay.setDirections(res);
-      const routePolyline = new google.maps.Polyline({
+      const line = new google.maps.Polyline({
         path: res.routes[0].overview_path,
         strokeColor: "#4285f4"
       });
-      routePolyline.setMap(map);
+      line.setMap(map);
+      const { distance, duration } = res.routes[0].legs[0];
+      const text = distance.text + "<br/>" + duration.text;
+      this._addListenerToLine(line, text, map);
     } else {
       alert("Directions request failed due to " + status);
     }
