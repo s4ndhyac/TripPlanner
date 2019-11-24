@@ -228,6 +228,13 @@ class ItineraryDetailsPanel extends React.Component {
                 </Grid>
                 <Grid item xs={6} style={{ overflow: "auto" }}>
                   <Typography variant="h6">Route Visulization</Typography>
+                  <Typography
+                    variant="caption"
+                    display="block"
+                    gutterBottom
+                  >
+                    Click on the route to view distances and durations
+                  </Typography>
                   <MapContainer sequence={p.sequence}></MapContainer>
                 </Grid>
               </Grid>

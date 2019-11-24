@@ -61,14 +61,15 @@ class MapContainer extends React.Component {
     const directionsService = new maps.DirectionsService();
     const directionsDisplay = new maps.DirectionsRenderer();
     for (let i = 0; i < sequence.length; i++) {
+      const next = i === sequence.length - 1 ? 0 : i + 1;
       directionsService.route(
         {
           origin: sequence[i].address,
-          destination: sequence[i === sequence.length - 1 ? 0 : i + 1].address,
+          destination: sequence[next].address,
           // waypoints: this._getWaypoints(sequence),
           travelMode: "DRIVING"
         },
-        this._routeCallback(directionsDisplay, map)
+        this._routeCallback(directionsDisplay, map, sequence, i, next)
       );
     }
   };
@@ -81,21 +82,25 @@ class MapContainer extends React.Component {
     });
   };
 
-  _routeCallback = (directionsDisplay, map) => (res, status) => {
+  _routeCallback = (directionsDisplay, map, seq, i, next) => (res, status) => {
     if (status === "OK") {
-      console.log(res);
       directionsDisplay.setDirections(res);
       const line = new google.maps.Polyline({
         path: res.routes[0].overview_path,
         strokeColor: "#4285f4"
       });
       line.setMap(map);
-      const { distance, duration } = res.routes[0].legs[0];
-      const text = distance.text + "<br/>" + duration.text;
+      const text = this._buildDisplayText(seq, i, next, res.routes[0].legs[0]);
       this._addListenerToLine(line, text, map);
     } else {
       alert("Directions request failed due to " + status);
     }
+  };
+
+  _buildDisplayText = (sequence, curr, next, {distance, duration}) => {
+    return `From ${curr + 1} - ${sequence[curr].name} to ${next + 1} - ${
+      sequence[next].name
+    }: <br/> ${distance.text} <br/> ${duration.text}`;
   };
 
   render() {
