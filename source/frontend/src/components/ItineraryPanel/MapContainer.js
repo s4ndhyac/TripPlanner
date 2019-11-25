@@ -97,10 +97,19 @@ class MapContainer extends React.Component {
     }
   };
 
-  _buildDisplayText = (sequence, curr, next, {distance, duration}) => {
-    return `From ${curr + 1} - ${sequence[curr].name} to ${next + 1} - ${
+  _buildGoogleMapsUrl = (origin, dest) => {
+    return `https://www.google.com/maps/dir/?api=1&origin=${origin}&destination=${dest}`;
+  };
+
+  _buildDisplayText = (sequence, curr, next, { distance, duration }) => {
+    return `From ${curr + 1} - ${sequence[curr].name} <br/> to ${next + 1} - ${
       sequence[next].name
-    }: <br/> ${distance.text} <br/> ${duration.text}`;
+    }: <br/> ${distance.text} <br/> ${
+      duration.text
+    } <br/> <a href="${this._buildGoogleMapsUrl(
+      sequence[curr].address,
+      sequence[next].address
+    )}" target="_blank">View in Google Maps</a>`;
   };
 
   render() {
