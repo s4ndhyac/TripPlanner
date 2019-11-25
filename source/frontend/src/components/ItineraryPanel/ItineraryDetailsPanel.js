@@ -179,7 +179,6 @@ class ItineraryDetailsPanel extends React.Component {
       plan
     } = this.props;
     let index = this._emptyPlan(plan) ? 0 : plan.list.findIndex(x => x.date === event.target.value);
-    console.log(index);
     var date_sort_asc = function (date1, date2) {
       if (date1 > date2) return 1;
       if (date1 < date2) return -1;
@@ -189,10 +188,8 @@ class ItineraryDetailsPanel extends React.Component {
       var allDates = plan.list.map(p => stringToDate(p.date));
       allDates.push(stringToDate(event.target.value));
       allDates.sort(date_sort_asc);
-      console.log(allDates);
       index = allDates.findIndex(x => x.getTime() === stringToDate(event.target.value).getTime());
     }
-    console.log(index);
     this.setState({ value: index });
   };
 
