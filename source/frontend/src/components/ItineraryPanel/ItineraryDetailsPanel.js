@@ -174,19 +174,25 @@ class ItineraryDetailsPanel extends React.Component {
   _emptyPlan = plan =>
     plan.list === undefined || (plan.list && plan.list.length === 0);
 
-  handleChangeOfDate = event => {
-    const { plan } = this.props;
-    let index = this._emptyPlan(plan)
-      ? 0
-      : plan.list.findIndex(x => x.date === event.target.value);
+  handleChangeOfDate = (event) => {
+    const {
+      plan
+    } = this.props;
+    let index = this._emptyPlan(plan) ? 0 : plan.list.findIndex(x => x.date === event.target.value);
+    console.log(index);
+    var date_sort_asc = function (date1, date2) {
+      if (date1 > date2) return 1;
+      if (date1 < date2) return -1;
+      return 0;
+    };
     if (index === -1) {
       var allDates = plan.list.map(p => stringToDate(p.date));
       allDates.push(stringToDate(event.target.value));
-      allDates.sort();
-      index = allDates.findIndex(
-        x => x.getTime() === stringToDate(event.target.value).getTime()
-      );
+      allDates.sort(date_sort_asc);
+      console.log(allDates);
+      index = allDates.findIndex(x => x.getTime() === stringToDate(event.target.value).getTime());
     }
+    console.log(index);
     this.setState({ value: index });
   };
 
@@ -198,10 +204,10 @@ class ItineraryDetailsPanel extends React.Component {
             {this._emptyPlan(plan) ? (
               <p></p>
             ) : (
-              plan.list.map(p => (
-                <Tab label={stringToDate(p.date).toDateString()} />
-              ))
-            )}
+                plan.list.map(p => (
+                  <Tab label={stringToDate(p.date).toDateString()} />
+                ))
+              )}
           </Tabs>
         </Paper>
         {this.renderItinerary(plan, value)}
@@ -213,34 +219,34 @@ class ItineraryDetailsPanel extends React.Component {
     return this._emptyPlan(plan)
       ? this.emptyPlanTip()
       : plan.list.map((p, i) => {
-          return (
-            <TabPanel value={value} index={i}>
-              <Grid
-                container
-                direction="row"
-                justify="space-between"
-                spacing={4}
-              >
-                <Grid item xs={6}>
-                  <List style={{ overflow: "auto", maxHeight: "60vh" }}>
-                    {p.sequence.map(this.getListItem, i)}
-                  </List>
-                </Grid>
-                <Grid item xs={6} style={{ overflow: "auto" }}>
-                  <Typography variant="h6">Route Visulization</Typography>
-                  <Typography
-                    variant="caption"
-                    display="block"
-                    gutterBottom
-                  >
-                    Click on the route to view distances and durations
-                  </Typography>
-                  <MapContainer sequence={p.sequence}></MapContainer>
-                </Grid>
+        return (
+          <TabPanel value={value} index={i}>
+            <Grid
+              container
+              direction="row"
+              justify="space-between"
+              spacing={4}
+            >
+              <Grid item xs={6}>
+                <List style={{ overflow: "auto", maxHeight: "60vh" }}>
+                  {p.sequence.map(this.getListItem, i)}
+                </List>
               </Grid>
-            </TabPanel>
-          );
-        });
+              <Grid item xs={6} style={{ overflow: "auto" }}>
+                <Typography variant="h6">Route Visulization</Typography>
+                <Typography
+                  variant="caption"
+                  display="block"
+                  gutterBottom
+                >
+                  Click on the route to view distances and durations
+                  </Typography>
+                <MapContainer sequence={p.sequence}></MapContainer>
+              </Grid>
+            </Grid>
+          </TabPanel>
+        );
+      });
   };
 
   render() {
@@ -327,8 +333,8 @@ class ItineraryDetailsPanel extends React.Component {
             <CircularProgress></CircularProgress>
           </center>
         ) : (
-          this.renderTab(plan, value)
-        )}
+            this.renderTab(plan, value)
+          )}
       </Paper>
     );
   }
