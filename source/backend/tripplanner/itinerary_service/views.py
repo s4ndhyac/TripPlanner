@@ -1,6 +1,8 @@
 import json
 import os
+from functools import lru_cache
 
+import googlemaps
 import requests
 from django.core import serializers
 from django.http import JsonResponse
@@ -9,6 +11,7 @@ from rest_framework import viewsets
 
 from .models import Itinerary
 from .serializers import ItinerarySerializer
+
 
 YELP_API_KEY = os.getenv('YELP_API_KEY', '')
 YELP_HEADER = {"Authorization": "Bearer %s" % YELP_API_KEY}
@@ -20,6 +23,8 @@ GOOGLE_PLACE_DETAILS_API = 'https://maps.googleapis.com/maps/api/place/details/j
 GOOGLE_API_KEY = os.getenv('GOOGLE_API_KEY', '')
 
 LIMIT = 15
+
+client = googlemaps.Client(key=GOOGLE_API_KEY)
 
 
 class ItineraryViewSet(viewsets.ModelViewSet):
@@ -84,3 +89,23 @@ def do_yelp_search(term, location):
 def generate_plan(request):
     plan = json.loads(request.body.decode('utf-8'))
     return JsonResponse(Itinerary.optimize(plan))
+
+
+def get_geocode(request):
+    addresses = request.GET.get('addresses', [])
+    addresses = json.loads(addresses) if len(addresses) > 0 else []
+    geocodes = [fetch_geocode(address) for address in addresses]
+    print(fetch_geocode.cache_info())
+    return JsonResponse({'geocodes': geocodes})
+
+
+@lru_cache(maxsize=128)
+def fetch_geocode(address):
+    attempts, exception = 0, None
+    while attempts < 3:
+        try:
+            return client.geocode(address)[0]['geometry']['location']
+        except Exception as e:
+            exception = e
+            attempts += 1
+    raise e

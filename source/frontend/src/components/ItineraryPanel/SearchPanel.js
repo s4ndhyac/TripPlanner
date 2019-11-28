@@ -11,7 +11,6 @@ import {
   Drawer
 } from "@material-ui/core";
 import InputAdornment from "@material-ui/core/InputAdornment";
-import TodayIcon from "@material-ui/icons/Today";
 import BusinessIcon from "@material-ui/icons/Business";
 import LocationOnIcon from "@material-ui/icons/LocationOn";
 import SearchResultList from "./SearchResultList";
