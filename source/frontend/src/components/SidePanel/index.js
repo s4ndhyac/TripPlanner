@@ -26,6 +26,8 @@ import ExpandMoreIcon from "@material-ui/icons/ExpandMore";
 
 import { openGroup, openItinerary } from "../../actions";
 import { axios } from "../oauth";
+import Pusher from 'pusher-js';
+// import { pusherSubscribe, pusherPublish } from "../../utils";
 
 const drawerWidth = "20rem";
 const listGroupsByUser = "/members/v1/usergroup/?user_id=";
@@ -72,7 +74,7 @@ class SidePanel extends React.Component {
     let currentComponent = this;
     axios
       .post(createItineraryAPI, itinerary)
-      .then(function(response) {
+      .then(function (response) {
         console.log(response);
         axios.get(listItinerariesByGroup + groupId).then(res => {
           const curr_itineraries = currentComponent.state.itineraries;
@@ -81,7 +83,7 @@ class SidePanel extends React.Component {
           currentComponent.setState({ itineraries: curr_itineraries });
         });
       })
-      .catch(function(error) {
+      .catch(function (error) {
         console.log(error);
       });
 
@@ -103,14 +105,14 @@ class SidePanel extends React.Component {
     let currentComponent = this;
     axios
       .post(groupAPI, user)
-      .then(function(response) {
+      .then(function (response) {
         console.log(response);
         axios.get(listGroupsByUser + curUser.id).then(res => {
           const groups = res.data;
           currentComponent.setState({ groups: groups });
         });
       })
-      .catch(function(error) {
+      .catch(function (error) {
         console.log(error);
       });
 
@@ -132,11 +134,27 @@ class SidePanel extends React.Component {
   }
 
   componentDidMount() {
-    const { curUser } = this.props;
-    axios.get(listGroupsByUser + curUser.id).then(res => {
-      const groups = res.data;
+    // const { curUser } = this.props;
+    // axios.get(listGroupsByUser + curUser.id).then(res => {
+    //   const groups = res.data;
+    //   this.setState({ groups });
+    // });
+
+    // pusherSubscribe(short.generate(), 'client-groups', data => {
+    //   const groups = data;
+    //   this.setState({ groups });
+    // });
+
+    var pusher = new Pusher('984d71bda00ac34d7d56', {
+      cluster: 'us3',
+      forceTLS: true
+    });
+    var channel = pusher.subscribe(short.generate());
+    channel.bind('client-groups', data => {
+      const groups = data;
       this.setState({ groups });
     });
+
   }
 
   fetchItinerariesByGroup(groupId) {
@@ -192,21 +210,21 @@ class SidePanel extends React.Component {
                 <List>
                   {group.group.id in itineraries
                     ? itineraries[group.group.id].map(itinerary => (
-                        <ListItem
-                          button
-                          key={`itinerary-${itinerary.id}`}
-                          onClick={() =>
-                            history.push(
-                              `/dashboard/itineraries/${itinerary.id}`
-                            )
-                          }
-                        >
-                          <ListItemIcon>
-                            <CardTravelIcon />
-                          </ListItemIcon>
-                          <ListItemText primary={itinerary.name} />
-                        </ListItem>
-                      ))
+                      <ListItem
+                        button
+                        key={`itinerary-${itinerary.id}`}
+                        onClick={() =>
+                          history.push(
+                            `/dashboard/itineraries/${itinerary.id}`
+                          )
+                        }
+                      >
+                        <ListItemIcon>
+                          <CardTravelIcon />
+                        </ListItemIcon>
+                        <ListItemText primary={itinerary.name} />
+                      </ListItem>
+                    ))
                     : null}
 
                   <ListItem key={short.generate()}>
