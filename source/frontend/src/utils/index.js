@@ -1,5 +1,10 @@
 import Pusher from 'pusher-js';
 
+var pusher = new Pusher('984d71bda00ac34d7d56', {
+  cluster: 'us3',
+  forceTLS: true
+});
+
 export const stringToDate = date => {
   const split = date.split("-");
   return new Date(split[0], split[1] - 1, split[2]);
@@ -16,14 +21,11 @@ export const emptyObject = obj =>
 
 
 export const pusherSubscribe = (channelId, eventId, callback) => {
-  var pusher = new Pusher('984d71bda00ac34d7d56', {
-    cluster: 'us3',
-    forceTLS: true
-  });
   var channel = pusher.subscribe(channelId);
   channel.bind(eventId, callback);
 }
 
-export const pusherPublish = (channel, eventId, data) => {
+export const pusherPublish = (channelId, eventId, data) => {
+  var channel = pusher.channel(channelId);
   channel.trigger(eventId, data);
 }
