@@ -15,5 +15,6 @@ urlpatterns = [
     path('addGroup/', views.addGroup, name='addGroup'),
     path('deleteMember/', views.deleteMember, name='deleteMember'),
     path('inviteMember/', views.inviteMember, name='inviteMember'),
+    path('pusher_auth/', views.pusher_auth, name='pusher_auth'),
     url(r'^v1/', include(router.urls))
 ]
