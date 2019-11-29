@@ -1,8 +1,10 @@
 import Pusher from 'pusher-js';
 
+const authBaseUrl = process.env.REACT_APP_ENVIRONMENT && process.env.REACT_APP_ENVIRONMENT === "prod" ? "https://backend.trippplanner.com" : "http://localhost:8000";
 var pusher = new Pusher('984d71bda00ac34d7d56', {
   cluster: 'us3',
-  forceTLS: true
+  forceTLS: true,
+  authEndpoint: authBaseUrl + '/members/pusher_auth/'
 });
 
 export const stringToDate = date => {

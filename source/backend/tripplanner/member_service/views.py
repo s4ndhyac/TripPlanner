@@ -176,5 +176,17 @@ def find_user_by_token(token):
     return user
 
 
+def pusher_auth(request):
+    try:
+        body_unicode = request.body.decode('utf-8')
+        body = json.loads(body_unicode)
+        auth = pusher_client.authenticate(
+            channel=body['channel_name'], socket_id=body['socket_id'])
+        return json.dumps(auth)
+    except Exception as e:
+        logger.error(e)
+        return HttpResponseForbidden()
+
+
 def index(request):
     return render(request, 'members/dashboard.html' if request.user.is_authenticated else 'members/index.html')
