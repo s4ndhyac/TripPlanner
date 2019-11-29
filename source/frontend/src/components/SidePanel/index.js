@@ -121,16 +121,27 @@ class SidePanel extends React.Component {
 
   componentDidMount() {
     const { curUser } = this.props;
+    let currentComponent = this;
+
     axios.get(listGroupsByUser + curUser.id).then(res => {
       const groups = res.data;
       this.setState({ groups });
+    }).then(function () {
+      const { groups } = currentComponent.state;
+      groups.map((usergroup) => {
+        pusherSubscribe('itinerary-edit-channel-' + usergroup.group.id, 'client-itinerary-edit', html => {
+          document.getElementById("itineraryname" + usergroup.group.id).innerHTML = html;
+        });
+      });
     });
+
     pusherSubscribe('groups-channel', 'add-group', data => {
       axios.get(listGroupsByUser + curUser.id).then(res => {
         const groups = res.data;
         this.setState({ groups });
       });
     });
+
     pusherSubscribe('itinerary-channel', 'add-itinerary', data => {
       const groupId = data.group;
       let currentComponent = this;
@@ -141,6 +152,10 @@ class SidePanel extends React.Component {
         currentComponent.setState({ itineraries: curr_itineraries });
       });
     });
+  }
+
+  itineraryTriggerChange(e, groupId) {
+    pusherPublish('itinerary-edit-channel-' + groupId, 'client-itinerary-edit', e.target.innerHTML);
   }
 
   fetchItinerariesByGroup(groupId) {
@@ -225,11 +240,12 @@ class SidePanel extends React.Component {
                     {this.state.showItineraryPopup[group.group.id] ? (
                       <div className="CreateItinerary">
                         <TextField
-                          id="itineraryname"
+                          id={"itineraryname" + group.group.id}
                           label="Itinerary Name"
                           type="itinerary-name"
                           margin="normal"
                           variant="outlined"
+                          onChange={(e) => this.itineraryTriggerChange(e, group.group.id)}
                         />
                         <Button
                           color="primary"
