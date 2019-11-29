@@ -129,7 +129,7 @@ class SidePanel extends React.Component {
     }).then(function () {
       const { groups } = currentComponent.state;
       groups.map((usergroup) => {
-        pusherSubscribe('itinerary-edit-channel-' + usergroup.group.id, 'client-itinerary-edit', html => {
+        pusherSubscribe('private-itinerary-edit-channel-' + usergroup.group.id, 'client-itinerary-edit', html => {
           document.getElementById("itineraryname" + usergroup.group.id).innerHTML = html;
         });
       });
@@ -155,7 +155,7 @@ class SidePanel extends React.Component {
   }
 
   itineraryTriggerChange(e, groupId) {
-    pusherPublish('itinerary-edit-channel-' + groupId, 'client-itinerary-edit', e.target.innerHTML);
+    pusherPublish('private-itinerary-edit-channel-' + groupId, 'client-itinerary-edit', e.target.innerHTML);
   }
 
   fetchItinerariesByGroup(groupId) {
