@@ -26,7 +26,6 @@ import ExpandMoreIcon from "@material-ui/icons/ExpandMore";
 
 import { openGroup, openItinerary } from "../../actions";
 import { axios } from "../oauth";
-import Pusher from 'pusher-js';
 import { pusherSubscribe, pusherPublish } from "../../utils";
 
 const drawerWidth = "20rem";
@@ -71,17 +70,10 @@ class SidePanel extends React.Component {
       group: groupId
     };
 
-    let currentComponent = this;
     axios
       .post(createItineraryAPI, itinerary)
       .then(function (response) {
         console.log(response);
-        axios.get(listItinerariesByGroup + groupId).then(res => {
-          const curr_itineraries = currentComponent.state.itineraries;
-          curr_itineraries[groupId] = res.data;
-          console.log(curr_itineraries);
-          currentComponent.setState({ itineraries: curr_itineraries });
-        });
       })
       .catch(function (error) {
         console.log(error);
@@ -137,6 +129,16 @@ class SidePanel extends React.Component {
       axios.get(listGroupsByUser + curUser.id).then(res => {
         const groups = res.data;
         this.setState({ groups });
+      });
+    });
+    pusherSubscribe('itinerary-channel', 'add-itinerary', data => {
+      const groupId = data.group;
+      let currentComponent = this;
+      axios.get(listItinerariesByGroup + groupId).then(res => {
+        const curr_itineraries = currentComponent.state.itineraries;
+        curr_itineraries[groupId] = res.data;
+        console.log(curr_itineraries);
+        currentComponent.setState({ itineraries: curr_itineraries });
       });
     });
   }

@@ -1,7 +1,7 @@
 import json
 import os
 from functools import lru_cache
-
+import pusher
 import googlemaps
 import requests
 from django.core import serializers
@@ -26,11 +26,29 @@ LIMIT = 15
 
 client = googlemaps.Client(key=GOOGLE_API_KEY)
 
+pusher_client = pusher.Pusher(
+    app_id='908774',
+    key='984d71bda00ac34d7d56',
+    secret='9d27ac455c2756f3682b',
+    cluster='us3',
+    ssl=True
+)
+
 
 class ItineraryViewSet(viewsets.ModelViewSet):
     queryset = Itinerary.objects.all()
     serializer_class = ItinerarySerializer
     filterset_fields = ['group_id', 'name', 'id']
+
+    def perform_create(self, serializer):
+        serializer.save()
+        pusher_client.trigger('itinerary-channel',
+                              'add-itinerary', serializer.data)
+
+    def perform_update(self, serializer):
+        serializer.save()
+        pusher_client.trigger('itinerary-channel',
+                              'update-itinerary', serializer.data)
 
 
 def search(request):
