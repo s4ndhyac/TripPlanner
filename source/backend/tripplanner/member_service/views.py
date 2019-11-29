@@ -2,6 +2,7 @@ import json
 import logging
 import os
 import requests
+import pusher
 from django.contrib.auth import logout as auth_logout
 from django.core import serializers
 from django.forms.models import model_to_dict
@@ -22,8 +23,17 @@ logger = logging.getLogger(__name__)
 
 GOOGLE_OAUTH_API = "https://oauth2.googleapis.com/tokeninfo?id_token={}"
 
+pusher_client = pusher.Pusher(
+    app_id='908774',
+    key='984d71bda00ac34d7d56',
+    secret='9d27ac455c2756f3682b',
+    cluster='us3',
+    ssl=True
+)
 
 # CRUD and filtering
+
+
 class UserViewSet(viewsets.ModelViewSet):
     queryset = User.objects.all()
     serializer_class = UserSerializer
@@ -72,6 +82,9 @@ def addGroup(request):
         user = User.objects.get(email=body['email'])
         group.users.add(user.id)
         group.save()
+
+        pusher_client.trigger('groups-channel', 'add-group', {})
+
         return HttpResponse(group)
     except Exception as e:
         logger.error(e)
@@ -95,6 +108,7 @@ def deleteMember(request):
             targetGroup = Group.objects.get(id=groupId)
             targetGroup.delete()
 
+        pusher_client.trigger('users-channel', 'delete-user', {})
         return HttpResponse("Delete the member successfully.")
     except Exception as e:
         logger.error(e)

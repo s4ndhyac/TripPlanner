@@ -27,7 +27,7 @@ import ExpandMoreIcon from "@material-ui/icons/ExpandMore";
 import { openGroup, openItinerary } from "../../actions";
 import { axios } from "../oauth";
 import Pusher from 'pusher-js';
-// import { pusherSubscribe, pusherPublish } from "../../utils";
+import { pusherSubscribe, pusherPublish } from "../../utils";
 
 const drawerWidth = "20rem";
 const listGroupsByUser = "/members/v1/usergroup/?user_id=";
@@ -101,16 +101,10 @@ class SidePanel extends React.Component {
       name: input,
       email: curUser.email
     };
-
-    let currentComponent = this;
     axios
       .post(groupAPI, user)
       .then(function (response) {
         console.log(response);
-        axios.get(listGroupsByUser + curUser.id).then(res => {
-          const groups = res.data;
-          currentComponent.setState({ groups: groups });
-        });
       })
       .catch(function (error) {
         console.log(error);
@@ -134,27 +128,17 @@ class SidePanel extends React.Component {
   }
 
   componentDidMount() {
-    // const { curUser } = this.props;
-    // axios.get(listGroupsByUser + curUser.id).then(res => {
-    //   const groups = res.data;
-    //   this.setState({ groups });
-    // });
-
-    // pusherSubscribe(short.generate(), 'client-groups', data => {
-    //   const groups = data;
-    //   this.setState({ groups });
-    // });
-
-    var pusher = new Pusher('984d71bda00ac34d7d56', {
-      cluster: 'us3',
-      forceTLS: true
-    });
-    var channel = pusher.subscribe(short.generate());
-    channel.bind('client-groups', data => {
-      const groups = data;
+    const { curUser } = this.props;
+    axios.get(listGroupsByUser + curUser.id).then(res => {
+      const groups = res.data;
       this.setState({ groups });
     });
-
+    pusherSubscribe('groups-channel', 'add-group', data => {
+      axios.get(listGroupsByUser + curUser.id).then(res => {
+        const groups = res.data;
+        this.setState({ groups });
+      });
+    });
   }
 
   fetchItinerariesByGroup(groupId) {
