@@ -62,7 +62,7 @@ class SidePanel extends React.Component {
   }
 
   handleSubmit(event, groupId) {
-    const input = document.getElementById("itineraryname").value;
+    const input = document.getElementById("itineraryname" + groupId).value;
     alert("A new itinerary was created: " + input);
     const itinerary = {
       name: input,
@@ -80,7 +80,7 @@ class SidePanel extends React.Component {
       });
 
     event.preventDefault();
-    document.getElementById("itineraryname").value = "";
+    document.getElementById("itineraryname" + groupId).value = "";
     this.toggleItineraryPopup(groupId);
   }
 
