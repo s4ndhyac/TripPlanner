@@ -59,7 +59,6 @@ class SidePanel extends React.Component {
     };
 
     this.handleSubmitGroup = this.handleSubmitGroup.bind(this);
-    this.testTriggerChange = this.testTriggerChange.bind(this);
   }
 
   handleSubmit(event, groupId) {
@@ -86,10 +85,10 @@ class SidePanel extends React.Component {
   }
 
   handleSubmitGroup(event) {
-    const input = document.getElementById("groupname").value;
+    const { curUser } = this.props;
+    const input = document.getElementById("groupname" + curUser.id).value;
     alert("A new group was created: " + input);
     this.setState({ inputGroup: input });
-    const { curUser } = this.props;
     const user = {
       name: input,
       email: curUser.email
@@ -104,7 +103,7 @@ class SidePanel extends React.Component {
       });
 
     event.preventDefault();
-    document.getElementById("groupname").value = "";
+    document.getElementById("groupname" + curUser.id).value = "";
     this.togglePopup();
   }
 
@@ -128,19 +127,18 @@ class SidePanel extends React.Component {
       const groups = res.data;
       this.setState({ groups });
     })
-    // .then(function () {
-    //   const { groups } = currentComponent.state;
-    //   groups.map((usergroup) => {
-    //     pusherSubscribe('private-itinerary-edit-channel-' + usergroup.group.id, 'client-itinerary-edit', html => {
-    //       document.getElementById("itineraryname" + usergroup.group.id).innerHTML = html;
-    //     });
-    //   });
-    // });
-
-    pusherSubscribe('private-test-channel', 'client-test', html => {
-      console.log(html);
-      document.getElementById("groupname2").value = html;
-    });
+      .then(function () {
+        const { groups } = currentComponent.state;
+        groups.map((usergroup) => {
+          pusherSubscribe('private-itinerary-edit-channel-' + usergroup.group.id, 'client-itinerary-edit', html => {
+            document.getElementById("itineraryname" + usergroup.group.id).value = html;
+          });
+        });
+      }).then(function () {
+        pusherSubscribe('private-group-edit-channel-' + curUser.id, 'client-group-edit', html => {
+          document.getElementById("groupname" + curUser.id).value = html;
+        });
+      });
 
     pusherSubscribe('groups-channel', 'add-group', data => {
       axios.get(listGroupsByUser + curUser.id).then(res => {
@@ -162,11 +160,11 @@ class SidePanel extends React.Component {
   }
 
   itineraryTriggerChange(e, groupId) {
-    pusherPublish('private-itinerary-edit-channel-' + groupId, 'client-itinerary-edit', e.target.innerHTML);
+    pusherPublish('private-itinerary-edit-channel-' + groupId, 'client-itinerary-edit', e.target.value);
   }
 
-  testTriggerChange(e) {
-    pusherPublish('private-test-channel', 'client-test', e.target.value);
+  groupTriggerChange(e, userId) {
+    pusherPublish('private-group-edit-channel-' + userId, 'client-group-edit', e.target.value);
   }
 
   fetchItinerariesByGroup(groupId) {
@@ -181,7 +179,7 @@ class SidePanel extends React.Component {
   }
 
   render() {
-    const { classes, history } = this.props;
+    const { curUser, classes, history } = this.props;
     const { groups, itineraries } = this.state;
     return (
       <Drawer
@@ -256,7 +254,7 @@ class SidePanel extends React.Component {
                           type="itinerary-name"
                           margin="normal"
                           variant="outlined"
-                        // onChange={(e) => this.itineraryTriggerChange(e, group.group.id)}
+                          onChange={(e) => this.itineraryTriggerChange(e, group.group.id)}
                         />
                         <Button
                           color="primary"
@@ -279,11 +277,12 @@ class SidePanel extends React.Component {
             {this.state.showPopup ? (
               <div className="Creategroup">
                 <TextField
-                  id="groupname"
+                  id={"groupname" + curUser.id}
                   label="Group Name"
                   type="group-name"
                   margin="normal"
                   variant="outlined"
+                  onChange={(e) => { this.groupTriggerChange(e, curUser.id) }}
                 />
                 <Button color="primary" onClick={this.handleSubmitGroup}>
                   Submit
@@ -292,14 +291,6 @@ class SidePanel extends React.Component {
             ) : null}
           </ListItem>
         </List>
-        <TextField
-          id="groupname2"
-          label="Group Name"
-          type="group-name"
-          margin="normal"
-          variant="outlined"
-          onChange={this.testTriggerChange}
-        />
       </Drawer>
 
     );
