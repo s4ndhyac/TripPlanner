@@ -180,9 +180,9 @@ def pusher_auth(request):
     try:
         tokenString = request.headers.get('Authorization')
         tokenId = tokenString.split(' ')[1]
-        token, _ = Token.objects.get(key=tokenId)
+        token = Token.objects.get(key=tokenId)
         presenceData = {
-            'user_id': token['user_id'],
+            'user_id': token.user_id,
             'user_info': {}
         }
         auth = pusher_client.authenticate(
