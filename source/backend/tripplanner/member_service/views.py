@@ -178,8 +178,15 @@ def find_user_by_token(token):
 
 def pusher_auth(request):
     try:
+        tokenString = request.headers.get('Authorization')
+        tokenId = tokenString.split(' ')[1]
+        token, _ = Token.objects.get(key=tokenId)
+        presenceData = {
+            'user_id': token['user_id'],
+            'user_info': {}
+        }
         auth = pusher_client.authenticate(
-            channel=request.POST['channel_name'], socket_id=request.POST['socket_id'])
+            channel=request.POST['channel_name'], socket_id=request.POST['socket_id'], custom_data=presenceData)
         return HttpResponse(json.dumps(auth))
     except Exception as e:
         logger.error(e)
