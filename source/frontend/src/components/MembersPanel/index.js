@@ -150,7 +150,7 @@ class MembersPanel extends React.Component {
               <TableBody>
                 {members.map(row => (
                   <TableRow
-                    key={row.user.first_name + " " + row.user.last_name}
+                    key={row.user.first_name + " " + row.user.last_name + " " + row.user.id}
                   >
                     <TableCell component="th" scope="row">
                       <PersonIcon></PersonIcon>

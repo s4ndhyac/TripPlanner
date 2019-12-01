@@ -181,9 +181,18 @@ def pusher_auth(request):
         tokenString = request.headers.get('Authorization')
         tokenId = tokenString.split(' ')[1]
         token = Token.objects.get(key=tokenId)
+        django_user = Auth_user.objects.get(id=token.user_id)
+        email = django_user.username
+        user = User.objects.get(email=email)
         presenceData = {
-            'user_id': token.user_id,
-            'user_info': {}
+            'user_id': user.id,
+            'user_info': {
+                "id": user.id,
+                "email": user.email,
+                "first_name": user.first_name,
+                "last_name": user.last_name,
+                "picture": user.picture
+            }
         }
         auth = pusher_client.authenticate(
             channel=request.POST['channel_name'], socket_id=request.POST['socket_id'], custom_data=presenceData)

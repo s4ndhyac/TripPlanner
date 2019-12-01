@@ -33,9 +33,35 @@ export const emptyObject = obj =>
 export const pusherSubscribe = (channelId, eventId, callback) => {
   var channel = pusher.subscribe(channelId);
   channel.bind(eventId, callback);
+  return channel;
 }
 
 export const pusherPublish = (channelId, eventId, data) => {
   var channel = pusher.channel(channelId);
   channel.trigger(eventId, data);
+}
+
+export const pusherUnsubscribe = (channelId) => {
+  pusher.unsubscribe(channelId);
+}
+
+export const stringToColor = (string) => {
+  let hash = 0;
+  let i;
+
+  /* eslint-disable no-bitwise */
+  for (i = 0; i < string.length; i += 1) {
+    hash = string.charCodeAt(i) + ((hash << 5) - hash);
+  }
+
+  let colour = '#';
+
+  for (i = 0; i < 3; i += 1) {
+    const value = (hash >> (i * 8)) & 0xff;
+    colour += `00${value.toString(16)}`.substr(-2);
+  }
+  /* eslint-enable no-bitwise */
+
+  if (parseInt(colour, 16) > 15658734) return '#eeeeee';
+  return colour;
 }

@@ -9,7 +9,9 @@ import {
   ListItemText,
   Typography,
   Button,
-  TextField
+  TextField,
+  Grid,
+  Tooltip
 } from "@material-ui/core";
 import IconButton from "@material-ui/core/IconButton";
 import CardTravelIcon from "@material-ui/icons/CardTravel";
@@ -23,10 +25,11 @@ import ExpansionPanel from "@material-ui/core/ExpansionPanel";
 import ExpansionPanelSummary from "@material-ui/core/ExpansionPanelSummary";
 import ExpansionPanelDetails from "@material-ui/core/ExpansionPanelDetails";
 import ExpandMoreIcon from "@material-ui/icons/ExpandMore";
+import Avatar from '@material-ui/core/Avatar';
 
 import { openGroup, openItinerary } from "../../actions";
 import { axios } from "../oauth";
-import { pusherSubscribe, pusherPublish } from "../../utils";
+import { pusherSubscribe, pusherPublish, stringToColor } from "../../utils";
 
 const drawerWidth = "20rem";
 const listGroupsByUser = "/members/v1/usergroup/?user_id=";
@@ -53,13 +56,16 @@ class SidePanel extends React.Component {
       showItineraryPopup: {},
       groups: [],
       itineraries: {},
-      users: [],
+      users: {},
       inputGroup: "",
-      inputItinerary: ""
+      inputItinerary: "",
+      curr_group: null
     };
 
     this.handleSubmitGroup = this.handleSubmitGroup.bind(this);
   }
+
+
 
   handleSubmit(event, groupId) {
     const input = document.getElementById("itineraryname" + groupId).value;
@@ -116,17 +122,66 @@ class SidePanel extends React.Component {
     if (!(groupId in curr_show_itineraries))
       curr_show_itineraries[groupId] = true;
     else curr_show_itineraries[groupId] = !curr_show_itineraries[groupId];
-    this.setState({ showItineraryPopup: curr_show_itineraries });
+    this.setState({ showItineraryPopup: curr_show_itineraries })
+  }
+
+  displayUserPresence = () => {
+    const { users, curr_group } = this.state;
+    const group_members = users[curr_group];
+    return (
+      group_members.map(member => {
+        const name = member.first_name + " " + member.last_name;
+        const color = stringToColor(name + " " + short.generate());
+        return (
+          <Grid item xs={1}>
+            <Tooltip title={name}>
+              <Avatar style={{ backgroundColor: color }} >{member.first_name.charAt(0) + member.last_name.charAt(0)}</Avatar >
+            </Tooltip>
+          </Grid>
+        );
+      })
+    );
   }
 
   componentDidMount() {
     const { curUser } = this.props;
     let currentComponent = this;
-
     axios.get(listGroupsByUser + curUser.id).then(res => {
       const groups = res.data;
       this.setState({ groups });
+    }).then(function () {
+      const { groups } = currentComponent.state;
+      groups.map((usergroup) => {
+        pusherSubscribe('presence-users-' + usergroup.group.id, 'pusher:subscription_succeeded', members => {
+          const curr_users = currentComponent.state.users;
+          curr_users[usergroup.group.id] = []
+          members.each(member => curr_users[usergroup.group.id].push(member.info));
+          currentComponent.setState({ users: curr_users });
+        });
+      })
     })
+      .then(function () {
+        const { groups } = currentComponent.state;
+        groups.map((usergroup) => {
+          pusherSubscribe('presence-users-' + usergroup.group.id, 'pusher:member_added', member => {
+            const curr_users = currentComponent.state.users;
+            curr_users[usergroup.group.id].push(member.info);
+            currentComponent.setState({ users: curr_users });
+          })
+        });
+      })
+      .then(function () {
+        const { groups } = currentComponent.state;
+        groups.map((usergroup) => {
+          pusherSubscribe('presence-users-' + usergroup.group.id, 'pusher:member_removed', member => {
+            const curr_users = currentComponent.state.users;
+            curr_users[usergroup.group.id] = curr_users[usergroup.group.id].filter(function (curr_member) {
+              return curr_member.id != member.id;
+            })
+            currentComponent.setState({ users: curr_users });
+          });
+        });
+      })
       .then(function () {
         const { groups } = currentComponent.state;
         groups.map((usergroup) => {
@@ -153,7 +208,6 @@ class SidePanel extends React.Component {
       axios.get(listItinerariesByGroup + groupId).then(res => {
         const curr_itineraries = currentComponent.state.itineraries;
         curr_itineraries[groupId] = res.data;
-        console.log(curr_itineraries);
         currentComponent.setState({ itineraries: curr_itineraries });
       });
     });
@@ -172,7 +226,6 @@ class SidePanel extends React.Component {
       axios.get(listItinerariesByGroup + groupId).then(res => {
         const curr_itineraries = this.state.itineraries;
         curr_itineraries[groupId] = res.data;
-        console.log(curr_itineraries);
         this.setState({ itineraries: curr_itineraries });
       });
     }
@@ -180,7 +233,7 @@ class SidePanel extends React.Component {
 
   render() {
     const { curUser, classes, history } = this.props;
-    const { groups, itineraries } = this.state;
+    const { groups, itineraries, curr_group } = this.state;
     return (
       <Drawer
         className={classes.drawer}
@@ -194,18 +247,24 @@ class SidePanel extends React.Component {
         <Divider />
         <List>
           <ListItem key={short.generate()}>
-            <Typography className={classes.heading} variant="h6">
-              Groups
+            <Grid container spacing={3}>
+              <Grid item xs={8}>
+                <Typography className={classes.heading} variant="h6">
+                  Groups
             </Typography>
+              </Grid>
+              {curr_group ? this.displayUserPresence() : null}
+            </Grid>
           </ListItem>
-
           {groups.map(group => (
             <ExpansionPanel>
               <ExpansionPanelSummary
                 expandIcon={<ExpandMoreIcon />}
+                key={short.generate()}
                 aria-controls="panel1a-content"
                 id="panel1a-header"
                 onClick={() => {
+                  this.setState({ curr_group: group.group.id });
                   this.fetchItinerariesByGroup(group.group.id);
                   history.push(`/dashboard/groups/${group.group.id}`);
                 }}
