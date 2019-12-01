@@ -145,7 +145,6 @@ class SidePanel extends React.Component {
       curr_show_itineraries[groupId] = true;
     else curr_show_itineraries[groupId] = !curr_show_itineraries[groupId];
     this.setState({ showItineraryPopup: curr_show_itineraries })
-    this.setBadgeInvisible(groupId);
   }
 
   displayUserPresence = () => {
@@ -205,18 +204,22 @@ class SidePanel extends React.Component {
           });
         });
       })
-    // .then(function () {
-    //   const { groups } = currentComponent.state;
-    //   groups.map((usergroup) => {
-    //     pusherSubscribe('private-itinerary-edit-channel-' + usergroup.group.id, 'client-itinerary-edit', html => {
-    //       document.getElementById("itineraryname" + usergroup.group.id).value = html;
-    //     });
-    //   });
-    // }).then(function () {
-    //   pusherSubscribe('private-group-edit-channel-' + curUser.id, 'client-group-edit', html => {
-    //     document.getElementById("groupname" + curUser.id).value = html;
-    //   });
-    // });
+      .then(function () {
+        const { groups } = currentComponent.state;
+        groups.map((usergroup) => {
+          pusherSubscribe('private-itinerary-edit-channel-' + usergroup.group.id, 'client-itinerary-edit', html => {
+            var ele = document.getElementById("itineraryname" + usergroup.group.id);
+            if (ele)
+              ele.value = html;
+          });
+        });
+      }).then(function () {
+        pusherSubscribe('private-group-edit-channel-' + curUser.id, 'client-group-edit', html => {
+          var ele = document.getElementById("groupname" + curUser.id);
+          if (ele)
+            ele.value = html;
+        });
+      });
 
     pusherSubscribe('groups-channel', 'add-group', data => {
       axios.get(listGroupsByUser + curUser.id).then(res => {
@@ -295,6 +298,7 @@ class SidePanel extends React.Component {
                 onClick={() => {
                   this.setState({ curr_group: group.group.id });
                   this.fetchItinerariesByGroup(group.group.id);
+                  this.setBadgeInvisible(group.group.id);
                   history.push(`/dashboard/groups/${group.group.id}`);
                 }}
               >
@@ -342,7 +346,7 @@ class SidePanel extends React.Component {
                           type="itinerary-name"
                           margin="normal"
                           variant="outlined"
-                        // onChange={(e) => this.itineraryTriggerChange(e, group.group.id)}
+                          onChange={(e) => this.itineraryTriggerChange(e, group.group.id)}
                         />
                         <Button
                           color="primary"
@@ -370,7 +374,7 @@ class SidePanel extends React.Component {
                   type="group-name"
                   margin="normal"
                   variant="outlined"
-                // onChange={(e) => { this.groupTriggerChange(e, curUser.id) }}
+                  onChange={(e) => { this.groupTriggerChange(e, curUser.id) }}
                 />
                 <Button color="primary" onClick={this.handleSubmitGroup}>
                   Submit
