@@ -7,6 +7,7 @@ import ItineraryDetailsPanel from "./ItineraryDetailsPanel";
 import { axios } from "../oauth";
 import { stringToDate, compareDates } from "../../utils";
 import SaveSnackbar from "./SaveSnackbar";
+import { pusherSubscribe, pusherPublish } from "../../utils";
 
 const styles = () => ({
   root: { flexGrow: 1 }
@@ -27,13 +28,23 @@ class ItineraryPanel extends React.Component {
   };
 
   componentWillMount() {
-    this.changeState(this.props);
+    this.changeState(this.props).then(() => {
+      const { id } = this.state;
+      pusherSubscribe('private-itinerary-' + id, 'client-itinerary-add', item => {
+        this.addOnClick(item);
+      });
+    });
   }
 
   componentWillReceiveProps(nextProps) {
     if (this.props.itemId !== nextProps.itemId) {
       this.changeState(nextProps);
     }
+  }
+
+  triggerItineraryAdd = (item) => {
+    const { id } = this.state;
+    pusherPublish('private-itinerary-' + id, 'client-itinerary-add', item);
   }
 
   changeState = async props => {
@@ -48,13 +59,7 @@ class ItineraryPanel extends React.Component {
     return data;
   };
 
-  handleAddOnClick = item => event => {
-    event.preventDefault();
-    item.datetime = document.getElementById("travel-date").value;
-    if (!item.datetime) {
-      alert("Please select a travel date!");
-      return;
-    }
+  addOnClick = item => {
     const date = stringToDate(item.datetime);
     const { plan } = this.state;
     if (!("list" in plan)) {
@@ -71,6 +76,11 @@ class ItineraryPanel extends React.Component {
       planForDate.sequence.push(item);
     }
     this.setState({ plan });
+  }
+
+  handleAddOnClick = (event, item) => {
+    event.preventDefault();
+    this.addOnClick(item);
   };
 
   handleDeleteOnClick = (itemId, datetime) => event => {
@@ -80,6 +90,7 @@ class ItineraryPanel extends React.Component {
     this.setState({
       plan: { list: this.state.plan.list.filter(p => p.sequence.length !== 0) }
     });
+    this.triggerItineraryUpdate(this.state.id);
   };
 
   _findPlanForDate = datetime => {
@@ -169,6 +180,7 @@ class ItineraryPanel extends React.Component {
         <SearchPanel
           open={searchPanelOpen}
           handleAddOnClick={this.handleAddOnClick}
+          triggerItineraryAdd={this.triggerItineraryAdd}
           toggle={this.toggleSearchPanel}
         ></SearchPanel>
         <SaveSnackbar

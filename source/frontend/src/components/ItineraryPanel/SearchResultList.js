@@ -17,7 +17,7 @@ class SearchResultList extends React.Component {
   handleItemClick = url => () => window.open(url);
 
   generateListItem = (id, url, name, address, rating, photo = undefined) => {
-    const { handleAddOnClick } = this.props;
+    const { handleAddOnClick, triggerItineraryAdd } = this.props;
     const item = {
       id,
       url,
@@ -65,7 +65,11 @@ class SearchResultList extends React.Component {
           <IconButton
             color="primary"
             aria-label="add"
-            onClick={handleAddOnClick(item)}
+            onClick={(e) => {
+              item.datetime = document.getElementById("travel-date").value;
+              handleAddOnClick(e, item);
+              triggerItineraryAdd(item);
+            }}
           >
             <AddIcon />
           </IconButton>

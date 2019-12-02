@@ -73,7 +73,7 @@ class SearchPanel extends React.Component {
   };
 
   render() {
-    const { classes, handleAddOnClick, open, toggle } = this.props;
+    const { classes, handleAddOnClick, triggerItineraryAdd, open, toggle } = this.props;
     const { searchResults, loading } = this.state;
     return (
       <Drawer anchor="right" open={open} onClose={toggle(false)}>
@@ -158,6 +158,7 @@ class SearchPanel extends React.Component {
               <SearchResultList
                 searchResults={searchResults}
                 handleAddOnClick={handleAddOnClick}
+                triggerItineraryAdd={triggerItineraryAdd}
               ></SearchResultList>
             )}
         </div>

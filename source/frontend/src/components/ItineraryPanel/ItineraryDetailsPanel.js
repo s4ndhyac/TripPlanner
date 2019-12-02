@@ -232,7 +232,7 @@ class ItineraryDetailsPanel extends React.Component {
                   </List>
                 </Grid>
                 <Grid item xs={6} style={{ overflow: "auto" }}>
-                  <Typography variant="h6">Route Visulization</Typography>
+                  <Typography variant="h6">Check your Route here</Typography>
                   <Typography variant="caption" display="block" gutterBottom>
                     Click on the route to view distances and durations
                   </Typography>
