@@ -24,20 +24,47 @@ class ItineraryPanel extends React.Component {
     snackbarOpen: false,
     optimizedSnackbarOpen: false,
     loading: false,
-    searchPanelOpen: false
+    searchPanelOpen: false,
+    itinerary_badges: {}
   };
 
-  componentWillMount() {
 
+  toggleBadgeVisibility(datestr) {
+    const curr_badges = this.state.itinerary_badges;
+    if (!(datestr in curr_badges))
+      curr_badges[datestr] = false;
+    else
+      curr_badges[datestr] = !curr_badges[datestr];
+    console.log(curr_badges);
+    this.setState({ itinerary_badges: curr_badges });
+  }
+
+  setBadgeInvisible(datestr) {
+    console.log(datestr);
+    const curr_badges = this.state.itinerary_badges;
+    curr_badges[datestr] = true;
+    console.log(curr_badges);
+    this.setState({ itinerary_badges: curr_badges });
+  }
+
+  setBadgeVisible(datestr) {
+    const curr_badges = this.state.itinerary_badges;
+    curr_badges[datestr] = false;
+    this.setState({ itinerary_badges: curr_badges });
+  }
+
+  componentDidMount() {
     this.changeState(this.props).then(() => {
       const { id } = this.state;
       pusherSubscribe('private-itinerary-' + id, 'client-itinerary-add', item => {
         this.addOnClick(item);
+        this.setBadgeVisible(item.datetime);
       });
     }).then(() => {
       const { id } = this.state;
       pusherSubscribe('private-itinerary-' + id, 'client-itinerary-remove', (item) => {
         this.deleteOnClick(item.id, item.datetime);
+        this.setBadgeVisible(item.datetime);
       })
     });
   }
@@ -62,7 +89,7 @@ class ItineraryPanel extends React.Component {
     const { itemId } = props;
     this.setState({ loading: true });
     const itineraryData = await this.getItineraryData(itemId);
-    this.setState({ ...itineraryData, loading: false });
+    this.setState({ ...itineraryData, loading: false, itinerary_badges: {} });
   };
 
   getItineraryData = async id => {
@@ -177,13 +204,15 @@ class ItineraryPanel extends React.Component {
       snackbarOpen,
       optimizedSnackbarOpen,
       loading,
-      searchPanelOpen
+      searchPanelOpen,
+      itinerary_badges
     } = this.state;
     return (
       <Box>
         <ItineraryDetailsPanel
           name={name}
           plan={plan}
+          itinerary_badges={itinerary_badges}
           toggle={this.toggleSearchPanel}
           handleCheckboxOnClick={this.handleCheckboxOnClick}
           handleDeleteOnClick={this.handleDeleteOnClick}

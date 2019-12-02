@@ -73,7 +73,6 @@ class SidePanel extends React.Component {
       curr_badges[groupId] = false;
     else
       curr_badges[groupId] = !curr_badges[groupId];
-    console.log(curr_badges);
     this.setState({ group_badges: curr_badges });
   }
 

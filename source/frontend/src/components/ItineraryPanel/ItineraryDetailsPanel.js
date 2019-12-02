@@ -70,8 +70,14 @@ class ItineraryDetailsPanel extends React.Component {
     value: 0
   };
 
+
   handleChange = (event, newValue) => {
     this.setState({ value: newValue });
+    const { plan, itinerary_badges } = this.props;
+    if (!this._emptyPlan(plan)) {
+      const datestr = plan.list[newValue].date;
+      itinerary_badges[datestr] = true;
+    }
   };
 
   emptyPlanTip = () => {
@@ -199,6 +205,7 @@ class ItineraryDetailsPanel extends React.Component {
   };
 
   renderTab = (plan, value) => {
+    const { itinerary_badges } = this.props;
     return (
       <div>
         <Paper position="static" square>
@@ -207,7 +214,11 @@ class ItineraryDetailsPanel extends React.Component {
               <p></p>
             ) : (
                 plan.list.map(p => (
-                  <Tab label={stringToDate(p.date).toDateString()} />
+                  <Tab label={
+                    <Badge color="secondary" variant="dot" invisible={(p.date in itinerary_badges) ? itinerary_badges[p.date] : true}>
+                      {stringToDate(p.date).toDateString()}
+                    </Badge>
+                  } />
                 ))
               )}
           </Tabs>
