@@ -99,7 +99,7 @@ class ItineraryDetailsPanel extends React.Component {
   };
 
   getListItem = (attraction, index) => {
-    const { classes, handleDeleteOnClick, handleCheckboxOnClick } = this.props;
+    const { classes, handleDeleteOnClick, triggerItineraryRemove, handleCheckboxOnClick } = this.props;
     const {
       name,
       address,
@@ -161,7 +161,10 @@ class ItineraryDetailsPanel extends React.Component {
             <IconButton
               color="secondary"
               aria-label="add"
-              onClick={handleDeleteOnClick(reactId, datetime)}
+              onClick={(e) => {
+                handleDeleteOnClick(e, reactId, datetime)
+                triggerItineraryRemove({ "id": reactId, "datetime": datetime });
+              }}
             >
               <DeleteOutlineIcon fontSize="small" />
             </IconButton>
@@ -179,7 +182,7 @@ class ItineraryDetailsPanel extends React.Component {
     let index = this._emptyPlan(plan)
       ? 0
       : plan.list.findIndex(x => x.date === event.target.value);
-    var date_sort_asc = function(date1, date2) {
+    var date_sort_asc = function (date1, date2) {
       if (date1 > date2) return 1;
       if (date1 < date2) return -1;
       return 0;
@@ -203,10 +206,10 @@ class ItineraryDetailsPanel extends React.Component {
             {this._emptyPlan(plan) ? (
               <p></p>
             ) : (
-              plan.list.map(p => (
-                <Tab label={stringToDate(p.date).toDateString()} />
-              ))
-            )}
+                plan.list.map(p => (
+                  <Tab label={stringToDate(p.date).toDateString()} />
+                ))
+              )}
           </Tabs>
         </Paper>
         {this.renderItinerary(plan, value)}
@@ -218,30 +221,30 @@ class ItineraryDetailsPanel extends React.Component {
     return this._emptyPlan(plan)
       ? this.emptyPlanTip()
       : plan.list.map((p, i) => {
-          return (
-            <TabPanel value={value} index={i}>
-              <Grid
-                container
-                direction="row"
-                justify="space-between"
-                spacing={4}
-              >
-                <Grid item xs={6}>
-                  <List style={{ overflow: "auto", maxHeight: "60vh" }}>
-                    {p.sequence.map(this.getListItem, i)}
-                  </List>
-                </Grid>
-                <Grid item xs={6} style={{ overflow: "auto" }}>
-                  <Typography variant="h6">Check your Route here</Typography>
-                  <Typography variant="caption" display="block" gutterBottom>
-                    Click on the route to view distances and durations
-                  </Typography>
-                  <MapContainer sequence={p.sequence}></MapContainer>
-                </Grid>
+        return (
+          <TabPanel value={value} index={i}>
+            <Grid
+              container
+              direction="row"
+              justify="space-between"
+              spacing={4}
+            >
+              <Grid item xs={6}>
+                <List style={{ overflow: "auto", maxHeight: "60vh" }}>
+                  {p.sequence.map(this.getListItem, i)}
+                </List>
               </Grid>
-            </TabPanel>
-          );
-        });
+              <Grid item xs={6} style={{ overflow: "auto" }}>
+                <Typography variant="h6">Check your Route here</Typography>
+                <Typography variant="caption" display="block" gutterBottom>
+                  Click on the route to view distances and durations
+                  </Typography>
+                <MapContainer sequence={p.sequence}></MapContainer>
+              </Grid>
+            </Grid>
+          </TabPanel>
+        );
+      });
   };
 
   render() {
@@ -328,8 +331,8 @@ class ItineraryDetailsPanel extends React.Component {
             <CircularProgress></CircularProgress>
           </center>
         ) : (
-          this.renderTab(plan, value)
-        )}
+            this.renderTab(plan, value)
+          )}
       </Paper>
     );
   }

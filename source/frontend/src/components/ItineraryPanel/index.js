@@ -28,11 +28,17 @@ class ItineraryPanel extends React.Component {
   };
 
   componentWillMount() {
+
     this.changeState(this.props).then(() => {
       const { id } = this.state;
       pusherSubscribe('private-itinerary-' + id, 'client-itinerary-add', item => {
         this.addOnClick(item);
       });
+    }).then(() => {
+      const { id } = this.state;
+      pusherSubscribe('private-itinerary-' + id, 'client-itinerary-remove', (item) => {
+        this.deleteOnClick(item.id, item.datetime);
+      })
     });
   }
 
@@ -45,6 +51,11 @@ class ItineraryPanel extends React.Component {
   triggerItineraryAdd = (item) => {
     const { id } = this.state;
     pusherPublish('private-itinerary-' + id, 'client-itinerary-add', item);
+  }
+
+  triggerItineraryRemove = (item) => {
+    const { id } = this.state;
+    pusherPublish('private-itinerary-' + id, 'client-itinerary-remove', item);
   }
 
   changeState = async props => {
@@ -83,15 +94,18 @@ class ItineraryPanel extends React.Component {
     this.addOnClick(item);
   };
 
-  handleDeleteOnClick = (itemId, datetime) => event => {
+  handleDeleteOnClick = (event, itemId, datetime) => {
     event.preventDefault();
+    this.deleteOnClick(itemId, datetime);
+  };
+
+  deleteOnClick = (itemId, datetime) => {
     const plan = this._findPlanForDate(datetime);
     plan.sequence = plan.sequence.filter(item => item.reactId !== itemId);
     this.setState({
       plan: { list: this.state.plan.list.filter(p => p.sequence.length !== 0) }
     });
-    this.triggerItineraryUpdate(this.state.id);
-  };
+  }
 
   _findPlanForDate = datetime => {
     const { list } = this.state.plan;
@@ -173,6 +187,7 @@ class ItineraryPanel extends React.Component {
           toggle={this.toggleSearchPanel}
           handleCheckboxOnClick={this.handleCheckboxOnClick}
           handleDeleteOnClick={this.handleDeleteOnClick}
+          triggerItineraryRemove={this.triggerItineraryRemove}
           handleSaveOnClick={this.handleSaveOnClick}
           handleGenerateOnClick={this.handleGenerateOnClick}
           loading={loading}
