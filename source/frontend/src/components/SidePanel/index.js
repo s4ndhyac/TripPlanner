@@ -149,19 +149,22 @@ class SidePanel extends React.Component {
   displayUserPresence = () => {
     const { users, curr_group } = this.state;
     const group_members = users[curr_group];
-    return (
-      group_members.map(member => {
-        const name = member.first_name + " " + member.last_name;
-        const color = stringToColor(name + " " + short.generate());
-        return (
-          <Grid item xs={1}>
-            <Tooltip title={name}>
-              <Avatar style={{ backgroundColor: color }} >{member.first_name.charAt(0) + member.last_name.charAt(0)}</Avatar >
-            </Tooltip>
-          </Grid>
-        );
-      })
-    );
+    if(group_members)
+      return (
+        group_members.map(member => {
+          const name = member.first_name + " " + member.last_name;
+          const color = stringToColor(name + " " + short.generate());
+          return (
+            <Grid item xs={1}>
+              <Tooltip title={name}>
+                <Avatar style={{ backgroundColor: color }} >{member.first_name.charAt(0) + member.last_name.charAt(0)}</Avatar >
+              </Tooltip>
+            </Grid>
+          );
+        })
+      );
+    else
+        return null;
   }
 
   componentDidMount() {
