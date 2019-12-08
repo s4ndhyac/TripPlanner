@@ -42,12 +42,12 @@ class ItineraryViewSet(viewsets.ModelViewSet):
 
     def perform_create(self, serializer):
         serializer.save()
-        pusher_client.trigger('itinerary-channel',
+        pusher_client.trigger('private-itinerary-channel',
                               'add-itinerary', serializer.data)
 
     def perform_update(self, serializer):
         serializer.save()
-        pusher_client.trigger('itinerary-channel',
+        pusher_client.trigger('private-itinerary-channel',
                               'update-itinerary', serializer.data)
 
 

@@ -83,7 +83,8 @@ def addGroup(request):
         group.users.add(user.id)
         group.save()
 
-        pusher_client.trigger('groups-channel', 'add-group', {})
+        pusher_client.trigger(
+            'groups-channel-' + str(user.id), 'add-group', {"groupId": group.id, "userId": user.id})
 
         return HttpResponse(group)
     except Exception as e:
@@ -152,6 +153,8 @@ def inviteMember(request):
                     subject, message, email_from, recipient_list)
                 email.content_subtype = "html"
                 email.send()
+                pusher_client.trigger(
+                    'groups-channel-' + str(user[0].id), 'add-group', {"groupId": group[0].id, "userId": user[0].id})
                 return HttpResponse("Registered user added to group successfully.")
             else:
                 return HttpResponse("The user is already present in the group.")

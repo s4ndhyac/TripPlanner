@@ -149,7 +149,7 @@ class SidePanel extends React.Component {
   displayUserPresence = () => {
     const { users, curr_group } = this.state;
     const group_members = users[curr_group];
-    if(group_members)
+    if (group_members)
       return (
         group_members.map(member => {
           const name = member.first_name + " " + member.last_name;
@@ -164,7 +164,7 @@ class SidePanel extends React.Component {
         })
       );
     else
-        return null;
+      return null;
   }
 
   componentDidMount() {
@@ -199,38 +199,51 @@ class SidePanel extends React.Component {
         groups.map((usergroup) => {
           pusherSubscribe('presence-users-' + usergroup.group.id, 'pusher:member_removed', member => {
             const curr_users = currentComponent.state.users;
-            curr_users[usergroup.group.id] = curr_users[usergroup.group.id].filter(function (curr_member) {
-              return curr_member.id != member.id;
-            })
+            if (curr_users !== undefined && usergroup.group.id in curr_users)
+              curr_users[usergroup.group.id] = curr_users[usergroup.group.id].filter(function (curr_member) {
+                return curr_member.id != member.id;
+              })
             currentComponent.setState({ users: curr_users });
           });
         });
-      })
-      .then(function () {
-        const { groups } = currentComponent.state;
-        groups.map((usergroup) => {
-          pusherSubscribe('private-itinerary-edit-channel-' + usergroup.group.id, 'client-itinerary-edit', html => {
-            var ele = document.getElementById("itineraryname" + usergroup.group.id);
-            if (ele)
-              ele.value = html;
-          });
-        });
-      }).then(function () {
-        pusherSubscribe('private-group-edit-channel-' + curUser.id, 'client-group-edit', html => {
-          var ele = document.getElementById("groupname" + curUser.id);
-          if (ele)
-            ele.value = html;
-        });
       });
 
-    pusherSubscribe('groups-channel', 'add-group', data => {
+    pusherSubscribe('groups-channel-' + curUser.id, 'add-group', data => {
+      const groupId = data.groupId;
+      const userId = data.userId;
       axios.get(listGroupsByUser + curUser.id).then(res => {
         const groups = res.data;
         this.setState({ groups });
+        currentComponent.setBadgeVisible(groupId);
+        pusherSubscribe('presence-users-' + groupId, 'pusher:subscription_succeeded', members => {
+          const curr_users = currentComponent.state.users;
+          curr_users[groupId] = []
+          members.each(member => curr_users[groupId].push(member.info));
+          currentComponent.setState({ users: curr_users });
+        });
+      }).then(function () {
+        pusherSubscribe('presence-users-' + groupId, 'pusher:member_added', member => {
+          const curr_users = currentComponent.state.users;
+          if (!(groupId in curr_users))
+            curr_users[groupId] = [];
+          curr_users[groupId].push(member.info);
+          curr_users[groupId] = curr_users[groupId].filter((v, i, a) => a.indexOf(v) === i);
+          currentComponent.setState({ users: curr_users });
+        })
       })
+        .then(function () {
+          pusherSubscribe('presence-users-' + groupId, 'pusher:member_removed', member => {
+            const curr_users = currentComponent.state.users;
+            if (curr_users !== undefined && groupId in curr_users)
+              curr_users[groupId] = curr_users[groupId].filter(function (curr_member) {
+                return curr_member.id != member.id;
+              })
+            currentComponent.setState({ users: curr_users });
+          });
+        });
     });
 
-    pusherSubscribe('itinerary-channel', 'add-itinerary', data => {
+    pusherSubscribe('private-itinerary-channel', 'add-itinerary', data => {
       const groupId = data.group;
       let currentComponent = this;
       axios.get(listItinerariesByGroup + groupId).then(res => {
@@ -238,17 +251,9 @@ class SidePanel extends React.Component {
         curr_itineraries[groupId] = res.data;
         currentComponent.setState({ itineraries: curr_itineraries });
       }).then(function () {
-        currentComponent.toggleBadgeVisibility(groupId);
+        currentComponent.setBadgeVisible(groupId);
       });
     });
-  }
-
-  itineraryTriggerChange(e, groupId) {
-    pusherPublish('private-itinerary-edit-channel-' + groupId, 'client-itinerary-edit', e.target.value);
-  }
-
-  groupTriggerChange(e, userId) {
-    pusherPublish('private-group-edit-channel-' + userId, 'client-group-edit', e.target.value);
   }
 
   fetchItinerariesByGroup(groupId) {
@@ -348,7 +353,6 @@ class SidePanel extends React.Component {
                           type="itinerary-name"
                           margin="normal"
                           variant="outlined"
-                          onChange={(e) => this.itineraryTriggerChange(e, group.group.id)}
                         />
                         <Button
                           color="primary"
@@ -376,7 +380,6 @@ class SidePanel extends React.Component {
                   type="group-name"
                   margin="normal"
                   variant="outlined"
-                  onChange={(e) => { this.groupTriggerChange(e, curUser.id) }}
                 />
                 <Button color="primary" onClick={this.handleSubmitGroup}>
                   Submit
