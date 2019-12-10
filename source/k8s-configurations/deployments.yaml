@@ -17,7 +17,7 @@ spec:
     spec:
       containers:
         - name: frontend
-          image: gcr.io/capstone-project-team2/frontend:v1
+          image: gcr.io/capstone-project-tripplanner/frontend:v1
           ports:
             - containerPort: 3000
               protocol: TCP
@@ -43,7 +43,7 @@ spec:
     spec: 
       containers:
         - name: backend
-          image: gcr.io/capstone-project-team2/backend:v1
+          image: gcr.io/capstone-project-tripplanner/backend:v1
           ports:
             - containerPort: 8000
               protocol: TCP
@@ -69,7 +69,7 @@ spec:
     spec: 
       containers: 
         - name: database
-          image: gcr.io/capstone-project-team2/database:v1
+          image: gcr.io/capstone-project-tripplanner/database:v1
           ports: 
             - containerPort: 5432
               protocol: TCP

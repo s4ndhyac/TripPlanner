@@ -1,5 +1,5 @@
 #!/bin/bash
-export PROJECT=capstone-project-team2
+export PROJECT=capstone-project-tripplanner
 export CLUSTER=capstone-team2-cluster
 export ZONE=us-west1-b
 export GCR_REGISTRY=gcr.io
